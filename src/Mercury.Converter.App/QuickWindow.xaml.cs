@@ -46,10 +46,11 @@ public sealed partial class QuickWindow : Window
         group = MediaGroups.Of(filePath) ?? MediaGroup.Photo;
         inputBytes = new FileInfo(filePath).Length;
         qualityFromMenu = quality;
-        target = chosen is { } format && MediaGroups.Of(format) == group ? format : settings.TargetFor(group);
+        target = chosen is { } format && FormatCatalog.IsOffered(group, format) ? format : settings.TargetFor(group);
 
         ExtendsContentIntoTitleBar = true;
         SetTitleBar(AppTitleBar);
+        UiHelpers.StyleCaptionButtons(AppWindow);
         if (AppWindow.Presenter is OverlappedPresenter presenter)
         {
             presenter.IsResizable = false;

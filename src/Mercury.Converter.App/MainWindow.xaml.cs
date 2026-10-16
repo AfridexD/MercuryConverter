@@ -31,6 +31,7 @@ public sealed partial class MainWindow : Window
 
         ExtendsContentIntoTitleBar = true;
         SetTitleBar(AppTitleBar);
+        UiHelpers.StyleCaptionButtons(AppWindow);
         AppWindow.Resize(new SizeInt32(1280, 800));
         TrySetIcon();
         AddKeyboardShortcuts();

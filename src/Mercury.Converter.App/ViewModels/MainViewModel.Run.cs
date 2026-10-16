@@ -35,7 +35,12 @@ public sealed partial class MainViewModel
     /// </summary>
     public void ApplyStartup(Mercury.Converter.Core.ConvertCommand command)
     {
-        AddFiles(command.Files);
+        var (added, _) = AddFiles(command.Files);
+        if (added == 0 && command.Files.Count > 0)
+        {
+            SetNotice("Mercury could not read the file Windows sent. Add it with Add files.");
+        }
+
         if (command.Target is not { } target)
         {
             return;
@@ -43,7 +48,16 @@ public sealed partial class MainViewModel
 
         savedTargets = new Dictionary<MediaGroup, TargetFormat>(targets);
         savedQuality = Quality;
-        targets[MediaGroups.Of(target)] = target;
+
+        // The format applies to each kind of file that can be converted to it, so "To GIF" on a video makes a GIF.
+        foreach (var group in command.Files.Select(MediaGroups.Of).OfType<MediaGroup>().Distinct())
+        {
+            if (FormatCatalog.IsOffered(group, target))
+            {
+                targets[group] = target;
+            }
+        }
+
         if (command.Quality is { } quality)
         {
             initializing = true;

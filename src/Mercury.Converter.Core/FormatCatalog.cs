@@ -104,6 +104,7 @@ public static class FormatCatalog
         new(MediaGroup.Video, TargetFormat.Mkv, "MKV", "Keeps every audio track and subtitle.", null, true, 0.30),
         new(MediaGroup.Video, TargetFormat.Ogv, "OGV", "Open format for some web players.", null, true, 0.34),
         new(MediaGroup.Video, TargetFormat.Avi, "AVI", "For older players and TVs.", null, true, 0.60),
+        new(MediaGroup.Video, TargetFormat.Gif, "GIF", "Short silent animation. Files get much larger.", null, true, 2.5),
 
         new(MediaGroup.Gif, TargetFormat.Gif, "GIF", "Animated image that plays everywhere.", "Stays a GIF", true, 0.75),
         new(MediaGroup.Gif, TargetFormat.Mp4, "MP4 video", "Much smaller, but no longer a GIF.", null, true, 0.12),

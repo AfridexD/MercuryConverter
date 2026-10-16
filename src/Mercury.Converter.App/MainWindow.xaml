@@ -8,7 +8,7 @@
     xmlns:local="using:Mercury.Converter.App"
     xmlns:controls="using:Microsoft.UI.Xaml.Controls">
 
-    <Grid x:Name="Root" Background="{StaticResource McBg}" SizeChanged="Root_SizeChanged">
+    <Grid x:Name="Root" Background="{StaticResource McBg}" SizeChanged="Root_SizeChanged" AllowDrop="True" DragOver="Files_DragOver" Drop="Files_Drop">
         <Grid.RowDefinitions>
             <RowDefinition Height="32" />
             <RowDefinition Height="48" />
@@ -93,7 +93,7 @@
             </Grid.ColumnDefinitions>
 
             <!-- Files region -->
-            <Grid x:Name="FilesRegion" Grid.Column="0" AllowDrop="True" DragOver="Files_DragOver" Drop="Files_Drop">
+            <Grid x:Name="FilesRegion" Grid.Column="0" Background="{StaticResource McTransparent}">
                 <!-- Empty state: dashed drop target -->
                 <Grid Visibility="{x:Bind local:UiHelpers.Show(ViewModel.IsEmpty), Mode=OneWay}" Margin="24">
                     <Rectangle RadiusX="10" RadiusY="10" Stroke="{StaticResource McStrokeStrong}" StrokeThickness="2" StrokeDashArray="4 3" />
