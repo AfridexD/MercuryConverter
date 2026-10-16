@@ -1,0 +1,14 @@
+# Build output
+bin/
+obj/
+*.user
+.vs/
+.idea/
+
+# Converter programs are large downloads. Run scripts/fetch-tools.ps1 to get them.
+tools/*
+!tools/README.md
+
+# Build outputs
+publish/
+dist/

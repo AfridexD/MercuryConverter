@@ -1,0 +1,118 @@
+<?xml version="1.0" encoding="utf-8"?>
+<root>
+  <resheader name="resmimetype"><value>text/microsoft-resx</value></resheader>
+  <resheader name="version"><value>2.0</value></resheader>
+  <resheader name="reader"><value>System.Resources.ResXResourceReader, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value></resheader>
+  <resheader name="writer"><value>System.Resources.ResXResourceWriter, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value></resheader>
+  <data name="AppTitle.Text" xml:space="preserve">
+    <value>Mercury Converter</value>
+  </data>
+  <data name="AppSubtitle.Text" xml:space="preserve">
+    <value>Convert images, GIFs, video, and audio. Everything stays on your computer.</value>
+  </data>
+  <data name="ShellToggle.Header" xml:space="preserve">
+    <value>Show in right-click menu</value>
+  </data>
+  <data name="DropHint.Text" xml:space="preserve">
+    <value>Drop files here</value>
+  </data>
+  <data name="PresetsHeader.Text" xml:space="preserve">
+    <value>Presets</value>
+  </data>
+  <data name="PresetBox.PlaceholderText" xml:space="preserve">
+    <value>Choose a preset</value>
+  </data>
+  <data name="PresetNameBox.PlaceholderText" xml:space="preserve">
+    <value>Name for this preset</value>
+  </data>
+  <data name="SavePresetButton.Content" xml:space="preserve">
+    <value>Save preset</value>
+  </data>
+  <data name="ImportPresetsButton.Content" xml:space="preserve">
+    <value>Import presets…</value>
+  </data>
+  <data name="ExportPresetsButton.Content" xml:space="preserve">
+    <value>Export presets…</value>
+  </data>
+  <data name="ConvertToHeader.Text" xml:space="preserve">
+    <value>Convert to</value>
+  </data>
+  <data name="LosslessCheck.Content" xml:space="preserve">
+    <value>Keep exact JPEG data when converting to JPEG XL</value>
+  </data>
+  <data name="QualityHeader.Text" xml:space="preserve">
+    <value>Quality</value>
+  </data>
+  <data name="KeepSmallerCheck.Content" xml:space="preserve">
+    <value>Never make the file larger than the original</value>
+  </data>
+  <data name="SizeHeader.Text" xml:space="preserve">
+    <value>Size</value>
+  </data>
+  <data name="RotateHeader.Text" xml:space="preserve">
+    <value>Rotate</value>
+  </data>
+  <data name="FlipHorizontalCheck.Content" xml:space="preserve">
+    <value>Flip left–right</value>
+  </data>
+  <data name="FlipVerticalCheck.Content" xml:space="preserve">
+    <value>Flip top–bottom</value>
+  </data>
+  <data name="AdvancedHeader.Text" xml:space="preserve">
+    <value>Advanced video options (optional)</value>
+  </data>
+  <data name="AdvancedBox.PlaceholderText" xml:space="preserve">
+    <value>for example: -b:v 2M -r 30 -preset slow</value>
+  </data>
+  <data name="AdvancedHint.Text" xml:space="preserve">
+    <value>Allowed: -b:v, -b:a, -r, -g, -ar, -ac, -preset, -tune, -ss, -t, -af.</value>
+  </data>
+  <data name="SaveToHeader.Text" xml:space="preserve">
+    <value>Save to</value>
+  </data>
+  <data name="ChooseFolderButton.Content" xml:space="preserve">
+    <value>Choose folder…</value>
+  </data>
+  <data name="OriginalFolderButton.Content" xml:space="preserve">
+    <value>Next to originals</value>
+  </data>
+  <data name="ConvertButton.Content" xml:space="preserve">
+    <value>Convert</value>
+  </data>
+  <data name="CancelButton.Content" xml:space="preserve">
+    <value>Cancel</value>
+  </data>
+  <data name="ClearButton.Content" xml:space="preserve">
+    <value>Clear list</value>
+  </data>
+  <data name="FooterNote.Text" xml:space="preserve">
+    <value>Converted files are new files. Your originals are never changed.</value>
+  </data>
+  <data name="AddFilesText.Text" xml:space="preserve">
+    <value>Add files</value>
+  </data>
+  <data name="AddFolderText.Text" xml:space="preserve">
+    <value>Add folder</value>
+  </data>
+  <data name="ViewText.Text" xml:space="preserve">
+    <value>View</value>
+  </data>
+  <data name="ThumbOffItem.Text" xml:space="preserve">
+    <value>No thumbnails</value>
+  </data>
+  <data name="ThumbSmallItem.Text" xml:space="preserve">
+    <value>Small thumbnails</value>
+  </data>
+  <data name="ThumbMediumItem.Text" xml:space="preserve">
+    <value>Medium thumbnails</value>
+  </data>
+  <data name="ThumbLargeItem.Text" xml:space="preserve">
+    <value>Large thumbnails</value>
+  </data>
+  <data name="SpeedHeader.Text" xml:space="preserve">
+    <value>Speed</value>
+  </data>
+  <data name="GpuCheck.Content" xml:space="preserve">
+    <value>Use my graphics card to encode video (less processor use, larger files)</value>
+  </data>
+</root>

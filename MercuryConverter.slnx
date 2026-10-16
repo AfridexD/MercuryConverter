@@ -1,0 +1,9 @@
+<Solution>
+  <Folder Name="/src/">
+    <Project Path="src/Mercury.Converter.App/Mercury.Converter.App.csproj" />
+    <Project Path="src/Mercury.Converter.Core/Mercury.Converter.Core.csproj" />
+  </Folder>
+  <Folder Name="/tests/">
+    <Project Path="tests/Mercury.Converter.Core.Tests/Mercury.Converter.Core.Tests.csproj" />
+  </Folder>
+</Solution>

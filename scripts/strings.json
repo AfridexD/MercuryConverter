@@ -1,0 +1,262 @@
+{
+  "_note": "Source of truth for the window text. Edit a translation here, then run scripts/build-strings.js. Drafts for es, fr, de and pt-BR are machine-written and need review by a native speaker.",
+  "AppTitle.Text": {
+    "en": "Mercury Converter",
+    "es": "Mercury Converter",
+    "fr": "Mercury Converter",
+    "de": "Mercury Converter",
+    "pt-BR": "Mercury Converter"
+  },
+  "AppSubtitle.Text": {
+    "en": "Convert images, GIFs, video, and audio. Everything stays on your computer.",
+    "es": "Convierte imágenes, GIF, vídeo y audio. Todo se queda en tu equipo.",
+    "fr": "Convertissez images, GIF, vidéos et audio. Tout reste sur votre ordinateur.",
+    "de": "Konvertieren Sie Bilder, GIFs, Videos und Audio. Alles bleibt auf Ihrem Computer.",
+    "pt-BR": "Converta imagens, GIFs, vídeos e áudios. Tudo fica no seu computador."
+  },
+  "ShellToggle.Header": {
+    "en": "Show in right-click menu",
+    "es": "Mostrar en el menú contextual",
+    "fr": "Afficher dans le menu contextuel",
+    "de": "Im Kontextmenü anzeigen",
+    "pt-BR": "Mostrar no menu de clique com o botão direito"
+  },
+  "DropHint.Text": {
+    "en": "Drop files here",
+    "es": "Suelta los archivos aquí",
+    "fr": "Déposez les fichiers ici",
+    "de": "Dateien hier ablegen",
+    "pt-BR": "Solte os arquivos aqui"
+  },
+  "PresetsHeader.Text": {
+    "en": "Presets",
+    "es": "Ajustes predefinidos",
+    "fr": "Préréglages",
+    "de": "Voreinstellungen",
+    "pt-BR": "Predefinições"
+  },
+  "PresetBox.PlaceholderText": {
+    "en": "Choose a preset",
+    "es": "Elige un ajuste predefinido",
+    "fr": "Choisissez un préréglage",
+    "de": "Voreinstellung wählen",
+    "pt-BR": "Escolha uma predefinição"
+  },
+  "PresetNameBox.PlaceholderText": {
+    "en": "Name for this preset",
+    "es": "Nombre de este ajuste",
+    "fr": "Nom de ce préréglage",
+    "de": "Name für diese Voreinstellung",
+    "pt-BR": "Nome desta predefinição"
+  },
+  "SavePresetButton.Content": {
+    "en": "Save preset",
+    "es": "Guardar ajuste",
+    "fr": "Enregistrer le préréglage",
+    "de": "Voreinstellung speichern",
+    "pt-BR": "Salvar predefinição"
+  },
+  "ImportPresetsButton.Content": {
+    "en": "Import presets…",
+    "es": "Importar ajustes…",
+    "fr": "Importer les préréglages…",
+    "de": "Voreinstellungen importieren…",
+    "pt-BR": "Importar predefinições…"
+  },
+  "ExportPresetsButton.Content": {
+    "en": "Export presets…",
+    "es": "Exportar ajustes…",
+    "fr": "Exporter les préréglages…",
+    "de": "Voreinstellungen exportieren…",
+    "pt-BR": "Exportar predefinições…"
+  },
+  "ConvertToHeader.Text": {
+    "en": "Convert to",
+    "es": "Convertir a",
+    "fr": "Convertir en",
+    "de": "Konvertieren in",
+    "pt-BR": "Converter para"
+  },
+  "LosslessCheck.Content": {
+    "en": "Keep exact JPEG data when converting to JPEG XL",
+    "es": "Conservar los datos exactos del JPEG al convertir a JPEG XL",
+    "fr": "Conserver les données JPEG exactes lors de la conversion en JPEG XL",
+    "de": "Exakte JPEG-Daten beim Konvertieren in JPEG XL erhalten",
+    "pt-BR": "Manter os dados exatos do JPEG ao converter para JPEG XL"
+  },
+  "QualityHeader.Text": {
+    "en": "Quality",
+    "es": "Calidad",
+    "fr": "Qualité",
+    "de": "Qualität",
+    "pt-BR": "Qualidade"
+  },
+  "KeepSmallerCheck.Content": {
+    "en": "Never make the file larger than the original",
+    "es": "No hacer nunca el archivo más grande que el original",
+    "fr": "Ne jamais rendre le fichier plus lourd que l’original",
+    "de": "Datei nie größer machen als das Original",
+    "pt-BR": "Nunca deixar o arquivo maior que o original"
+  },
+  "SizeHeader.Text": {
+    "en": "Size",
+    "es": "Tamaño",
+    "fr": "Taille",
+    "de": "Größe",
+    "pt-BR": "Tamanho"
+  },
+  "RotateHeader.Text": {
+    "en": "Rotate",
+    "es": "Girar",
+    "fr": "Rotation",
+    "de": "Drehen",
+    "pt-BR": "Girar"
+  },
+  "FlipHorizontalCheck.Content": {
+    "en": "Flip left–right",
+    "es": "Voltear izquierda–derecha",
+    "fr": "Retourner gauche–droite",
+    "de": "Links–rechts spiegeln",
+    "pt-BR": "Inverter esquerda–direita"
+  },
+  "FlipVerticalCheck.Content": {
+    "en": "Flip top–bottom",
+    "es": "Voltear arriba–abajo",
+    "fr": "Retourner haut–bas",
+    "de": "Oben–unten spiegeln",
+    "pt-BR": "Inverter cima–baixo"
+  },
+  "AdvancedHeader.Text": {
+    "en": "Advanced video options (optional)",
+    "es": "Opciones avanzadas de vídeo (opcional)",
+    "fr": "Options vidéo avancées (facultatif)",
+    "de": "Erweiterte Videooptionen (optional)",
+    "pt-BR": "Opções avançadas de vídeo (opcional)"
+  },
+  "AdvancedBox.PlaceholderText": {
+    "en": "for example: -b:v 2M -r 30 -preset slow",
+    "es": "por ejemplo: -b:v 2M -r 30 -preset slow",
+    "fr": "par exemple : -b:v 2M -r 30 -preset slow",
+    "de": "zum Beispiel: -b:v 2M -r 30 -preset slow",
+    "pt-BR": "por exemplo: -b:v 2M -r 30 -preset slow"
+  },
+  "AdvancedHint.Text": {
+    "en": "Allowed: -b:v, -b:a, -r, -g, -ar, -ac, -preset, -tune, -ss, -t, -af.",
+    "es": "Permitido: -b:v, -b:a, -r, -g, -ar, -ac, -preset, -tune, -ss, -t, -af.",
+    "fr": "Autorisé : -b:v, -b:a, -r, -g, -ar, -ac, -preset, -tune, -ss, -t, -af.",
+    "de": "Erlaubt: -b:v, -b:a, -r, -g, -ar, -ac, -preset, -tune, -ss, -t, -af.",
+    "pt-BR": "Permitido: -b:v, -b:a, -r, -g, -ar, -ac, -preset, -tune, -ss, -t, -af."
+  },
+  "SaveToHeader.Text": {
+    "en": "Save to",
+    "es": "Guardar en",
+    "fr": "Enregistrer dans",
+    "de": "Speichern in",
+    "pt-BR": "Salvar em"
+  },
+  "ChooseFolderButton.Content": {
+    "en": "Choose folder…",
+    "es": "Elegir carpeta…",
+    "fr": "Choisir un dossier…",
+    "de": "Ordner wählen…",
+    "pt-BR": "Escolher pasta…"
+  },
+  "OriginalFolderButton.Content": {
+    "en": "Next to originals",
+    "es": "Junto a los originales",
+    "fr": "À côté des originaux",
+    "de": "Neben den Originalen",
+    "pt-BR": "Ao lado dos originais"
+  },
+  "ConvertButton.Content": {
+    "en": "Convert",
+    "es": "Convertir",
+    "fr": "Convertir",
+    "de": "Konvertieren",
+    "pt-BR": "Converter"
+  },
+  "CancelButton.Content": {
+    "en": "Cancel",
+    "es": "Cancelar",
+    "fr": "Annuler",
+    "de": "Abbrechen",
+    "pt-BR": "Cancelar"
+  },
+  "ClearButton.Content": {
+    "en": "Clear list",
+    "es": "Vaciar lista",
+    "fr": "Vider la liste",
+    "de": "Liste leeren",
+    "pt-BR": "Limpar lista"
+  },
+  "FooterNote.Text": {
+    "en": "Converted files are new files. Your originals are never changed.",
+    "es": "Los archivos convertidos son archivos nuevos. Los originales nunca se modifican.",
+    "fr": "Les fichiers convertis sont de nouveaux fichiers. Vos originaux ne sont jamais modifiés.",
+    "de": "Konvertierte Dateien sind neue Dateien. Ihre Originale werden nie verändert.",
+    "pt-BR": "Os arquivos convertidos são novos arquivos. Seus originais nunca são alterados."
+  },
+  "AddFilesText.Text": {
+    "en": "Add files",
+    "es": "Añadir archivos",
+    "fr": "Ajouter des fichiers",
+    "de": "Dateien hinzufügen",
+    "pt-BR": "Adicionar arquivos"
+  },
+  "AddFolderText.Text": {
+    "en": "Add folder",
+    "es": "Añadir carpeta",
+    "fr": "Ajouter un dossier",
+    "de": "Ordner hinzufügen",
+    "pt-BR": "Adicionar pasta"
+  },
+  "ViewText.Text": {
+    "en": "View",
+    "es": "Vista",
+    "fr": "Affichage",
+    "de": "Ansicht",
+    "pt-BR": "Exibir"
+  },
+  "ThumbOffItem.Text": {
+    "en": "No thumbnails",
+    "es": "Sin miniaturas",
+    "fr": "Aucune miniature",
+    "de": "Keine Vorschaubilder",
+    "pt-BR": "Sem miniaturas"
+  },
+  "ThumbSmallItem.Text": {
+    "en": "Small thumbnails",
+    "es": "Miniaturas pequeñas",
+    "fr": "Petites miniatures",
+    "de": "Kleine Vorschaubilder",
+    "pt-BR": "Miniaturas pequenas"
+  },
+  "ThumbMediumItem.Text": {
+    "en": "Medium thumbnails",
+    "es": "Miniaturas medianas",
+    "fr": "Miniatures moyennes",
+    "de": "Mittlere Vorschaubilder",
+    "pt-BR": "Miniaturas médias"
+  },
+  "ThumbLargeItem.Text": {
+    "en": "Large thumbnails",
+    "es": "Miniaturas grandes",
+    "fr": "Grandes miniatures",
+    "de": "Große Vorschaubilder",
+    "pt-BR": "Miniaturas grandes"
+  },
+  "SpeedHeader.Text": {
+    "en": "Speed",
+    "es": "Velocidad",
+    "fr": "Vitesse",
+    "de": "Geschwindigkeit",
+    "pt-BR": "Velocidade"
+  },
+  "GpuCheck.Content": {
+    "en": "Use my graphics card to encode video (less processor use, larger files)",
+    "es": "Usar mi tarjeta gráfica para codificar vídeo (menos uso del procesador, archivos más grandes)",
+    "fr": "Utiliser ma carte graphique pour encoder la vidéo (moins de processeur, fichiers plus gros)",
+    "de": "Grafikkarte zum Kodieren von Videos verwenden (weniger Prozessorlast, größere Dateien)",
+    "pt-BR": "Usar minha placa de vídeo para codificar vídeo (menos uso do processador, arquivos maiores)"
+  }
+}
