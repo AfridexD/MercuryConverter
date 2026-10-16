@@ -1,0 +1,185 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!-- Control and text styles that follow the design: 32 px controls, 4 px radius, 1 px strokes.
+     WinUI styles cannot carry their own resources, so the control colors are set once for the whole app below. -->
+<ResourceDictionary
+    xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+    xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml">
+
+    <!-- Standard buttons: white, thin border -->
+    <StaticResource x:Key="ButtonBackground" ResourceKey="McCtrl" />
+    <StaticResource x:Key="ButtonBackgroundPointerOver" ResourceKey="McCtrlHover" />
+    <StaticResource x:Key="ButtonBackgroundPressed" ResourceKey="McCtrlHover" />
+    <StaticResource x:Key="ButtonBackgroundDisabled" ResourceKey="McDisabledFill" />
+    <StaticResource x:Key="ButtonForeground" ResourceKey="McText" />
+    <StaticResource x:Key="ButtonForegroundPointerOver" ResourceKey="McText" />
+    <StaticResource x:Key="ButtonForegroundPressed" ResourceKey="McText" />
+    <StaticResource x:Key="ButtonForegroundDisabled" ResourceKey="McDisabledText" />
+    <StaticResource x:Key="ButtonBorderBrush" ResourceKey="McCtrlStroke" />
+    <StaticResource x:Key="ButtonBorderBrushPointerOver" ResourceKey="McCtrlStroke" />
+    <StaticResource x:Key="ButtonBorderBrushPressed" ResourceKey="McCtrlStroke" />
+    <StaticResource x:Key="ButtonBorderBrushDisabled" ResourceKey="McTransparent" />
+
+    <!-- Primary buttons: brand blue, white text -->
+    <StaticResource x:Key="AccentButtonBackground" ResourceKey="McAccent" />
+    <StaticResource x:Key="AccentButtonBackgroundPointerOver" ResourceKey="McAccentHover" />
+    <StaticResource x:Key="AccentButtonBackgroundPressed" ResourceKey="McAccentHover" />
+    <StaticResource x:Key="AccentButtonBackgroundDisabled" ResourceKey="McDisabledFill" />
+    <StaticResource x:Key="AccentButtonForeground" ResourceKey="McOnAccent" />
+    <StaticResource x:Key="AccentButtonForegroundPointerOver" ResourceKey="McOnAccent" />
+    <StaticResource x:Key="AccentButtonForegroundPressed" ResourceKey="McOnAccent" />
+    <StaticResource x:Key="AccentButtonForegroundDisabled" ResourceKey="McDisabledText" />
+    <StaticResource x:Key="AccentButtonBorderBrush" ResourceKey="McAccent" />
+    <StaticResource x:Key="AccentButtonBorderBrushPointerOver" ResourceKey="McAccentHover" />
+    <StaticResource x:Key="AccentButtonBorderBrushPressed" ResourceKey="McAccentHover" />
+    <StaticResource x:Key="AccentButtonBorderBrushDisabled" ResourceKey="McTransparent" />
+
+    <!-- Toggle buttons (filter pills, chips): clear until selected, then soft blue -->
+    <StaticResource x:Key="ToggleButtonBackground" ResourceKey="McTransparent" />
+    <StaticResource x:Key="ToggleButtonBackgroundPointerOver" ResourceKey="McSubtleHover" />
+    <StaticResource x:Key="ToggleButtonBackgroundPressed" ResourceKey="McSubtleHover" />
+    <StaticResource x:Key="ToggleButtonBackgroundChecked" ResourceKey="McAccentSoft" />
+    <StaticResource x:Key="ToggleButtonBackgroundCheckedPointerOver" ResourceKey="McAccentSoft" />
+    <StaticResource x:Key="ToggleButtonBackgroundCheckedPressed" ResourceKey="McAccentSoft" />
+    <StaticResource x:Key="ToggleButtonForeground" ResourceKey="McText" />
+    <StaticResource x:Key="ToggleButtonForegroundPointerOver" ResourceKey="McText" />
+    <StaticResource x:Key="ToggleButtonForegroundPressed" ResourceKey="McText" />
+    <StaticResource x:Key="ToggleButtonForegroundChecked" ResourceKey="McAccentText" />
+    <StaticResource x:Key="ToggleButtonForegroundCheckedPointerOver" ResourceKey="McAccentText" />
+    <StaticResource x:Key="ToggleButtonForegroundCheckedPressed" ResourceKey="McAccentText" />
+    <StaticResource x:Key="ToggleButtonBorderBrush" ResourceKey="McCtrlStroke" />
+    <StaticResource x:Key="ToggleButtonBorderBrushPointerOver" ResourceKey="McCtrlStroke" />
+    <StaticResource x:Key="ToggleButtonBorderBrushPressed" ResourceKey="McCtrlStroke" />
+    <StaticResource x:Key="ToggleButtonBorderBrushChecked" ResourceKey="McAccent" />
+    <StaticResource x:Key="ToggleButtonBorderBrushCheckedPointerOver" ResourceKey="McAccent" />
+    <StaticResource x:Key="ToggleButtonBorderBrushCheckedPressed" ResourceKey="McAccent" />
+
+    <!-- Drop-downs: white field, thin border -->
+    <StaticResource x:Key="ComboBoxBackground" ResourceKey="McInput" />
+    <StaticResource x:Key="ComboBoxBackgroundPointerOver" ResourceKey="McCtrlHover" />
+    <StaticResource x:Key="ComboBoxBackgroundPressed" ResourceKey="McCtrlHover" />
+    <StaticResource x:Key="ComboBoxBorderBrush" ResourceKey="McCtrlStroke" />
+    <StaticResource x:Key="ComboBoxBorderBrushPointerOver" ResourceKey="McCtrlStroke" />
+    <StaticResource x:Key="ComboBoxBorderBrushPressed" ResourceKey="McCtrlStroke" />
+
+    <Style x:Key="McButton" TargetType="Button" BasedOn="{StaticResource DefaultButtonStyle}">
+        <Setter Property="MinHeight" Value="32" />
+        <Setter Property="Height" Value="32" />
+        <Setter Property="Padding" Value="12,0" />
+        <Setter Property="CornerRadius" Value="4" />
+    </Style>
+
+    <Style x:Key="McPrimaryButton" TargetType="Button" BasedOn="{StaticResource AccentButtonStyle}">
+        <Setter Property="MinHeight" Value="32" />
+        <Setter Property="Height" Value="32" />
+        <Setter Property="Padding" Value="14,0" />
+        <Setter Property="CornerRadius" Value="4" />
+        <Setter Property="FontWeight" Value="SemiBold" />
+        <Setter Property="HorizontalContentAlignment" Value="Center" />
+    </Style>
+
+    <!-- Subtle button: no fill until hovered. Used in the command bar and for icon buttons -->
+    <Style x:Key="McSubtleButton" TargetType="Button" BasedOn="{StaticResource DefaultButtonStyle}">
+        <Setter Property="MinHeight" Value="32" />
+        <Setter Property="Height" Value="32" />
+        <Setter Property="Padding" Value="10,0" />
+        <Setter Property="CornerRadius" Value="4" />
+        <Setter Property="Background" Value="{StaticResource McTransparent}" />
+        <Setter Property="BorderBrush" Value="{StaticResource McTransparent}" />
+    </Style>
+
+    <!-- Link-style button in the accent color -->
+    <Style x:Key="McLinkButton" TargetType="Button" BasedOn="{StaticResource McSubtleButton}">
+        <Setter Property="MinHeight" Value="28" />
+        <Setter Property="Height" Value="28" />
+        <Setter Property="Padding" Value="8,0" />
+        <Setter Property="FontSize" Value="13" />
+        <Setter Property="Foreground" Value="{StaticResource McAccentText}" />
+    </Style>
+
+    <!-- Compact button, 28 px tall -->
+    <Style x:Key="McCompactButton" TargetType="Button" BasedOn="{StaticResource McButton}">
+        <Setter Property="MinHeight" Value="28" />
+        <Setter Property="Height" Value="28" />
+        <Setter Property="Padding" Value="10,0" />
+        <Setter Property="FontSize" Value="13" />
+    </Style>
+
+    <!-- Filter pill and preset chip -->
+    <Style x:Key="McPill" TargetType="ToggleButton" BasedOn="{StaticResource DefaultToggleButtonStyle}">
+        <Setter Property="MinHeight" Value="28" />
+        <Setter Property="Height" Value="28" />
+        <Setter Property="Padding" Value="10,0" />
+        <Setter Property="CornerRadius" Value="14" />
+        <Setter Property="FontSize" Value="13" />
+    </Style>
+
+    <Style x:Key="McComboBox" TargetType="ComboBox" BasedOn="{StaticResource DefaultComboBoxStyle}">
+        <Setter Property="MinHeight" Value="32" />
+        <Setter Property="CornerRadius" Value="4" />
+        <Setter Property="HorizontalAlignment" Value="Stretch" />
+    </Style>
+
+    <!-- Text styles -->
+    <Style x:Key="McBodyText" TargetType="TextBlock">
+        <Setter Property="FontSize" Value="14" />
+        <Setter Property="Foreground" Value="{StaticResource McText}" />
+    </Style>
+
+    <Style x:Key="McSecondaryText" TargetType="TextBlock">
+        <Setter Property="FontSize" Value="13" />
+        <Setter Property="Foreground" Value="{StaticResource McText2}" />
+        <Setter Property="TextWrapping" Value="WrapWholeWords" />
+    </Style>
+
+    <Style x:Key="McCaptionText" TargetType="TextBlock">
+        <Setter Property="FontSize" Value="12" />
+        <Setter Property="Foreground" Value="{StaticResource McText2}" />
+        <Setter Property="TextWrapping" Value="WrapWholeWords" />
+    </Style>
+
+    <Style x:Key="McTertiaryText" TargetType="TextBlock" BasedOn="{StaticResource McCaptionText}">
+        <Setter Property="Foreground" Value="{StaticResource McText3}" />
+    </Style>
+
+    <Style x:Key="McSectionLabel" TargetType="TextBlock">
+        <Setter Property="FontSize" Value="12" />
+        <Setter Property="FontWeight" Value="SemiBold" />
+        <Setter Property="Foreground" Value="{StaticResource McText2}" />
+    </Style>
+
+    <Style x:Key="McTitle16" TargetType="TextBlock">
+        <Setter Property="FontSize" Value="16" />
+        <Setter Property="FontWeight" Value="SemiBold" />
+        <Setter Property="Foreground" Value="{StaticResource McText}" />
+    </Style>
+
+    <Style x:Key="McPageTitle" TargetType="TextBlock">
+        <Setter Property="FontSize" Value="28" />
+        <Setter Property="FontWeight" Value="SemiBold" />
+        <Setter Property="Foreground" Value="{StaticResource McText}" />
+    </Style>
+
+    <!-- Icon text: Segoe Fluent Icons -->
+    <Style x:Key="McIcon" TargetType="FontIcon">
+        <Setter Property="FontFamily" Value="{ThemeResource SymbolThemeFontFamily}" />
+        <Setter Property="FontSize" Value="16" />
+    </Style>
+
+    <!-- Rounded panel with a thin border -->
+    <Style x:Key="McPanel" TargetType="Border">
+        <Setter Property="Background" Value="{StaticResource McLayer}" />
+        <Setter Property="BorderBrush" Value="{StaticResource McStroke}" />
+        <Setter Property="BorderThickness" Value="1" />
+        <Setter Property="CornerRadius" Value="8" />
+    </Style>
+
+    <!-- A row on the Settings page -->
+    <Style x:Key="McSettingCard" TargetType="Border">
+        <Setter Property="Background" Value="{StaticResource McCard}" />
+        <Setter Property="BorderBrush" Value="{StaticResource McStroke}" />
+        <Setter Property="BorderThickness" Value="1" />
+        <Setter Property="CornerRadius" Value="6" />
+        <Setter Property="Padding" Value="16,14" />
+    </Style>
+
+</ResourceDictionary>
