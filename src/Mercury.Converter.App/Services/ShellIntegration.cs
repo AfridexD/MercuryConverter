@@ -20,6 +20,24 @@ public static class ShellIntegration
         return key is not null;
     }
 
+    /// <summary>True when the menu is on but its entries are out of date: written by an older build, or pointing at another folder.</summary>
+    public static bool NeedsRepair(string exePath)
+    {
+        if (!IsInstalled())
+        {
+            return false;
+        }
+
+        var entry = ShellMenu.For(MediaKind.Video).FirstOrDefault();
+        if (entry is null)
+        {
+            return false;
+        }
+
+        using var command = Registry.CurrentUser.OpenSubKey($@"{ClassesRoot}\.mp4\shell\{MenuName}\shell\{entry.VerbKey}\command");
+        return command?.GetValue(string.Empty) as string != entry.CommandLine(exePath);
+    }
+
     /// <summary>Writes the menu entries. Safe to run again: existing entries are replaced.</summary>
     public static void Install(string exePath)
     {

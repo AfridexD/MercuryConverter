@@ -46,8 +46,8 @@ public sealed partial class MainViewModel
             return;
         }
 
-        savedTargets = new Dictionary<MediaGroup, TargetFormat>(targets);
-        savedQuality = Quality;
+        savedTargets ??= new Dictionary<MediaGroup, TargetFormat>(targets);
+        savedQuality ??= Quality;
 
         // The format applies to each kind of file that can be converted to it, so "To GIF" on a video makes a GIF.
         foreach (var group in command.Files.Select(MediaGroups.Of).OfType<MediaGroup>().Distinct())

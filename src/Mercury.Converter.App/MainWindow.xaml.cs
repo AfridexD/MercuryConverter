@@ -54,6 +54,18 @@ public sealed partial class MainWindow : Window
 
     public MainViewModel ViewModel { get; } = new();
 
+    /// <summary>Adds files sent by another right-click while this window is open, and converts them if a format was named.</summary>
+    public void Receive(ConvertCommand command)
+    {
+        ViewModel.ApplyStartup(command);
+        if (command.Target is not null)
+        {
+            _ = ConvertWhenReadyAsync();
+        }
+
+        Activate();
+    }
+
     private void TrySetIcon()
     {
         var icon = Path.Combine(AppContext.BaseDirectory, "Assets", "AppIcon.ico");
@@ -67,6 +79,13 @@ public sealed partial class MainWindow : Window
     {
         // Wait briefly so the window and its list finish loading before work starts.
         await Task.Delay(150);
+
+        // Files sent while another run is going wait their turn.
+        while (ViewModel.IsBusy)
+        {
+            await Task.Delay(500);
+        }
+
         if (ViewModel.ConvertCommand.CanExecute(null))
         {
             ViewModel.ConvertCommand.Execute(null);
