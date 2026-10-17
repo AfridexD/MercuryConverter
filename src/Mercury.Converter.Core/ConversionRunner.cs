@@ -11,9 +11,20 @@ public sealed record ConversionResult(
     long OutputBytes,
     string? Warning,
     string? Error,
-    int? AdjustedQuality = null)
+    int? AdjustedQuality = null,
+    double? PartialSeconds = null)
 {
     public bool WasCancelled => Error == ConversionRunner.CancelledMessage;
+}
+
+/// <summary>What a conversion has done so far. Read after a failure to see how far it got.</summary>
+internal sealed class RunState
+{
+    /// <summary>The furthest point in the media, in seconds, that was converted before an error.</summary>
+    public double LastSeconds { get; set; }
+
+    /// <summary>Set only when the failure came after real progress, so a "save the part before it" option makes sense.</summary>
+    public double? PartialSeconds => LastSeconds >= 1.0 ? LastSeconds : null;
 }
 
 /// <summary>Runs a conversion with cancellation, progress, safe output handling, and optional size control.</summary>
@@ -48,6 +59,7 @@ public sealed class ConversionRunner(ToolLocator tools)
             ? SizeAttempts(request.Quality)
             : [QualityMapper.Clamp(request.Quality)];
 
+        var state = new RunState();
         try
         {
             for (var attempt = 0; attempt < qualities.Count; attempt++)
@@ -57,10 +69,10 @@ public sealed class ConversionRunner(ToolLocator tools)
                 var committed = false;
                 try
                 {
-                    var error = await ConvertToTempAsync(request with { Quality = quality }, temp, durationSeconds, progress, cancellationToken);
+                    var error = await ConvertToTempAsync(request with { Quality = quality }, temp, durationSeconds, progress, state, cancellationToken);
                     if (error is not null)
                     {
-                        return Fail(error, inputBytes);
+                        return Fail(error, inputBytes, state.PartialSeconds);
                     }
 
                     var outputBytes = new FileInfo(temp).Length;
@@ -128,17 +140,19 @@ public sealed class ConversionRunner(ToolLocator tools)
         string temp,
         double? durationSeconds,
         IProgress<double>? progress,
+        RunState state,
         CancellationToken cancellationToken)
     {
-        var error = await ConvertOnceAsync(request, temp, durationSeconds, progress, cancellationToken);
+        var error = await ConvertOnceAsync(request, temp, durationSeconds, progress, state, cancellationToken);
 
         var exec = request.Execution ?? ExecutionOptions.Default;
         var usesFfmpegVideo = Targets.Get(request.Target).Kind is MediaKind.Video or MediaKind.Animation;
         if (error is not null && exec.UsesHardware && usesFfmpegVideo)
         {
             SafeOutput.TryDelete(temp);
+            state.LastSeconds = 0;
             error = await ConvertOnceAsync(
-                request with { Execution = exec.SoftwareOnly() }, temp, durationSeconds, progress, cancellationToken);
+                request with { Execution = exec.SoftwareOnly() }, temp, durationSeconds, progress, state, cancellationToken);
         }
 
         return error;
@@ -149,6 +163,7 @@ public sealed class ConversionRunner(ToolLocator tools)
         string temp,
         double? durationSeconds,
         IProgress<double>? progress,
+        RunState state,
         CancellationToken cancellationToken)
     {
         // Plan straight to the temp file. The final step writes there, and earlier steps use their own temp files.
@@ -164,7 +179,7 @@ public sealed class ConversionRunner(ToolLocator tools)
                 // Each step fills its own share of the bar, so a two-step conversion never jumps back.
                 var share = new SharedProgress(progress, index / (double)count, 1.0 / count);
                 var stepDuration = index == count - 1 ? durationSeconds : null;
-                var error = await RunStepAsync(plan.Steps[index], exec, stepDuration, share, cancellationToken);
+                var error = await RunStepAsync(plan.Steps[index], exec, stepDuration, share, state, cancellationToken);
                 if (error is not null)
                 {
                     return error;
@@ -195,8 +210,8 @@ public sealed class ConversionRunner(ToolLocator tools)
         public void Report(double value) => inner?.Report(Math.Clamp(offset + value * scale, 0, 1));
     }
 
-    private static ConversionResult Fail(string message, long inputBytes) =>
-        new(false, null, inputBytes, 0, null, message);
+    private static ConversionResult Fail(string message, long inputBytes, double? partialSeconds = null) =>
+        new(false, null, inputBytes, 0, null, message, PartialSeconds: partialSeconds);
 
     private static string? SizeWarning(long inputBytes, long outputBytes, int quality, bool lossy, bool keepSmaller)
     {
@@ -217,6 +232,7 @@ public sealed class ConversionRunner(ToolLocator tools)
         ExecutionOptions exec,
         double? durationSeconds,
         IProgress<double>? progress,
+        RunState state,
         CancellationToken cancellationToken)
     {
         var fileName = tools.Locate(step.Tool);
@@ -264,7 +280,16 @@ public sealed class ConversionRunner(ToolLocator tools)
 
         while (await process.StandardOutput.ReadLineAsync(CancellationToken.None) is { } line)
         {
-            if (durationSeconds is > 0 && progress is not null && TryParseOutTime(line, out var seconds))
+            if (!TryParseOutTime(line, out var seconds))
+            {
+                continue;
+            }
+
+            // Remember how far it got, even without a known length. If the file turns out to be damaged, this
+            // is the point up to which a partial result can be saved.
+            state.LastSeconds = Math.Max(state.LastSeconds, seconds);
+
+            if (durationSeconds is > 0 && progress is not null)
             {
                 progress.Report(Math.Clamp(seconds / durationSeconds.Value, 0, 1));
             }

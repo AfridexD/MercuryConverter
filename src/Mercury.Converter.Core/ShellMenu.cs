@@ -6,12 +6,12 @@ namespace Mercury.Converter.Core;
 /// <param name="VerbKey">Registry key name. The number keeps the menu in the intended order.</param>
 public sealed record ShellMenuEntry(MediaKind Kind, TargetFormat Target, int? Quality, string Label, string VerbKey)
 {
-    /// <summary>The command Explorer runs. %* is replaced with every selected file, each already quoted.</summary>
+    /// <summary>The command Explorer runs. With the Player multi-select model Explorer starts it once per selected file, putting that file in place of %1. (%* does not work in a verb: Explorer passes nothing.)</summary>
     public string CommandLine(string exePath)
     {
         var extension = Targets.Get(Target).Extension;
         var quality = Quality is { } value ? $" --quality {value}" : string.Empty;
-        return $"\"{exePath}\" --convert {extension}{quality} %*";
+        return $"\"{exePath}\" --convert {extension}{quality} \"%1\"";
     }
 }
 

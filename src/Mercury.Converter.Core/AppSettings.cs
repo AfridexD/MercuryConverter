@@ -34,6 +34,38 @@ public sealed record AppSettings
     /// so it is off unless the user turns it on.
     /// </summary>
     public bool UseGraphicsCardEncoder { get; init; }
+
+    /// <summary>The format chosen for each kind of file. Each kind remembers its own choice.</summary>
+    public TargetFormat PhotoTarget { get; init; } = FormatCatalog.Default(MediaGroup.Photo);
+
+    public TargetFormat VideoTarget { get; init; } = FormatCatalog.Default(MediaGroup.Video);
+
+    public TargetFormat GifTarget { get; init; } = FormatCatalog.Default(MediaGroup.Gif);
+
+    public TargetFormat AudioTarget { get; init; } = FormatCatalog.Default(MediaGroup.Audio);
+
+    /// <summary>
+    /// When one file is converted from the right-click menu, show the small Quick Convert window.
+    /// When off, the full window opens instead.
+    /// </summary>
+    public bool UseQuickWindow { get; init; } = true;
+
+    /// <summary>The right-click tip is shown once. This remembers that it has been shown.</summary>
+    public bool RightClickTipShown { get; init; }
+
+    /// <summary>How fast video is encoded. Faster makes bigger files, slower makes smaller ones.</summary>
+    public VideoSpeed VideoSpeed { get; init; } = VideoSpeed.Balanced;
+
+    public AudioChannels AudioChannels { get; init; } = AudioChannels.KeepAsIs;
+
+    /// <summary>Gets the saved format for a kind of file.</summary>
+    public TargetFormat TargetFor(MediaGroup group) => group switch
+    {
+        MediaGroup.Photo => PhotoTarget,
+        MediaGroup.Video => VideoTarget,
+        MediaGroup.Gif => GifTarget,
+        _ => AudioTarget,
+    };
 }
 
 /// <summary>Reads and writes <see cref="AppSettings"/>. A damaged file falls back to defaults.</summary>

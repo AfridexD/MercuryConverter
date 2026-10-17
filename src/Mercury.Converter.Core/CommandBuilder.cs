@@ -103,7 +103,7 @@ public static class CommandBuilder
                 throw new NotSupportedException("Images cannot be converted to audio.");
             }
 
-            steps.Add(AudioStep(request.InputPath, request.Target, quality, exec, outputPath));
+            steps.Add(AudioStep(request.InputPath, request.Target, quality, exec, request.ExtraFfmpegArguments, outputPath));
         }
 
         return new ConversionPlan(steps, intermediates);
@@ -343,6 +343,8 @@ public static class CommandBuilder
                 break;
 
             case TargetFormat.Mkv:
+                // MKV keeps every audio track and every subtitle. The "?" makes a missing kind of track fine.
+                args.AddRange(["-map", "0:v:0", "-map", "0:a?", "-map", "0:s?", "-c:s", "copy"]);
                 args.AddRange(H264Arguments(exec.Encoder, crf));
                 args.AddRange(["-c:a", "aac", "-b:a", "160k"]);
                 break;
@@ -382,24 +384,32 @@ public static class CommandBuilder
                 throw new NotSupportedException($"{target} is not a video format.");
         }
 
-        if (!string.IsNullOrWhiteSpace(extraArguments))
-        {
-            var extra = FfmpegOptions.Parse(extraArguments);
-
-            // A user's option replaces the built-in one with the same name, so there is only one value in the command.
-            for (var index = args.Count - 2; index >= 0; index--)
-            {
-                if (args[index].StartsWith('-') && extra.Contains(args[index]))
-                {
-                    args.RemoveRange(index, 2);
-                }
-            }
-
-            args.AddRange(extra);
-        }
+        AddExtraArguments(args, extraArguments);
 
         args.Add(output);
         return new ToolCommand(Tool.FFmpeg, args);
+    }
+
+    /// <summary>Adds the user's extra FFmpeg options after checking them against the allowlist.</summary>
+    private static void AddExtraArguments(List<string> args, string? extraArguments)
+    {
+        if (string.IsNullOrWhiteSpace(extraArguments))
+        {
+            return;
+        }
+
+        var extra = FfmpegOptions.Parse(extraArguments);
+
+        // A user's option replaces the built-in one with the same name, so there is only one value in the command.
+        for (var index = args.Count - 2; index >= 0; index--)
+        {
+            if (args[index].StartsWith('-') && extra.Contains(args[index]))
+            {
+                args.RemoveRange(index, 2);
+            }
+        }
+
+        args.AddRange(extra);
     }
 
     /// <summary>H.264 video arguments for software (x264) or a graphics-card encoder.</summary>
@@ -415,7 +425,7 @@ public static class CommandBuilder
             ["-c:v", "libx264", "-preset", "medium", "-crf", crf, "-pix_fmt", "yuv420p"],
     };
 
-    private static ToolCommand AudioStep(string input, TargetFormat target, int quality, ExecutionOptions exec, string output)
+    private static ToolCommand AudioStep(string input, TargetFormat target, int quality, ExecutionOptions exec, string? extraArguments, string output)
     {
         var args = FfmpegStart(input, exec with { UseHardwareDecode = false });
         args.Add("-vn");
@@ -440,6 +450,8 @@ public static class CommandBuilder
             default:
                 throw new NotSupportedException($"{target} is not an audio format.");
         }
+
+        AddExtraArguments(args, extraArguments);
 
         args.Add(output);
         return new ToolCommand(Tool.FFmpeg, args);

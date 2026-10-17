@@ -78,7 +78,7 @@ public class ShellMenuTests
     {
         var low = ShellMenu.For(MediaKind.Video).Single(entry => entry.Label == "To Mp4 (low quality)");
 
-        Assert.Equal("\"C:\\Apps\\Mercury Converter\\MercuryConverter.exe\" --convert mp4 --quality 30 %*", low.CommandLine(@"C:\Apps\Mercury Converter\MercuryConverter.exe"));
+        Assert.Equal("\"C:\\Apps\\Mercury Converter\\MercuryConverter.exe\" --convert mp4 --quality 30 \"%1\"", low.CommandLine(@"C:\Apps\Mercury Converter\MercuryConverter.exe"));
     }
 
     [Fact]

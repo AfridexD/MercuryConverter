@@ -1,0 +1,118 @@
+<!DOCTYPE html>
+<html>
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<script src="./support.js"></script>
+</head>
+<body>
+<x-dc>
+<helmet>
+<meta name="design_doc_mode" content="canvas">
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:opsz,wght,FILL,GRAD@20..24,300..500,0..1,0&display=block">
+<style>body{margin:0;background:#E4E6EB}a{color:#1F4FD6}a:hover{color:#1A43B8}</style>
+</helmet>
+<div style="padding:48px;display:flex;flex-direction:column;gap:40px;font-family:'Segoe UI Variable Text','Segoe UI',system-ui,sans-serif;color:#1A1B20">
+  <div style="display:flex;flex-direction:column;gap:6px;max-width:760px">
+    <div style="font-size:28px;font-weight:600;line-height:36px">Quick Convert overlay</div>
+    <div style="font-size:14px;line-height:20px;color:#464953;text-wrap:pretty">Opens from the Explorer right-click menu next to the cursor. It's 360 px wide, has no resize handle, and stays on top until the task finishes. Esc closes it, and Enter converts with the highlighted format.</div>
+  </div>
+  <sc-for list="{{ themes }}" as="t" hint-placeholder-count="2">
+    <div style="display:flex;flex-direction:column;gap:14px">
+      <div style="font-size:13px;font-weight:600;color:#464953;letter-spacing:0.02em">{{ t.label }}</div>
+      <div style="{{ t.vars }}">
+        <div style="display:flex;gap:32px;flex-wrap:wrap;align-items:flex-start;padding:32px;border-radius:8px;background:var(--desk)">
+          <sc-for list="{{ states }}" as="st" hint-placeholder-count="4">
+            <div style="display:flex;flex-direction:column;gap:10px">
+              <div style="font-size:12px;font-weight:600;color:var(--deskText)">{{ st.n }} · {{ st.title }}</div>
+              <div role="dialog" aria-label="Quick Convert" style="width:360px;background:var(--layer);border:1px solid var(--winStroke);border-radius:8px;box-shadow:var(--shadow);overflow:hidden;color:var(--text);font-size:14px;line-height:20px">
+                <div style="display:flex;align-items:center;gap:8px;height:32px;padding:0 0 0 12px">
+                  <img src="assets/app-icon-32.png" alt="" style="width:16px;height:16px"></img>
+                  <span style="flex:1;font-size:12px">Quick Convert</span>
+                  <button aria-label="Close" style="width:46px;height:32px;border:none;background:transparent;color:var(--text);font-family:'Material Symbols Outlined';font-size:16px;cursor:pointer">close</button>
+                </div>
+                <div style="display:flex;align-items:center;gap:12px;padding:8px 16px 12px">
+                  <div style="width:40px;height:40px;border-radius:4px;background:var(--card);border:1px solid var(--stroke);display:flex;align-items:center;justify-content:center;font-family:'Material Symbols Outlined';font-size:22px;color:var(--text2)">{{ st.icon }}</div>
+                  <div style="flex:1;min-width:0"><div style="font-weight:600;overflow:hidden;text-overflow:ellipsis;white-space:nowrap">{{ st.file }}</div><div style="font-size:12px;line-height:16px;color:var(--text2)">{{ st.meta }}</div></div>
+                </div>
+                <sc-if value="{{ st.pick }}" hint-placeholder-val="{{ true }}">
+                  <div role="listbox" aria-label="Convert to" style="display:flex;flex-direction:column;gap:2px;padding:0 8px 8px">
+                    <div style="padding:4px 8px;font-size:12px;font-weight:600;color:var(--text2)">Convert to</div>
+                    <sc-for list="{{ formats }}" as="f" hint-placeholder-count="4">
+                      <div role="option" aria-selected="{{ f.on }}" style="position:relative;display:flex;align-items:center;gap:10px;height:36px;padding:0 10px;border-radius:4px;background:{{ f.bg }}">
+                        <sc-if value="{{ f.on }}"><span style="position:absolute;left:0;top:10px;bottom:10px;width:3px;border-radius:2px;background:var(--accent)"></span></sc-if>
+                        <span style="flex:1;font-weight:600">{{ f.name }}</span>
+                        <sc-if value="{{ f.rec }}"><span style="padding:0 6px;border-radius:4px;background:var(--accentSoft);color:var(--accentText);font-size:12px;line-height:18px">Recommended</span></sc-if>
+                        <span style="font-size:12px;color:var(--text2)">{{ f.est }}</span>
+                      </div>
+                    </sc-for>
+                  </div>
+                  <div style="display:flex;gap:8px;padding:12px 16px 16px;border-top:1px solid var(--stroke);background:var(--bg)">
+                    <button style="flex:1;height:32px;border-radius:4px;background:var(--accent);border:1px solid var(--accent);color:var(--onAccent);font:inherit;font-weight:600;cursor:pointer">Convert</button>
+                    <button style="flex:1;height:32px;border-radius:4px;background:var(--ctrl);border:1px solid var(--ctrlStroke);color:var(--text);font:inherit;cursor:pointer">More options…</button>
+                  </div>
+                </sc-if>
+                <sc-if value="{{ st.run }}" hint-placeholder-val="{{ false }}">
+                  <div style="display:flex;flex-direction:column;gap:8px;padding:4px 16px 16px">
+                    <div style="display:flex;justify-content:space-between;font-size:13px"><span>Converting to WebP</span><span style="color:var(--text2)">62%</span></div>
+                    <div role="progressbar" aria-label="Converting" aria-valuenow="62" aria-valuemin="0" aria-valuemax="100" style="height:4px;border-radius:2px;background:var(--track);overflow:hidden"><div style="width:62%;height:100%;background:var(--accent);border-radius:2px"></div></div>
+                  </div>
+                  <div style="display:flex;gap:8px;padding:12px 16px 16px;border-top:1px solid var(--stroke);background:var(--bg)">
+                    <button style="flex:1;height:32px;border-radius:4px;background:var(--ctrl);border:1px solid var(--ctrlStroke);color:var(--text);font:inherit;cursor:pointer">Cancel</button>
+                  </div>
+                </sc-if>
+                <sc-if value="{{ st.done }}" hint-placeholder-val="{{ false }}">
+                  <div style="display:flex;align-items:center;gap:10px;margin:4px 16px 16px;padding:10px 12px;border-radius:4px;background:var(--okSoft)">
+                    <span style="font-family:'Material Symbols Outlined';font-size:20px;color:var(--ok)">check_circle</span>
+                    <span style="flex:1;font-size:13px">Saved as photo-0412.webp · 1.1 MB (−74%)</span>
+                  </div>
+                  <div style="display:flex;gap:8px;padding:12px 16px 16px;border-top:1px solid var(--stroke);background:var(--bg)">
+                    <button style="flex:1;height:32px;border-radius:4px;background:var(--accent);border:1px solid var(--accent);color:var(--onAccent);font:inherit;font-weight:600;cursor:pointer">Show in folder</button>
+                    <button style="flex:1;height:32px;border-radius:4px;background:var(--ctrl);border:1px solid var(--ctrlStroke);color:var(--text);font:inherit;cursor:pointer">Close</button>
+                  </div>
+                </sc-if>
+                <sc-if value="{{ st.err }}" hint-placeholder-val="{{ false }}">
+                  <div style="display:flex;align-items:flex-start;gap:10px;margin:4px 16px 16px;padding:10px 12px;border-radius:4px;background:var(--errSoft)">
+                    <span style="font-family:'Material Symbols Outlined';font-size:20px;color:var(--err)">error</span>
+                    <span style="flex:1;font-size:13px;line-height:19px;text-wrap:pretty">This file is damaged after 00:41. Mercury can save the part before that.</span>
+                  </div>
+                  <div style="display:flex;gap:8px;padding:12px 16px 16px;border-top:1px solid var(--stroke);background:var(--bg)">
+                    <button style="flex:1;height:32px;border-radius:4px;background:var(--accent);border:1px solid var(--accent);color:var(--onAccent);font:inherit;font-weight:600;cursor:pointer">Save first 00:41</button>
+                    <button style="flex:1;height:32px;border-radius:4px;background:var(--ctrl);border:1px solid var(--ctrlStroke);color:var(--text);font:inherit;cursor:pointer">Open in Mercury</button>
+                  </div>
+                </sc-if>
+              </div>
+            </div>
+          </sc-for>
+        </div>
+      </div>
+    </div>
+  </sc-for>
+</div>
+</x-dc>
+<script type="text/x-dc" data-dc-script>
+class Component extends DCLogic {
+  renderVals() {
+    const L = "--bg:#F2F3F6;--layer:#FAFAFB;--card:#FFFFFF;--winStroke:rgba(0,0,0,0.12);--stroke:rgba(0,0,0,0.08);--text:#1A1B20;--text2:#464953;--ctrl:#FFFFFF;--ctrlStroke:rgba(0,0,0,0.12);--accent:#1F4FD6;--onAccent:#FFFFFF;--accentText:#1F4FD6;--accentSoft:rgba(31,79,214,0.08);--track:rgba(0,0,0,0.12);--ok:#0F7B0F;--err:#C42B1C;--okSoft:#DFF6DD;--errSoft:#FDE7E9;--shadow:0 8px 32px rgba(0,0,0,0.16);--desk:#CFD5E0;--deskText:#2A2D35;--sel:rgba(0,0,0,0.05)";
+    const D = "--bg:#1C1D22;--layer:#24262C;--card:#2C2E35;--winStroke:rgba(255,255,255,0.10);--stroke:rgba(255,255,255,0.07);--text:#FFFFFF;--text2:#C8CAD2;--ctrl:rgba(255,255,255,0.06);--ctrlStroke:rgba(255,255,255,0.10);--accent:#7FA3FF;--onAccent:#0D1530;--accentText:#9DB8F2;--accentSoft:rgba(127,163,255,0.14);--track:rgba(255,255,255,0.16);--ok:#6CCB5F;--err:#FF99A4;--okSoft:#263526;--errSoft:#442726;--shadow:0 8px 32px rgba(0,0,0,0.5);--desk:#101114;--deskText:#C8CAD2;--sel:rgba(255,255,255,0.06)";
+    const photo = { icon: 'image', file: 'photo-0412.heic', meta: 'HEIC image · 4.2 MB' };
+    return {
+      themes: [{ label: 'LIGHT', vars: L }, { label: 'DARK', vars: D }],
+      states: [
+        { n: '1', title: 'Pick format', pick: true, ...photo },
+        { n: '2', title: 'Converting', run: true, ...photo },
+        { n: '3', title: 'Done', done: true, ...photo },
+        { n: '4', title: 'Problem', err: true, icon: 'movie', file: 'GOPR0193.mp4', meta: 'MP4 video · 812 MB' }
+      ],
+      formats: [
+        { name: 'WebP', est: '≈ 1.1 MB', rec: true, on: true, bg: 'var(--sel)' },
+        { name: 'JPEG', est: '≈ 1.6 MB', bg: 'transparent' },
+        { name: 'PNG', est: '≈ 9.8 MB', bg: 'transparent' },
+        { name: 'AVIF', est: '≈ 0.8 MB', bg: 'transparent' }
+      ]
+    };
+  }
+}
+</script>
+</body>
+</html>

@@ -1,85 +1,144 @@
+<div align="center">
+
+<img src="branding/icon/png/app-icon-256.png" alt="Mercury Converter" width="112" height="112">
+
 # Mercury Converter
 
-A free, open-source file converter for Windows. Convert photos, animated GIFs, video, and audio on your own computer, from a simple window or from File Explorer's right-click menu. Nothing is uploaded.
+**Convert photos, GIFs, video and audio on your own computer.**<br>
+Free, open source, and nothing is ever uploaded.
 
-> **Status:** early version (1.0). It works and is tested, but it is not code-signed yet, so Windows SmartScreen may warn you the first time you run the installer.
+[![Download for Windows](https://img.shields.io/badge/Download-for%20Windows-1F4FD6?style=for-the-badge&logo=windows11&logoColor=white)](https://github.com/AfridexD/MercuryConverter/releases/latest/download/MercuryConverter-x64-setup.exe)
+&nbsp;
+[![Documentation](https://img.shields.io/badge/Read%20the-documentation-0D1530?style=for-the-badge)](https://afridexd.github.io/MercuryConverter/)
 
-## Features
+[![Latest release](https://img.shields.io/github/v/release/AfridexD/MercuryConverter?label=release&color=1F4FD6)](https://github.com/AfridexD/MercuryConverter/releases/latest)
+[![Downloads](https://img.shields.io/github/downloads/AfridexD/MercuryConverter/total?color=1F4FD6)](https://github.com/AfridexD/MercuryConverter/releases)
+[![License: MIT](https://img.shields.io/badge/license-MIT-1F4FD6)](LICENSE)
+![Windows 10 and 11](https://img.shields.io/badge/Windows-10%20%7C%2011-1F4FD6)
 
-- **Many formats**
-  - Images: JPEG, PNG, WebP, AVIF, JPEG XL, TIFF, PDF
-  - Animation: GIF
-  - Video: MP4, MKV, WebM, OGV, AVI
-  - Audio: MP3, FLAC, OGG, WAV, AAC
-- **One quality slider** from *Smallest file* to *Best quality*, instead of codec settings.
-- **Files never get bigger by surprise.** If a result would be larger than the original, the app lowers the quality and tries again.
-- **Lossless JPEG to JPEG XL**, which can be turned back into the exact original JPEG.
-- **Resize, rotate, and flip**, plus presets you can save, import, and export.
-- **Previews** of every file, in three sizes or off.
-- **Right-click menu** in File Explorer: *To Mp4*, *To Webp*, and so on.
-- **Uses your PC sensibly.** It checks how busy the computer is and adjusts, and can decode video on the graphics card. Encoding on the graphics card is optional (it uses less processor but makes larger files).
-- **Safe output.** Files are written under a temporary name and renamed only when finished. Existing files are never overwritten.
-- **Progress** for every file, and on the taskbar.
+<br>
 
-## Requirements
+<img src="docs/images/main.png" alt="Mercury Converter with six files ready to convert" width="860">
 
-Windows 10 version 2004 (build 19041) or later, 64-bit. Windows 11 is fine.
+</div>
+
+<br>
+
+## Why Mercury
+
+Most converters make you pick a codec, a bitrate and a container before you can do anything. Mercury asks one question: *what do you want it to become?* Drop your files in, pick a format, and press **Convert**.
+
+- **Simple.** One quality slider from *Smallest file* to *Best quality*, with the expected size shown before you start.
+- **Private.** Everything runs on your PC. No account, no upload, no tracking.
+- **Safe.** Your originals are never changed and existing files are never overwritten.
+- **Kind to your PC.** It watches how busy the computer is and adjusts, and can decode video on your graphics card.
+- **From File Explorer.** Right-click a file, choose *To WebP* or *To MP4*, and a small window does the rest.
+
+## Download
+
+| | |
+|---|---|
+| **[Installer (recommended)](https://github.com/AfridexD/MercuryConverter/releases/latest/download/MercuryConverter-x64-setup.exe)** | Installs for just you, or for everyone on the PC. No administrator password needed for "just me". |
+| [Portable zip](https://github.com/AfridexD/MercuryConverter/releases/latest/download/MercuryConverter-x64-portable.zip) | Unzip anywhere and run `MercuryConverter.exe`. |
+| [All releases and checksums](https://github.com/AfridexD/MercuryConverter/releases) | Every version, with SHA-256 checksums. |
+
+Needs Windows 10 (version 2004 or later) or Windows 11, 64-bit.
+
+> **Windows may warn you the first time.** Mercury is new and not code-signed yet, so SmartScreen can say "Windows protected your PC". Choose **More info**, then **Run anyway**. You can compare the file with the checksum on the release page first.
+
+## What it converts
+
+| Kind | Open | Convert to |
+|---|---|---|
+| **Photos** | JPEG, PNG, HEIC, WebP, AVIF, JPEG XL, TIFF, BMP, camera RAW (DNG, CR2, NEF, ARW, RAF) and more | WebP, JPEG, JPEG XL, AVIF, PNG, TIFF, PDF |
+| **GIFs** | GIF | GIF, MP4, WebM |
+| **Video** | MP4, MOV, MKV, WebM, AVI, WMV, FLV, MPEG, 3GP, TS and more | MP4, WebM, MKV, OGV, AVI, GIF |
+| **Audio** | MP3, M4A, AAC, FLAC, WAV, OGG, Opus, WMA, AIFF and more | MP3, AAC, OGG, FLAC, WAV |
+
+## Highlights
+
+<table>
+<tr>
+<td width="50%" valign="top">
+
+### Everything at a glance
+Previews, sizes, a progress bar for every file, and filters for *Converting*, *Waiting*, *Done* and *Failed*.
+
+<img src="docs/images/main-done.png" alt="Finished conversions with the size saved on each card">
+
+</td>
+<td width="50%" valign="top">
+
+### Options that fit your files
+The panel on the right only shows what applies: photos get a quality slider, audio gets channels, and so on. Save your favorite settings as **presets**.
+
+<img src="docs/images/settings.png" alt="The Settings page">
+
+</td>
+</tr>
+<tr>
+<td width="50%" valign="top">
+
+### Right-click, done
+Pick *Mercury Converter → To MP4* in File Explorer. A small window shows progress, then a **Show in folder** button.
+
+<img src="docs/images/quick-done.png" alt="The Quick Convert window after a finished conversion" width="360">
+
+</td>
+<td width="50%" valign="top">
+
+### Smarter than a slider
+- Files never get bigger by surprise: quality is lowered and retried.
+- JPEG to **JPEG XL without any loss**, and back to the exact original.
+- Resize, rotate and flip.
+- Taskbar progress, drag and drop, and full keyboard control.
+
+</td>
+</tr>
+</table>
+
+## Documentation
+
+The [documentation site](https://afridexd.github.io/MercuryConverter/) has a step-by-step guide, the right-click menu, presets, keyboard shortcuts, and answers to common questions:
+
+- [Getting started](https://afridexd.github.io/MercuryConverter/guide.html)
+- [Right-click menu](https://afridexd.github.io/MercuryConverter/guide.html#right-click)
+- [Questions and fixes](https://afridexd.github.io/MercuryConverter/faq.html)
+- [Building from source](docs/BUILDING.md)
 
 ## Build from source
 
-You need the [.NET 10 SDK](https://dotnet.microsoft.com/download).
+You need the [.NET 10 SDK](https://dotnet.microsoft.com/download). The full guide is in [docs/BUILDING.md](docs/BUILDING.md).
 
 ```powershell
-# 1. Fetch the converter programs (FFmpeg, libjxl, ImageMagick) into .\tools
-#    Needs 7-Zip and ImageMagick installed: winget install 7zip.7zip ImageMagick.ImageMagick
+# Fetch FFmpeg, libjxl and ImageMagick into .\tools (needs 7-Zip and ImageMagick: winget install 7zip.7zip ImageMagick.ImageMagick)
 powershell -ExecutionPolicy Bypass -File scripts\fetch-tools.ps1
 
-# 2. Build and test
 dotnet build MercuryConverter.slnx
 dotnet test MercuryConverter.slnx
 ```
-
-The tests that run real conversions are skipped automatically if `tools\` is missing, so the rest of the tests still run.
-
-To run the app after building:
-
-```powershell
-src\Mercury.Converter.App\bin\x64\Debug\net10.0-windows10.0.26100.0\win-x64\MercuryConverter.exe
-```
-
-### Build the installer
-
-Needs [Inno Setup 6](https://jrsoftware.org/isinfo.php).
-
-```powershell
-powershell -ExecutionPolicy Bypass -File scripts\build-installer.ps1
-```
-
-This writes the installer to `dist\` with a SHA-256 checksum. The installer asks whether to install for just you or for all users. Uninstalling removes the right-click menu entries. Your settings and presets in `%LOCALAPPDATA%\MercuryConverter` are kept.
 
 ## Project layout
 
 | Folder | What is in it |
 |---|---|
-| `src/Mercury.Converter.Core` | Conversion engine: commands, quality mapping, safe output, resource governor, thumbnails, presets |
+| `src/Mercury.Converter.Core` | The conversion engine: commands, quality mapping, safe output, resource governor, thumbnails, presets |
 | `src/Mercury.Converter.App` | The WinUI 3 app |
 | `tests/` | Unit tests and real-conversion tests |
-| `scripts/` | Tool fetching, installer build, translation files |
+| `scripts/` | Fetching the converter programs, building the installer and release files |
 | `installer/` | Inno Setup script |
-| `docs/` | UI/UX study and the redesign brief |
+| `branding/` | Icon and logo files |
+| `docs/` | The documentation site, design files and the UI study |
 
-## Translations
+## Credits and licenses
 
-Window text lives in `scripts/strings.json`. Run `node scripts/build-strings.js` after editing it to write one `Resources.resw` per language. Spanish, French, German, and Brazilian Portuguese are machine-written drafts and need review by a native speaker. Messages shown after a conversion are still English only.
+Mercury Converter is [MIT licensed](LICENSE). It runs these excellent programs, each as a separate process under its own license: [FFmpeg](https://ffmpeg.org/) (GPL v3), [ImageMagick](https://imagemagick.org/) and [libjxl](https://github.com/libjxl/libjxl). See [THIRD-PARTY-NOTICES.md](THIRD-PARTY-NOTICES.md).
 
 ## Known limits
 
-- The right-click menu is in the classic Windows menu. On Windows 11, choose **Show more options** (or hold Shift while right-clicking).
+- On Windows 11 the right-click menu is under **Show more options** (or hold Shift while you right-click).
+- Light theme only for now. Dark mode is planned.
 - Not code-signed yet.
-- Light theme, high contrast, and right-to-left layouts have not been tested. See [docs/UIUX-STUDY.md](docs/UIUX-STUDY.md) for the full list of known interface issues and the plan.
+- The app is in English. Translations are planned.
 
-## License
-
-Mercury Converter is MIT licensed. See [LICENSE](LICENSE).
-
-The downloads also include FFmpeg (GPL v3), ImageMagick, and libjxl, which have their own licenses. See [THIRD-PARTY-NOTICES.md](THIRD-PARTY-NOTICES.md).
+Found a problem or have an idea? [Open an issue](https://github.com/AfridexD/MercuryConverter/issues/new).

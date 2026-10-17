@@ -26,6 +26,44 @@ public sealed record Preset
     /// <summary>Built-in presets are shown in the app but are never written to the user's file.</summary>
     public bool IsBuiltIn { get; init; }
 
+    /// <summary>The kind of file this preset is for. Presets are offered only for kinds of files in the list.</summary>
+    [JsonIgnore]
+    public MediaGroup Group => MediaGroups.Of(Target);
+
+    /// <summary>The short name shown on a chip: "Web photo" for "Web photo (WebP, 1920 px)".</summary>
+    [JsonIgnore]
+    public string ChipLabel
+    {
+        get
+        {
+            var cut = Name.IndexOf(" (", StringComparison.Ordinal);
+            return cut > 0 ? Name[..cut] : Name;
+        }
+    }
+
+    /// <summary>One line describing the settings, such as "WebP · Quality 70 · Fit within 1200 px".</summary>
+    [JsonIgnore]
+    public string Summary
+    {
+        get
+        {
+            var choice = FormatCatalog.Get(Group, Target);
+            var parts = new List<string> { choice.Name };
+            if (choice.Lossy)
+            {
+                parts.Add($"Quality {Quality}");
+            }
+
+            var size = SizeChoices.Describe(Changes);
+            if (size is not null)
+            {
+                parts.Add(size);
+            }
+
+            return string.Join(" · ", parts);
+        }
+    }
+
     /// <summary>Returns the first problem with these settings, or null if they are safe to use.</summary>
     public string? Validate()
     {
@@ -84,15 +122,16 @@ public sealed class PresetStore(string userFilePath)
 
     public static IReadOnlyList<Preset> BuiltIn { get; } =
     [
+        // The first eight match the design. Chips show the first four that fit the files in the list.
         new() { Name = "Web photo (WebP, 1920 px)", Target = TargetFormat.WebP, Quality = 75, Changes = new Transform(MaxWidth: 1920), IsBuiltIn = true },
         new() { Name = "Phone share (JPEG, 1080 px)", Target = TargetFormat.Jpeg, Quality = 80, Changes = new Transform(MaxHeight: 1080), IsBuiltIn = true },
         new() { Name = "Smallest photo (JPEG XL)", Target = TargetFormat.JpegXl, Quality = 60, IsBuiltIn = true },
-        new() { Name = "Keep exact JPEG (JPEG XL, reversible)", Target = TargetFormat.JpegXl, Quality = 100, LosslessJpegRecompression = true, IsBuiltIn = true },
         new() { Name = "Archive (lossless PNG)", Target = TargetFormat.Png, Quality = 100, IsBuiltIn = true },
-        new() { Name = "Video for sharing (MP4, 1080 p)", Target = TargetFormat.Mp4, Quality = 75, Changes = new Transform(MaxHeight: 1080), IsBuiltIn = true },
-        new() { Name = "Video for web (WebM, 720 p)", Target = TargetFormat.WebM, Quality = 70, Changes = new Transform(MaxHeight: 720), IsBuiltIn = true },
+        new() { Name = "Video for sharing (MP4, 1080p)", Target = TargetFormat.Mp4, Quality = 75, Changes = new Transform(MaxHeight: 1080), IsBuiltIn = true },
+        new() { Name = "Video for web (WebM, 720p)", Target = TargetFormat.WebM, Quality = 70, Changes = new Transform(MaxHeight: 720), IsBuiltIn = true },
         new() { Name = "Short GIF (480 px)", Target = TargetFormat.Gif, Quality = 70, Changes = new Transform(MaxWidth: 480), IsBuiltIn = true },
         new() { Name = "Podcast audio (MP3)", Target = TargetFormat.Mp3, Quality = 70, IsBuiltIn = true },
+        new() { Name = "Keep exact JPEG (JPEG XL, reversible)", Target = TargetFormat.JpegXl, Quality = 100, LosslessJpegRecompression = true, IsBuiltIn = true },
         new() { Name = "Photos to PDF", Target = TargetFormat.Pdf, IsBuiltIn = true },
     ];
 

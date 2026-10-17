@@ -1,0 +1,95 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Questions and fixes: Mercury Converter</title>
+<meta name="description" content="Answers to common questions about Mercury Converter: Windows SmartScreen, the right-click menu, file sizes, privacy and more.">
+<link rel="icon" href="images/favicon.png">
+<link rel="stylesheet" href="style.css">
+</head>
+<body>
+
+<header class="nav">
+  <div class="nav-inner">
+    <a class="brand" href="./"><img src="images/logo.png" alt=""> Mercury Converter</a>
+    <nav class="nav-links">
+      <a href="guide.html">Guide</a>
+      <a class="on" href="faq.html">Questions</a>
+      <a class="hide-s" href="https://github.com/AfridexD/MercuryConverter">GitHub</a>
+      <a class="btn small primary" href="https://github.com/AfridexD/MercuryConverter/releases/latest/download/MercuryConverter-x64-setup.exe">Download</a>
+    </nav>
+  </div>
+</header>
+
+<div class="wrap doc">
+  <aside class="toc">
+    <strong>On this page</strong>
+    <a href="#general">General</a>
+    <a href="#smartscreen">Windows warnings</a>
+    <a href="#menu">Right-click menu</a>
+    <a href="#results">Results and sizes</a>
+    <a href="#speed">Speed and your PC</a>
+    <a href="#help">Still stuck?</a>
+  </aside>
+
+  <article class="article">
+    <h1>Questions and fixes</h1>
+    <p class="lead">Quick answers. If yours is not here, <a href="https://github.com/AfridexD/MercuryConverter/issues/new">ask on GitHub</a>.</p>
+
+    <h2 id="general">General</h2>
+    <details><summary>Is Mercury Converter really free?</summary><p>Yes. It is open source under the MIT license, with no ads, no account, no trial and no paid tier.</p></details>
+    <details><summary>Are my files uploaded anywhere?</summary><p>No. All conversion happens on your computer, and the app does not need the internet. It collects no usage data. You can check: the source code is public.</p></details>
+    <details><summary>Does it change my original files?</summary><p>Never. Mercury reads the original and writes a new file. It also never replaces a file that already exists: it adds a number to the name instead (<code>photo (2).webp</code>).</p></details>
+    <details><summary>Which formats can it open and make?</summary><p>See the <a href="./#formats">format table</a> on the home page. Photos include JPEG, PNG, HEIC, WebP, AVIF, JPEG XL, TIFF and camera RAW. Video includes MP4, MOV, MKV, WebM, AVI and more. Audio includes MP3, M4A, FLAC, WAV, OGG and more.</p></details>
+    <details><summary>Is there a Mac, Linux or phone version?</summary><p>Not at the moment. Mercury Converter is for Windows 10 and 11 only.</p></details>
+    <details><summary>Is there a dark mode, or other languages?</summary><p>Not yet. The app is light-themed and in English. Both are planned.</p></details>
+
+    <h2 id="smartscreen">Windows warnings</h2>
+    <details><summary>Windows says "Windows protected your PC". Is it safe?</summary>
+      <p>SmartScreen warns about any new program that few people have downloaded yet and that is not code-signed. Code-signing certificates cost money each year, and Mercury does not have one yet. The warning does not mean the file is bad.</p>
+      <p>To run it: choose <strong>More info</strong>, then <strong>Run anyway</strong>. To be extra careful, compare the file's checksum with the one on the <a href="https://github.com/AfridexD/MercuryConverter/releases/latest">release page</a>. In PowerShell: <code>Get-FileHash .\MercuryConverter-x64-setup.exe</code>. The two long strings should match.</p>
+    </details>
+    <details><summary>My antivirus flagged something.</summary><p>Mercury includes FFmpeg, ImageMagick and libjxl, which some antivirus programs treat with suspicion because they are powerful tools that unsigned programs also use. If you want certainty, build Mercury yourself from the <a href="https://github.com/AfridexD/MercuryConverter/blob/main/docs/BUILDING.md">source code</a>.</p></details>
+
+    <h2 id="menu">Right-click menu</h2>
+    <details><summary>I do not see "Mercury Converter" when I right-click.</summary>
+      <ul>
+        <li>Open Settings and make sure <em>Show in the right-click menu</em> is <strong>On</strong>.</li>
+        <li><strong>On Windows 11</strong>, the menu is under <em>Show more options</em>. You can also hold <kbd>Shift</kbd> while you right-click.</li>
+        <li>The menu only appears on file types Mercury can read, such as JPEG, MP4 or MP3.</li>
+        <li>If you moved the app's folder, open Mercury once. It repairs the menu so it points to the new place.</li>
+      </ul>
+    </details>
+    <details><summary>The app opened from the menu but my file was not there.</summary><p>Early test builds had this problem: Windows did not pass the file name to the app. It is fixed in the 1.0.0 release. Install the latest version, open it once so the menu repairs itself, and try again. If it still happens, <a href="https://github.com/AfridexD/MercuryConverter/issues/new">tell us</a> which kind of file it was.</p></details>
+    <details><summary>Can I choose which formats appear in the menu?</summary><p>Not yet. The menu lists the common formats for each kind of file, in a fixed order.</p></details>
+    <details><summary>Why does selecting many files open the main window?</summary><p>The small window is for one file. With several, the main window can show every file's progress at once.</p></details>
+
+    <h2 id="results">Results and sizes</h2>
+    <details><summary>My converted file is bigger than the original.</summary>
+      <p>It can happen when a file is already very compact. Mercury tries lower quality settings when <em>Never make a file larger than the original</em> is on, but some files cannot be made smaller. Going to GIF is the usual cause: GIF is an old format and its files are much larger than video. Try MP4 or WebM instead, or lower the quality slider.</p>
+    </details>
+    <details><summary>The picture looks worse than the original.</summary><p>Raise the <em>Quality</em> slider, or choose a format that loses nothing: PNG for photos, FLAC for audio. Converting an already-compressed file again always loses a little.</p></details>
+    <details><summary>Where did my converted files go?</summary><p>Next to the originals, unless you chose another folder under <em>Save to</em>. Open any finished card's <strong>⋯</strong> menu and choose <em>Show in folder</em>, or use <em>Show in folder</em> in the green bar after a run.</p></details>
+    <details><summary>A file says "Failed".</summary><p>Open its <strong>⋯</strong> menu and choose <em>Details</em> for the reason, then try <em>Retry</em> (<kbd>F5</kbd>). Common causes: the file is damaged or only partly downloaded, the disk is full, or another program has the file open. For a damaged video, the Quick Convert window can offer to save the part that is readable.</p></details>
+    <details><summary>Does converting video to MKV keep subtitles and audio tracks?</summary><p>Yes. MKV output keeps every audio track and subtitle track.</p></details>
+    <details><summary>Does a GIF keep its animation?</summary><p>Yes, GIF to GIF stays animated. GIF to MP4 or WebM makes a video of the animation.</p></details>
+
+    <h2 id="speed">Speed and your PC</h2>
+    <details><summary>Conversion is slow, or it makes my PC slow.</summary><p>Open Settings and change <em>Speed</em>. <strong>Gentle</strong> keeps your PC responsive. <strong>Balanced</strong> (the default) adapts to what else you are doing. <strong>Fastest</strong> uses everything. Video is the heaviest job, so large videos take the longest whatever you pick.</p></details>
+    <details><summary>Should I turn on "Encode video on the graphics card"?</summary><p>Only if you care more about processor use than file size. It works with NVIDIA, AMD and Intel graphics, but the files come out about 60% larger. It is off by default. Mercury already uses your graphics card to <em>read</em> video faster, with no extra size.</p></details>
+    <details><summary>Where does Mercury keep its settings?</summary><p>In <code>%LOCALAPPDATA%\MercuryConverter</code>: your settings, presets and a cache of previews. Delete that folder to start fresh. Previews are cleaned up automatically and use at most about 200 MB.</p></details>
+
+    <h2 id="help">Still stuck?</h2>
+    <p><a href="https://github.com/AfridexD/MercuryConverter/issues/new">Open an issue on GitHub</a>. It helps a lot if you tell us your Windows version, what you clicked, and what you expected. Attach a screenshot if you can. Never attach files you do not want to share.</p>
+  </article>
+</div>
+
+<footer>
+  <div class="wrap">
+    <span>Mercury Converter is free software under the MIT license.</span>
+    <span><a href="https://github.com/AfridexD/MercuryConverter">Source code</a> &middot; <a href="https://github.com/AfridexD/MercuryConverter/issues/new">Report a problem</a></span>
+  </div>
+</footer>
+</body>
+</html>

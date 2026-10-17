@@ -1,0 +1,761 @@
+<!DOCTYPE html>
+<html>
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<script src="./support.js"></script>
+</head>
+<body>
+<x-dc>
+<helmet>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:opsz,wght,FILL,GRAD@20..24,300..500,0..1,0&display=block">
+<style>@keyframes mcWait{0%{transform:translateX(-110%)}100%{transform:translateX(260%)}}body{margin:0}button{white-space:nowrap;flex-shrink:0}a{color:#1F4FD6}a:hover{color:#1A43B8}</style>
+</helmet>
+<div ref="{{ rootRef }}" style="{{ rootStyle }}">
+<div role="application" aria-label="Mercury Converter" style="position:relative;width:100%;height:100%;display:flex;flex-direction:column;background:var(--bg);color:var(--text);font-family:'Segoe UI Variable Text','Segoe UI',system-ui,-apple-system,sans-serif;font-size:14px;line-height:20px;border-radius:8px;overflow:hidden;border:1px solid var(--winStroke);box-sizing:border-box">
+
+  <div style="height:48px;flex:none;display:flex;align-items:flex-start">
+    <div style="height:48px;display:flex;align-items:center;gap:12px;padding-left:16px;flex:1;min-width:0">
+      <img src="assets/app-icon-32.png" alt="" width="16" height="16" style="display:block;flex:none">
+      <span style="font-size:12px;color:var(--text2)">Mercury Converter</span>
+    </div>
+    <div style="display:flex">
+      <div style="width:46px;height:32px;display:flex;align-items:center;justify-content:center;color:var(--text2)" style-hover="background:var(--subtleHover)"><span style="font-family:'Material Symbols Outlined';font-size:16px;line-height:1;font-weight:300">remove</span></div>
+      <div style="width:46px;height:32px;display:flex;align-items:center;justify-content:center;color:var(--text2)" style-hover="background:var(--subtleHover)"><span style="font-family:'Material Symbols Outlined';font-size:14px;line-height:1;font-weight:300">crop_square</span></div>
+      <div style="width:46px;height:32px;display:flex;align-items:center;justify-content:center;color:var(--text2)" style-hover="background:#C42B1C;color:#FFFFFF"><span style="font-family:'Material Symbols Outlined';font-size:16px;line-height:1;font-weight:300">close</span></div>
+    </div>
+  </div>
+
+  <sc-if value="{{ isMain }}" hint-placeholder-val="{{ true }}">
+  <div role="toolbar" aria-label="Commands" style="height:48px;flex:none;display:flex;align-items:center;gap:4px;padding:0 16px 8px;box-sizing:border-box">
+    <button aria-label="Add files" aria-keyshortcuts="Control+O" onClick="{{ addFiles }}" style="display:flex;align-items:center;gap:8px;height:32px;padding:0 12px;border-radius:4px;background:var(--ctrl);border:1px solid var(--ctrlStroke);color:var(--text);font:inherit;cursor:pointer;box-sizing:border-box" style-hover="background:var(--ctrlHover)"><span style="font-family:'Material Symbols Outlined';font-size:18px;line-height:1;font-weight:300">add</span><span>Add files</span></button>
+    <button aria-label="Add folder" aria-keyshortcuts="Control+Shift+O" onClick="{{ addFiles }}" style="display:flex;align-items:center;gap:8px;height:32px;padding:0 12px;border-radius:4px;background:var(--ctrl);border:1px solid var(--ctrlStroke);color:var(--text);font:inherit;cursor:pointer;box-sizing:border-box" style-hover="background:var(--ctrlHover)"><span style="font-family:'Material Symbols Outlined';font-size:18px;line-height:1;font-weight:300">create_new_folder</span><sc-if value="{{ wide }}" hint-placeholder-val="{{ true }}"><span>Add folder</span></sc-if></button>
+    <div style="width:1px;height:20px;background:var(--strokeStrong);margin:0 8px"></div>
+    <button aria-label="View options" style="display:flex;align-items:center;gap:8px;height:32px;padding:0 10px;border-radius:4px;background:transparent;border:1px solid transparent;color:var(--text);font:inherit;cursor:pointer" style-hover="background:var(--subtleHover)"><span style="font-family:'Material Symbols Outlined';font-size:18px;line-height:1;font-weight:300">grid_view</span><sc-if value="{{ wide }}" hint-placeholder-val="{{ true }}"><span>View</span></sc-if><span style="font-family:'Material Symbols Outlined';font-size:16px;line-height:1;font-weight:300;color:var(--text2)">expand_more</span></button>
+    <sc-if value="{{ wide }}" hint-placeholder-val="{{ true }}"><button aria-label="Sort" style="display:flex;align-items:center;gap:8px;height:32px;padding:0 10px;border-radius:4px;background:transparent;border:1px solid transparent;color:var(--text);font:inherit;cursor:pointer" style-hover="background:var(--subtleHover)"><span style="font-family:'Material Symbols Outlined';font-size:18px;line-height:1;font-weight:300">sort</span><span>Sort: Added</span><span style="font-family:'Material Symbols Outlined';font-size:16px;line-height:1;font-weight:300;color:var(--text2)">expand_more</span></button></sc-if>
+    <div style="flex:1"></div>
+    <sc-if value="{{ narrow }}" hint-placeholder-val="{{ false }}"><button aria-label="Conversion options" aria-expanded="{{ paneOpen }}" onClick="{{ togglePane }}" style="display:flex;align-items:center;gap:8px;height:32px;padding:0 12px;border-radius:4px;background:var(--ctrl);border:1px solid var(--ctrlStroke);color:var(--text);font:inherit;cursor:pointer;box-sizing:border-box" style-hover="background:var(--ctrlHover)"><span style="font-family:'Material Symbols Outlined';font-size:18px;line-height:1;font-weight:300">tune</span><span>Options</span></button></sc-if>
+    <button aria-label="Settings" onClick="{{ openSettings }}" style="width:36px;height:32px;display:flex;align-items:center;justify-content:center;border-radius:4px;background:transparent;border:1px solid transparent;color:var(--text);cursor:pointer" style-hover="background:var(--subtleHover)"><span style="font-family:'Material Symbols Outlined';font-size:20px;line-height:1;font-weight:300">settings</span></button>
+  </div>
+
+  <div style="flex:1;min-height:0;display:flex;gap:12px;padding:0 16px">
+    <div role="region" aria-label="Files" style="flex:1;min-width:0;display:flex;flex-direction:column;background:var(--layer);border:1px solid var(--stroke);border-radius:8px;overflow:hidden">
+      <sc-if value="{{ isEmpty }}" hint-placeholder-val="{{ false }}">
+        <div style="flex:1;margin:16px;border:1.5px dashed var(--strokeStrong);border-radius:8px;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:16px;padding:24px;text-align:center">
+          <span style="font-family:'Material Symbols Outlined';font-size:48px;line-height:1;font-weight:200;color:var(--text2)">download</span>
+          <div style="display:flex;flex-direction:column;gap:4px;align-items:center">
+            <div style="font-size:20px;line-height:28px;font-weight:600">Drop files here</div>
+            <div style="color:var(--text2);max-width:420px;text-wrap:pretty">Photos, GIFs, videos and audio. Everything is converted on this computer. Nothing is uploaded.</div>
+          </div>
+          <div style="display:flex;gap:8px;flex-wrap:wrap;justify-content:center">
+            <button aria-label="Add files" onClick="{{ addFiles }}" style="display:flex;align-items:center;gap:8px;height:32px;padding:0 14px;border-radius:4px;background:var(--accent);border:1px solid var(--accent);color:var(--onAccent);font:inherit;font-weight:600;cursor:pointer" style-hover="background:var(--accentHover)"><span style="font-family:'Material Symbols Outlined';font-size:18px;line-height:1;font-weight:400">add</span><span>Add files</span></button>
+            <button aria-label="Add folder" onClick="{{ addFiles }}" style="display:flex;align-items:center;gap:8px;height:32px;padding:0 14px;border-radius:4px;background:var(--ctrl);border:1px solid var(--ctrlStroke);color:var(--text);font:inherit;cursor:pointer;box-sizing:border-box" style-hover="background:var(--ctrlHover)"><span style="font-family:'Material Symbols Outlined';font-size:18px;line-height:1;font-weight:300">create_new_folder</span><span>Add folder</span></button>
+          </div>
+          <div style="font-size:12px;color:var(--text3)">JPEG, PNG, HEIC, RAW, MP4, MOV, MKV, MP3, WAV and 40 more</div>
+        </div>
+      </sc-if>
+      <sc-if value="{{ hasFiles }}" hint-placeholder-val="{{ true }}">
+        <sc-if value="{{ banner.show }}" hint-placeholder-val="{{ false }}">
+          <div role="status" aria-live="polite" style="margin:12px 12px 0;padding:10px 12px 10px 14px;border-radius:6px;background:{{ banner.bg }};border:1px solid var(--stroke);display:flex;align-items:center;gap:12px;flex-wrap:wrap">
+            <span style="font-family:'Material Symbols Outlined';font-size:20px;line-height:1;font-variation-settings:'FILL' 1;color:{{ banner.iconColor }}">{{ banner.icon }}</span>
+            <div style="flex:1;min-width:200px;display:flex;flex-wrap:wrap;column-gap:8px"><span style="font-weight:600">{{ banner.title }}</span><span style="color:var(--text2)">{{ banner.body }}</span></div>
+            <div style="display:flex;gap:8px;flex-wrap:wrap">
+              <button onClick="{{ noop }}" style="display:flex;align-items:center;gap:6px;height:32px;padding:0 12px;border-radius:4px;background:var(--ctrl);border:1px solid var(--ctrlStroke);color:var(--text);font:inherit;cursor:pointer;box-sizing:border-box" style-hover="background:var(--ctrlHover)"><span style="font-family:'Material Symbols Outlined';font-size:18px;line-height:1;font-weight:300">folder_open</span><span>Show in folder</span></button>
+              <sc-if value="{{ banner.canRetry }}" hint-placeholder-val="{{ false }}"><button onClick="{{ retryFailed }}" style="display:flex;align-items:center;gap:6px;height:32px;padding:0 12px;border-radius:4px;background:var(--ctrl);border:1px solid var(--ctrlStroke);color:var(--text);font:inherit;cursor:pointer;box-sizing:border-box" style-hover="background:var(--ctrlHover)"><span style="font-family:'Material Symbols Outlined';font-size:18px;line-height:1;font-weight:300">refresh</span><span>{{ banner.retryLabel }}</span></button></sc-if>
+              <button aria-label="Dismiss" onClick="{{ dismissBanner }}" style="width:32px;height:32px;display:flex;align-items:center;justify-content:center;border-radius:4px;background:transparent;border:1px solid transparent;color:var(--text2);cursor:pointer" style-hover="background:var(--subtleHover)"><span style="font-family:'Material Symbols Outlined';font-size:18px;line-height:1;font-weight:300">close</span></button>
+            </div>
+          </div>
+        </sc-if>
+        <div role="group" aria-label="Queue" style="padding:14px 16px 12px;display:flex;flex-direction:column;gap:10px;border-bottom:1px solid var(--stroke)">
+          <div style="display:flex;align-items:center;gap:12px;flex-wrap:wrap">
+            <div aria-live="polite" style="flex:1;min-width:200px;display:flex;align-items:baseline;gap:8px;flex-wrap:wrap">
+              <span style="font-size:16px;line-height:22px;font-weight:600">{{ q.title }}</span>
+              <span style="color:var(--text2)">{{ q.sub }}</span>
+            </div>
+            <sc-if value="{{ q.running }}" hint-placeholder-val="{{ false }}">
+              <button onClick="{{ jumpActive }}" style="display:flex;align-items:center;gap:6px;height:28px;padding:0 10px;border-radius:4px;background:var(--ctrl);border:1px solid var(--ctrlStroke);color:var(--text);font:inherit;font-size:13px;cursor:pointer;box-sizing:border-box" style-hover="background:var(--ctrlHover)"><span style="font-family:'Material Symbols Outlined';font-size:16px;line-height:1;font-weight:300">my_location</span><span>Jump to active</span></button>
+            </sc-if>
+          </div>
+          <sc-if value="{{ q.running }}" hint-placeholder-val="{{ false }}">
+            <div role="progressbar" aria-label="Overall progress" aria-valuenow="{{ q.pctNum }}" aria-valuemin="0" aria-valuemax="100" style="height:4px;border-radius:2px;background:var(--track);overflow:hidden"><div style="height:100%;width:{{ q.pct }};background:var(--accent);border-radius:2px;transition:width 300ms cubic-bezier(0,0,0,1)"></div></div>
+          </sc-if>
+          <div role="tablist" aria-label="Show" style="display:flex;gap:6px;flex-wrap:wrap">
+            <sc-for list="{{ pills }}" as="p" hint-placeholder-count="4">
+              <button role="tab" aria-selected="{{ p.on }}" onClick="{{ p.onClick }}" style="display:flex;align-items:center;gap:6px;height:28px;padding:0 10px;border-radius:14px;background:{{ p.bg }};border:1px solid {{ p.border }};color:{{ p.color }};font:inherit;font-size:13px;cursor:pointer;box-sizing:border-box">
+                <sc-if value="{{ p.icon }}"><span style="font-family:'Material Symbols Outlined';font-size:15px;line-height:1;font-variation-settings:'FILL' 1;color:{{ p.iconColor }}">{{ p.icon }}</span></sc-if>
+                <span>{{ p.label }}</span><span style="font-variant-numeric:tabular-nums;opacity:0.85">{{ p.count }}</span>
+              </button>
+            </sc-for>
+          </div>
+        </div>
+        <div style="flex:1;min-height:0;overflow:auto;padding:12px 16px 16px">
+          <sc-if value="{{ aboveNote }}" hint-placeholder-val="{{ false }}">
+            <div style="display:flex;align-items:center;gap:10px;padding:0 0 12px;font-size:12px;color:var(--text3)"><div style="flex:1;height:1px;background:var(--stroke)"></div><span>{{ aboveNote }}</span><div style="flex:1;height:1px;background:var(--stroke)"></div></div>
+          </sc-if>
+          <div role="list" aria-label="Files to convert" style="display:grid;grid-template-columns:repeat(auto-fill,minmax(176px,1fr));gap:12px">
+            <sc-for list="{{ cards }}" as="c" hint-placeholder-count="8">
+              <div role="listitem" tabindex="{{ c.tab }}" data-mid="{{ c.id }}" aria-label="{{ c.aria }}" aria-selected="{{ c.selected }}" onClick="{{ c.onClick }}" style="position:relative;display:flex;flex-direction:column;border-radius:8px;background:var(--card);border:1px solid var(--stroke);overflow:hidden;cursor:default" style-hover="background:var(--cardHover)">
+                <div style="position:relative;height:116px;background:{{ c.tile }};display:flex;align-items:center;justify-content:center">
+                  <span style="font-family:'Material Symbols Outlined';font-size:32px;line-height:1;font-weight:200;color:{{ c.tileIcon }}">{{ c.kindIcon }}</span>
+                  <sc-if value="{{ c.dur }}"><span style="position:absolute;right:8px;bottom:8px;padding:0 6px;border-radius:4px;background:rgba(0,0,0,0.62);color:#FFFFFF;font-size:12px;line-height:18px;font-variant-numeric:tabular-nums">{{ c.dur }}</span></sc-if>
+                  <button aria-label="{{ c.menuAria }}" onClick="{{ c.onMenu }}" style="position:absolute;right:6px;top:6px;width:28px;height:28px;display:flex;align-items:center;justify-content:center;border-radius:4px;background:rgba(20,22,28,0.55);border:none;color:#FFFFFF;cursor:pointer" style-hover="background:rgba(20,22,28,0.8)"><span style="font-family:'Material Symbols Outlined';font-size:18px;line-height:1">more_horiz</span></button>
+                </div>
+                <div style="padding:10px 12px 12px;display:flex;flex-direction:column;gap:3px;min-width:0">
+                  <div title="{{ c.name }}" style="font-weight:600;white-space:nowrap;overflow:hidden;text-overflow:ellipsis">{{ c.name }}</div>
+                  <div style="display:flex;align-items:center;gap:6px;font-size:12px;line-height:16px;color:var(--text2)">
+                    <span style="font-family:'Material Symbols Outlined';font-size:15px;line-height:1;font-variation-settings:'FILL' 1;color:{{ c.iconColor }}">{{ c.icon }}</span>
+                    <span style="font-weight:{{ c.statusWeight }};color:{{ c.statusColor }}">{{ c.statusText }}</span>
+                  </div>
+                  <sc-if value="{{ c.detail }}"><div style="font-size:12px;line-height:16px;color:var(--text3);font-variant-numeric:tabular-nums;text-wrap:pretty">{{ c.detail }}</div></sc-if>
+                  <sc-if value="{{ c.canRetry }}" hint-placeholder-val="{{ false }}"><button onClick="{{ c.onRetry }}" style="align-self:flex-start;margin-top:4px;display:flex;align-items:center;gap:4px;height:24px;padding:0 8px 0 6px;border-radius:4px;background:var(--ctrl);border:1px solid var(--ctrlStroke);color:var(--text);font:inherit;font-size:12px;cursor:pointer;box-sizing:border-box" style-hover="background:var(--ctrlHover)"><span style="font-family:'Material Symbols Outlined';font-size:15px;line-height:1">refresh</span><span>Retry</span></button></sc-if>
+                  <sc-if value="{{ c.showBar }}" hint-placeholder-val="{{ false }}">
+                    <div role="progressbar" aria-label="{{ c.barAria }}" aria-valuenow="{{ c.pctNum }}" style="position:relative;margin-top:6px;height:3px;border-radius:2px;background:var(--track);overflow:hidden">
+                      <sc-if value="{{ c.isActive }}" hint-placeholder-val="{{ false }}"><div style="height:100%;width:{{ c.pct }};background:var(--accent);border-radius:2px;transition:width 200ms linear"></div></sc-if>
+                      <sc-if value="{{ c.anim }}">{{ c.anim }}</sc-if>
+                    </div>
+                  </sc-if>
+                </div>
+                <sc-if value="{{ c.selected }}" hint-placeholder-val="{{ false }}">
+                  <div style="position:absolute;inset:0;border:2px solid var(--accent);border-radius:8px;pointer-events:none"></div>
+                  <div style="position:absolute;left:8px;top:8px;width:20px;height:20px;border-radius:4px;background:var(--accent);display:flex;align-items:center;justify-content:center;pointer-events:none"><span style="font-family:'Material Symbols Outlined';font-size:16px;line-height:1;font-weight:600;color:var(--onAccent)">check</span></div>
+                </sc-if>
+              </div>
+            </sc-for>
+          </div>
+        </div>
+      </sc-if>
+    </div>
+
+    <div role="region" aria-label="Conversion options" style="{{ inspStyle }}">
+      <sc-if value="{{ isEmpty }}" hint-placeholder-val="{{ false }}">
+        <div style="flex:1;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:8px;padding:32px;text-align:center">
+          <span style="font-family:'Material Symbols Outlined';font-size:32px;line-height:1;font-weight:200;color:var(--text3)">tune</span>
+          <div style="font-weight:600">Options appear here</div>
+          <div style="color:var(--text2);font-size:13px;max-width:240px;text-wrap:pretty">They change to fit the files you add, so you only see what applies.</div>
+        </div>
+      </sc-if>
+      <sc-if value="{{ hasFiles }}" hint-placeholder-val="{{ true }}">
+        <div style="padding:16px 16px 14px;border-bottom:1px solid var(--stroke);display:flex;align-items:flex-start;justify-content:space-between;gap:12px">
+          <div style="display:flex;flex-direction:column;gap:2px;min-width:0">
+            <div style="font-size:16px;line-height:22px;font-weight:600">{{ insp.title }}</div>
+            <div style="font-size:12px;line-height:16px;color:var(--text2);text-wrap:pretty">{{ insp.sub }}</div>
+          </div>
+          <sc-if value="{{ insp.hasSel }}" hint-placeholder-val="{{ false }}"><button onClick="{{ clearSel }}" style="flex:none;height:28px;padding:0 8px;border-radius:4px;background:transparent;border:1px solid transparent;color:var(--accentText);font:inherit;font-size:13px;cursor:pointer" style-hover="background:var(--subtleHover)">Clear selection</button></sc-if>
+          <sc-if value="{{ narrow }}" hint-placeholder-val="{{ false }}"><button aria-label="Close options" onClick="{{ togglePane }}" style="flex:none;width:28px;height:28px;display:flex;align-items:center;justify-content:center;border-radius:4px;background:transparent;border:none;color:var(--text2);cursor:pointer"><span style="font-family:'Material Symbols Outlined';font-size:18px;line-height:1">close</span></button></sc-if>
+        </div>
+        <div style="flex:1;min-height:0;overflow:auto;display:flex;flex-direction:column">
+          <div role="group" aria-label="Presets" style="padding:14px 16px;display:flex;flex-direction:column;gap:8px;border-bottom:1px solid var(--stroke)">
+            <div style="display:flex;justify-content:space-between;align-items:center"><span style="font-size:12px;font-weight:600;color:var(--text2)">Presets</span><button onClick="{{ openPresets }}" style="height:24px;padding:0 6px;border-radius:4px;background:transparent;border:none;color:var(--accentText);font:inherit;font-size:12px;cursor:pointer" style-hover="background:var(--subtleHover)">Manage presets</button></div>
+            <div style="display:flex;flex-wrap:wrap;gap:6px">
+              <sc-for list="{{ chips }}" as="ch" hint-placeholder-count="3">
+                <button aria-pressed="{{ ch.on }}" onClick="{{ ch.onClick }}" title="{{ ch.full }}" style="display:flex;align-items:center;gap:4px;height:28px;padding:0 10px;border-radius:14px;background:{{ ch.bg }};border:1px solid {{ ch.border }};color:{{ ch.color }};font:inherit;font-size:13px;cursor:pointer;box-sizing:border-box"><sc-if value="{{ ch.on }}"><span style="font-family:'Material Symbols Outlined';font-size:15px;line-height:1;font-weight:500">check</span></sc-if><span>{{ ch.label }}</span></button>
+              </sc-for>
+            </div>
+          </div>
+          <div role="group" aria-label="Convert to" style="padding:14px 16px;display:flex;flex-direction:column;gap:12px;border-bottom:1px solid var(--stroke)">
+            <span style="font-size:12px;font-weight:600;color:var(--text2)">Convert to</span>
+            <sc-for list="{{ kindRows }}" as="k" hint-placeholder-count="2">
+              <div style="display:flex;flex-direction:column;gap:6px">
+                <div style="display:flex;align-items:center;gap:6px;font-size:12px;line-height:16px;color:var(--text2)"><span style="font-family:'Material Symbols Outlined';font-size:16px;line-height:1;font-weight:300">{{ k.icon }}</span><span>{{ k.label }}</span></div>
+                <button aria-label="{{ k.aria }}" aria-haspopup="listbox" onClick="{{ k.onClick }}" style="display:flex;align-items:center;justify-content:space-between;gap:8px;width:100%;min-height:50px;padding:7px 10px 7px 12px;border-radius:4px;background:var(--input);border:1px solid {{ k.border }};box-shadow:{{ k.ring }};color:var(--text);font:inherit;text-align:left;cursor:pointer;box-sizing:border-box" style-hover="background:var(--ctrlHover)">
+                  <span style="display:flex;flex-direction:column;gap:1px;min-width:0"><span style="font-weight:600">{{ k.fmtName }}</span><span style="font-size:12px;line-height:16px;color:var(--text2);text-wrap:pretty">{{ k.fmtDesc }}</span></span>
+                  <span style="font-family:'Material Symbols Outlined';font-size:18px;line-height:1;font-weight:300;color:var(--text2)">expand_more</span>
+                </button>
+              </div>
+            </sc-for>
+          </div>
+          <div role="group" aria-label="Quality" style="padding:14px 16px;display:flex;flex-direction:column;gap:10px;border-bottom:1px solid var(--stroke)">
+            <sc-if value="{{ insp.lossy }}" hint-placeholder-val="{{ true }}">
+              <div style="display:flex;justify-content:space-between;align-items:baseline"><span style="font-size:12px;font-weight:600;color:var(--text2)">Quality</span><span style="font-size:13px;font-weight:600;font-variant-numeric:tabular-nums">{{ insp.qLabel }}</span></div>
+              <input type="range" min="10" max="100" step="5" aria-label="Quality" aria-valuetext="{{ insp.qAria }}" value="{{ quality }}" onChange="{{ onQuality }}" style="width:100%;margin:0;accent-color:var(--accent);cursor:pointer">
+              <div style="display:flex;justify-content:space-between;font-size:12px;line-height:16px;color:var(--text3)"><span>Smaller file</span><span>Better quality</span></div>
+              <div style="display:flex;align-items:center;gap:8px;padding:8px 10px;border-radius:4px;background:var(--accentSoft);font-size:13px"><span style="font-family:'Material Symbols Outlined';font-size:18px;line-height:1;font-weight:300;color:var(--accentText)">insights</span><span><b style="font-weight:600">{{ insp.estimate }}</b> <span style="color:var(--text2)">{{ insp.saving }}</span></span></div>
+              <button role="checkbox" aria-checked="{{ never }}" onClick="{{ toggleNever }}" style="display:flex;align-items:flex-start;gap:10px;padding:2px 0;background:transparent;border:none;color:var(--text);font:inherit;text-align:left;cursor:pointer">
+                <sc-if value="{{ never }}" hint-placeholder-val="{{ true }}"><span style="flex:none;width:20px;height:20px;border-radius:4px;background:var(--accent);display:flex;align-items:center;justify-content:center"><span style="font-family:'Material Symbols Outlined';font-size:16px;line-height:1;font-weight:600;color:var(--onAccent)">check</span></span></sc-if>
+                <sc-if value="{{ notNever }}" hint-placeholder-val="{{ false }}"><span style="flex:none;width:20px;height:20px;border-radius:4px;border:1px solid var(--strokeStrong);box-sizing:border-box;background:var(--input)"></span></sc-if>
+                <span style="font-size:13px;line-height:20px">Never make a file larger than the original</span>
+              </button>
+            </sc-if>
+            <sc-if value="{{ insp.lossless }}" hint-placeholder-val="{{ false }}">
+              <span style="font-size:12px;font-weight:600;color:var(--text2)">Quality</span>
+              <div style="display:flex;gap:8px;font-size:13px;color:var(--text2)"><span style="font-family:'Material Symbols Outlined';font-size:18px;line-height:1;font-weight:300">verified</span><span style="text-wrap:pretty">These formats keep full quality, so there is nothing to adjust. {{ insp.estimate }}.</span></div>
+            </sc-if>
+          </div>
+          <div style="border-bottom:1px solid var(--stroke)">
+            <button aria-expanded="{{ more }}" onClick="{{ toggleMore }}" style="width:100%;display:flex;align-items:center;justify-content:space-between;padding:12px 16px;background:transparent;border:none;color:var(--text);font:inherit;cursor:pointer" style-hover="background:var(--subtleHover)"><span style="display:flex;flex-direction:column;align-items:flex-start;gap:1px"><span style="font-size:12px;font-weight:600;color:var(--text2)">More options</span><span style="font-size:12px;line-height:16px;color:var(--text3)">{{ insp.moreSummary }}</span></span><span style="font-family:'Material Symbols Outlined';font-size:18px;line-height:1;font-weight:300;color:var(--text2)">{{ moreIcon }}</span></button>
+            <sc-if value="{{ more }}" hint-placeholder-val="{{ false }}">
+              <div style="padding:2px 16px 16px;display:flex;flex-direction:column;gap:14px">
+                <sc-if value="{{ insp.resize }}">
+                  <div style="display:flex;flex-direction:column;gap:6px"><span style="font-size:12px;color:var(--text2)">Size</span><div style="display:flex;align-items:center;justify-content:space-between;height:32px;padding:0 10px 0 12px;border-radius:4px;background:var(--input);border:1px solid var(--ctrlStroke)"><span>{{ insp.sizeVal }}</span><span style="font-family:'Material Symbols Outlined';font-size:18px;line-height:1;font-weight:300;color:var(--text2)">expand_more</span></div><span style="font-size:12px;line-height:16px;color:var(--text3)">Only ever makes things smaller.</span></div>
+                </sc-if>
+                <sc-if value="{{ insp.rotate }}">
+                  <div style="display:flex;flex-direction:column;gap:6px"><span style="font-size:12px;color:var(--text2)">Rotate and flip</span>
+                    <div role="group" aria-label="Rotate and flip" style="display:flex;gap:4px">
+                      <button aria-label="Rotate left" style="flex:1;height:32px;border-radius:4px;background:var(--ctrl);border:1px solid var(--ctrlStroke);color:var(--text);display:flex;align-items:center;justify-content:center;cursor:pointer;box-sizing:border-box"><span style="font-family:'Material Symbols Outlined';font-size:18px;line-height:1;font-weight:300">rotate_left</span></button>
+                      <button aria-label="Rotate right" style="flex:1;height:32px;border-radius:4px;background:var(--ctrl);border:1px solid var(--ctrlStroke);color:var(--text);display:flex;align-items:center;justify-content:center;cursor:pointer;box-sizing:border-box"><span style="font-family:'Material Symbols Outlined';font-size:18px;line-height:1;font-weight:300">rotate_right</span></button>
+                      <button aria-label="Flip left to right" aria-pressed="false" style="flex:1;height:32px;border-radius:4px;background:var(--ctrl);border:1px solid var(--ctrlStroke);color:var(--text);display:flex;align-items:center;justify-content:center;cursor:pointer;box-sizing:border-box"><span style="font-family:'Material Symbols Outlined';font-size:18px;line-height:1;font-weight:300">flip</span></button>
+                      <button aria-label="Flip top to bottom" aria-pressed="false" style="flex:1;height:32px;border-radius:4px;background:var(--ctrl);border:1px solid var(--ctrlStroke);color:var(--text);display:flex;align-items:center;justify-content:center;cursor:pointer;box-sizing:border-box"><span style="font-family:'Material Symbols Outlined';font-size:18px;line-height:1;font-weight:300;transform:rotate(90deg)">flip</span></button>
+                    </div>
+                    <span style="font-size:12px;line-height:16px;color:var(--text3)">{{ insp.rotateNote }}</span>
+                  </div>
+                </sc-if>
+                <sc-if value="{{ insp.speed }}">
+                  <div style="display:flex;flex-direction:column;gap:6px"><span style="font-size:12px;color:var(--text2)">Video speed</span><div style="display:flex;align-items:center;justify-content:space-between;height:32px;padding:0 10px 0 12px;border-radius:4px;background:var(--input);border:1px solid var(--ctrlStroke)"><span>Balanced</span><span style="font-family:'Material Symbols Outlined';font-size:18px;line-height:1;font-weight:300;color:var(--text2)">expand_more</span></div><span style="font-size:12px;line-height:16px;color:var(--text3)">Faster makes bigger files. Slower makes smaller ones.</span></div>
+                </sc-if>
+                <sc-if value="{{ insp.audioOnly }}">
+                  <div style="display:flex;flex-direction:column;gap:6px"><span style="font-size:12px;color:var(--text2)">Channels</span><div style="display:flex;align-items:center;justify-content:space-between;height:32px;padding:0 10px 0 12px;border-radius:4px;background:var(--input);border:1px solid var(--ctrlStroke)"><span>Keep as is</span><span style="font-family:'Material Symbols Outlined';font-size:18px;line-height:1;font-weight:300;color:var(--text2)">expand_more</span></div></div>
+                </sc-if>
+              </div>
+            </sc-if>
+          </div>
+          <div role="group" aria-label="Save to" style="padding:14px 16px 16px;display:flex;flex-direction:column;gap:8px">
+            <span style="font-size:12px;font-weight:600;color:var(--text2)">Save to</span>
+            <div style="display:flex;align-items:center;gap:10px"><span style="font-family:'Material Symbols Outlined';font-size:20px;line-height:1;font-weight:300;color:var(--text2)">folder</span><span style="flex:1">Next to the originals</span><button style="height:28px;padding:0 10px;border-radius:4px;background:var(--ctrl);border:1px solid var(--ctrlStroke);color:var(--text);font:inherit;font-size:13px;cursor:pointer;box-sizing:border-box">Change</button></div>
+            <div style="font-size:12px;line-height:16px;color:var(--text3);text-wrap:pretty">{{ insp.naming }}</div>
+          </div>
+        </div>
+      </sc-if>
+    </div>
+  </div>
+
+  <div role="group" aria-label="Actions" style="height:64px;flex:none;display:flex;align-items:center;gap:12px;padding:0 16px">
+    <div role="status" aria-live="polite" style="flex:1;min-width:0;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;color:var(--text2)">{{ summary }}</div>
+    <sc-if value="{{ act.cancel }}" hint-placeholder-val="{{ false }}"><button aria-keyshortcuts="Escape" onClick="{{ cancelRun }}" style="height:32px;padding:0 16px;border-radius:4px;background:var(--ctrl);border:1px solid var(--ctrlStroke);color:var(--text);font:inherit;cursor:pointer;box-sizing:border-box" style-hover="background:var(--ctrlHover)">Cancel</button></sc-if>
+    <sc-if value="{{ act.clear }}" hint-placeholder-val="{{ false }}"><button onClick="{{ clearList }}" style="height:32px;padding:0 16px;border-radius:4px;background:var(--ctrl);border:1px solid var(--ctrlStroke);color:var(--text);font:inherit;cursor:pointer;box-sizing:border-box" style-hover="background:var(--ctrlHover)">Clear list</button></sc-if>
+    <sc-if value="{{ act.primaryOn }}" hint-placeholder-val="{{ false }}"><button aria-keyshortcuts="Enter" onClick="{{ convert }}" style="display:flex;align-items:center;gap:8px;height:32px;min-width:140px;padding:0 18px;border-radius:4px;background:var(--accent);border:1px solid var(--accent);color:var(--onAccent);font:inherit;font-weight:600;cursor:pointer;justify-content:center" style-hover="background:var(--accentHover)"><span style="font-family:'Material Symbols Outlined';font-size:18px;line-height:1;font-weight:500">arrow_forward</span><span>{{ act.label }}</span></button></sc-if>
+    <sc-if value="{{ act.primaryOff }}" hint-placeholder-val="{{ true }}"><button disabled="{{ true }}" aria-disabled="true" style="display:flex;align-items:center;gap:8px;height:32px;min-width:140px;padding:0 18px;border-radius:4px;background:var(--disabledFill);border:1px solid transparent;color:var(--disabledText);font:inherit;font-weight:600;justify-content:center"><span>{{ act.label }}</span></button></sc-if>
+  </div>
+  </sc-if>
+
+  <sc-if value="{{ isSettings }}" hint-placeholder-val="{{ false }}">
+    <div style="flex:1;min-height:0;overflow:auto;padding:4px 24px 24px">
+      <div style="max-width:1200px;margin:0 auto;display:flex;flex-direction:column;gap:20px">
+        <div style="display:flex;align-items:center;gap:12px">
+          <button aria-label="Back" onClick="{{ closeSettings }}" style="width:36px;height:32px;display:flex;align-items:center;justify-content:center;border-radius:4px;background:transparent;border:none;color:var(--text);cursor:pointer" style-hover="background:var(--subtleHover)"><span style="font-family:'Material Symbols Outlined';font-size:20px;line-height:1;font-weight:300">arrow_back</span></button>
+          <h1 style="margin:0;font-size:28px;line-height:36px;font-weight:600">Settings</h1>
+        </div>
+        <div style="display:grid;grid-template-columns:repeat(auto-fit,minmax(min(440px,100%),1fr));gap:24px;align-items:start">
+          <div style="display:flex;flex-direction:column;gap:4px">
+            <div style="font-weight:600;padding:0 0 6px">Converting from File Explorer</div>
+            <div style="display:flex;align-items:center;gap:16px;padding:14px 16px;background:var(--card);border:1px solid var(--stroke);border-radius:6px">
+              <span style="font-family:'Material Symbols Outlined';font-size:22px;line-height:1;font-weight:300">left_click</span>
+              <div style="flex:1;min-width:0"><div>Show in the right-click menu</div><div style="font-size:12px;line-height:16px;color:var(--text2);text-wrap:pretty">Adds To MP4, To WebP and more. On Windows 11, choose Show more options first.</div></div>
+              <span style="font-size:13px;color:var(--text2)">{{ rcLabel }}</span>
+              <button role="switch" aria-checked="{{ rcOn }}" aria-label="Show in the right-click menu" onClick="{{ toggleRc }}" style="{{ rcSwitch }}"><span style="{{ rcKnob }}"></span></button>
+            </div>
+            <div style="display:flex;align-items:center;gap:16px;padding:14px 16px;background:var(--card);border:1px solid var(--stroke);border-radius:6px">
+              <span style="font-family:'Material Symbols Outlined';font-size:22px;line-height:1;font-weight:300">picture_in_picture</span>
+              <div style="flex:1;min-width:0"><div>When converting from the menu</div><div style="font-size:12px;line-height:16px;color:var(--text2)">The small window shows progress, then a Show in folder button.</div></div>
+              <div style="display:flex;align-items:center;gap:24px;height:32px;padding:0 10px 0 12px;border-radius:4px;background:var(--input);border:1px solid var(--ctrlStroke)"><span>Open the small window</span><span style="font-family:'Material Symbols Outlined';font-size:18px;line-height:1;font-weight:300;color:var(--text2)">expand_more</span></div>
+            </div>
+            <div style="font-weight:600;padding:18px 0 6px">Files</div>
+            <div style="display:flex;align-items:center;gap:16px;padding:14px 16px;background:var(--card);border:1px solid var(--stroke);border-radius:6px">
+              <span style="font-family:'Material Symbols Outlined';font-size:22px;line-height:1;font-weight:300">folder</span>
+              <div style="flex:1;min-width:0"><div>Save converted files</div><div style="font-size:12px;line-height:16px;color:var(--text2)">Used when nothing else is chosen in the window.</div></div>
+              <div style="display:flex;align-items:center;gap:24px;height:32px;padding:0 10px 0 12px;border-radius:4px;background:var(--input);border:1px solid var(--ctrlStroke)"><span>Next to the originals</span><span style="font-family:'Material Symbols Outlined';font-size:18px;line-height:1;font-weight:300;color:var(--text2)">expand_more</span></div>
+            </div>
+            <div style="display:flex;align-items:center;gap:16px;padding:14px 16px;background:var(--card);border:1px solid var(--stroke);border-radius:6px">
+              <span style="font-family:'Material Symbols Outlined';font-size:22px;line-height:1;font-weight:300">shield</span>
+              <div style="flex:1;min-width:0"><div>If the name is already taken</div><div style="font-size:12px;line-height:16px;color:var(--text2);text-wrap:pretty">A number is added, for example photo (2).webp. Existing files are never replaced.</div></div>
+            </div>
+            <div style="font-weight:600;padding:18px 0 6px">Appearance</div>
+            <div style="display:flex;align-items:center;gap:16px;padding:14px 16px;background:var(--card);border:1px solid var(--stroke);border-radius:6px;flex-wrap:wrap">
+              <span style="font-family:'Material Symbols Outlined';font-size:22px;line-height:1;font-weight:300">contrast</span>
+              <div style="flex:1;min-width:120px">App theme</div>
+              <div role="radiogroup" aria-label="App theme" style="display:flex;gap:16px">
+                <sc-for list="{{ themeOpts }}" as="o" hint-placeholder-count="3">
+                  <button role="radio" aria-checked="{{ o.on }}" onClick="{{ o.onClick }}" style="display:flex;align-items:center;gap:8px;background:transparent;border:none;color:var(--text);font:inherit;cursor:pointer;padding:0"><span style="{{ o.dot }}"></span><span>{{ o.label }}</span></button>
+                </sc-for>
+              </div>
+            </div>
+            <div style="display:flex;align-items:center;gap:16px;padding:14px 16px;background:var(--card);border:1px solid var(--stroke);border-radius:6px">
+              <span style="font-family:'Material Symbols Outlined';font-size:22px;line-height:1;font-weight:300">photo_size_select_large</span>
+              <div style="flex:1;min-width:0">Previews</div>
+              <div style="display:flex;align-items:center;gap:24px;height:32px;padding:0 10px 0 12px;border-radius:4px;background:var(--input);border:1px solid var(--ctrlStroke)"><span>Medium</span><span style="font-family:'Material Symbols Outlined';font-size:18px;line-height:1;font-weight:300;color:var(--text2)">expand_more</span></div>
+            </div>
+            <div style="display:flex;align-items:center;gap:16px;padding:14px 16px;background:var(--card);border:1px solid var(--stroke);border-radius:6px">
+              <span style="font-family:'Material Symbols Outlined';font-size:22px;line-height:1;font-weight:300">animation</span>
+              <div style="flex:1;min-width:0"><div>Animations</div><div style="font-size:12px;line-height:16px;color:var(--text2)">Follows the Windows animation effects setting.</div></div>
+              <button style="display:flex;align-items:center;gap:6px;height:28px;padding:0 8px;border-radius:4px;background:transparent;border:none;color:var(--accentText);font:inherit;font-size:13px;cursor:pointer"><span>Open Windows settings</span><span style="font-family:'Material Symbols Outlined';font-size:16px;line-height:1">open_in_new</span></button>
+            </div>
+            <div style="font-weight:600;padding:18px 0 6px">Performance</div>
+            <div style="display:flex;align-items:center;gap:16px;padding:14px 16px;background:var(--card);border:1px solid var(--stroke);border-radius:6px">
+              <span style="font-family:'Material Symbols Outlined';font-size:22px;line-height:1;font-weight:300">speed</span>
+              <div style="flex:1;min-width:0"><div>Speed</div><div style="font-size:12px;line-height:16px;color:var(--text2)">Balanced leaves room for other apps.</div></div>
+              <div style="display:flex;align-items:center;gap:24px;height:32px;padding:0 10px 0 12px;border-radius:4px;background:var(--input);border:1px solid var(--ctrlStroke)"><span>Balanced</span><span style="font-family:'Material Symbols Outlined';font-size:18px;line-height:1;font-weight:300;color:var(--text2)">expand_more</span></div>
+            </div>
+            <div style="display:flex;align-items:center;gap:16px;padding:14px 16px;background:var(--card);border:1px solid var(--stroke);border-radius:6px">
+              <span style="font-family:'Material Symbols Outlined';font-size:22px;line-height:1;font-weight:300">memory</span>
+              <div style="flex:1;min-width:0"><div>Encode video on the graphics card</div><div style="font-size:12px;line-height:16px;color:var(--text2)">Uses less processor, but files are larger.</div></div>
+              <span style="font-size:13px;color:var(--text2)">{{ gpuLabel }}</span>
+              <button role="switch" aria-checked="{{ gpuOn }}" aria-label="Encode video on the graphics card" onClick="{{ toggleGpu }}" style="{{ gpuSwitch }}"><span style="{{ gpuKnob }}"></span></button>
+            </div>
+            <div style="display:flex;align-items:center;gap:16px;padding:14px 16px;background:var(--card);border:1px solid var(--stroke);border-radius:6px">
+              <span style="font-family:'Material Symbols Outlined';font-size:22px;line-height:1;font-weight:300">call_to_action</span>
+              <div style="flex:1;min-width:0">Show progress on the taskbar</div>
+              <span style="font-size:13px;color:var(--text2)">{{ tbLabel }}</span>
+              <button role="switch" aria-checked="{{ tbOn }}" aria-label="Show progress on the taskbar" onClick="{{ toggleTb }}" style="{{ tbSwitch }}"><span style="{{ tbKnob }}"></span></button>
+            </div>
+          </div>
+          <div style="display:flex;flex-direction:column;gap:4px">
+            <div style="font-weight:600;padding:0 0 6px">About</div>
+            <div style="display:flex;align-items:center;gap:16px;padding:16px;background:var(--card);border:1px solid var(--stroke);border-radius:6px">
+              <img src="assets/app-icon-64.png" alt="" width="48" height="48" style="display:block;flex:none">
+              <div style="flex:1;min-width:0"><div style="font-size:16px;font-weight:600">Mercury Converter</div><div style="font-size:12px;line-height:16px;color:var(--text2)">Version 1.0.0 · Free and open source (MIT) · Collects no usage data</div></div>
+            </div>
+            <div style="display:flex;gap:4px;flex-wrap:wrap;padding:8px 0">
+              <button style="display:flex;align-items:center;gap:6px;height:32px;padding:0 10px;border-radius:4px;background:transparent;border:none;color:var(--accentText);font:inherit;cursor:pointer" style-hover="background:var(--subtleHover)"><span style="font-family:'Material Symbols Outlined';font-size:18px;line-height:1;font-weight:300">code</span><span>Source code</span></button>
+              <button style="display:flex;align-items:center;gap:6px;height:32px;padding:0 10px;border-radius:4px;background:transparent;border:none;color:var(--accentText);font:inherit;cursor:pointer" style-hover="background:var(--subtleHover)"><span style="font-family:'Material Symbols Outlined';font-size:18px;line-height:1;font-weight:300">bug_report</span><span>Report a problem</span></button>
+              <button style="display:flex;align-items:center;gap:6px;height:32px;padding:0 10px;border-radius:4px;background:transparent;border:none;color:var(--accentText);font:inherit;cursor:pointer" style-hover="background:var(--subtleHover)"><span style="font-family:'Material Symbols Outlined';font-size:18px;line-height:1;font-weight:300">description</span><span>License</span></button>
+            </div>
+            <div style="background:var(--card);border:1px solid var(--stroke);border-radius:6px;overflow:hidden">
+              <div style="display:flex;align-items:center;gap:16px;padding:14px 16px;border-bottom:1px solid var(--stroke)">
+                <span style="font-family:'Material Symbols Outlined';font-size:22px;line-height:1;font-weight:300">gavel</span>
+                <div style="flex:1;min-width:0"><div>Third-party licenses</div><div style="font-size:12px;line-height:16px;color:var(--text2);text-wrap:pretty">Mercury Converter runs these programs to do the converting. Each keeps its own license.</div></div>
+                <span style="font-family:'Material Symbols Outlined';font-size:18px;line-height:1;font-weight:300;color:var(--text2)">expand_less</span>
+              </div>
+              <sc-for list="{{ licenses }}" as="l" hint-placeholder-count="5">
+                <div style="display:flex;align-items:center;gap:12px;padding:10px 16px 10px 54px;border-bottom:1px solid var(--stroke)">
+                  <div style="flex:1;min-width:0"><div style="font-weight:600">{{ l.name }}</div><div style="font-size:12px;line-height:16px;color:var(--text2)">{{ l.use }} · {{ l.lic }}</div></div>
+                  <button style="height:28px;padding:0 8px;border-radius:4px;background:transparent;border:none;color:var(--accentText);font:inherit;font-size:13px;cursor:pointer;white-space:nowrap">View license</button>
+                </div>
+              </sc-for>
+              <div style="padding:12px 16px 14px 54px;font-size:12px;line-height:16px;color:var(--text2);text-wrap:pretty">FFmpeg is GPL v3. The source for the exact build is linked from each license page.</div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </sc-if>
+
+  <sc-if value="{{ ov.picker }}" hint-placeholder-val="{{ false }}">
+    <div onClick="{{ closeOverlay }}" style="position:absolute;inset:0"></div>
+    <div role="listbox" aria-label="{{ picker.title }}" style="{{ picker.style }}">
+      <div style="padding:14px 16px 10px;display:flex;flex-direction:column;gap:2px"><div style="font-weight:600">{{ picker.title }}</div><div style="font-size:12px;line-height:16px;color:var(--text2)">{{ picker.sub }}</div></div>
+      <div style="padding:0 6px 6px;display:flex;flex-direction:column;gap:2px">
+        <div style="padding:6px 10px 4px;font-size:12px;font-weight:600;color:var(--text2)">Recommended</div>
+        <sc-for list="{{ picker.rec }}" as="f" hint-placeholder-count="2">
+          <div role="option" aria-selected="{{ f.on }}" onClick="{{ f.onClick }}" style="position:relative;display:flex;align-items:flex-start;gap:10px;padding:8px 10px;border-radius:4px;background:{{ f.bg }};cursor:pointer" style-hover="background:var(--subtleHover)">
+            <sc-if value="{{ f.on }}"><span style="position:absolute;left:0;top:12px;bottom:12px;width:3px;border-radius:2px;background:var(--accent)"></span></sc-if>
+            <span style="font-family:'Material Symbols Outlined';font-size:20px;line-height:20px;font-weight:300;color:var(--accentText)">{{ f.icon }}</span>
+            <div style="flex:1;min-width:0"><div style="display:flex;align-items:center;gap:8px;flex-wrap:wrap"><span style="font-weight:600">{{ f.name }}</span><span style="padding:0 6px;border-radius:4px;background:var(--accentSoft);color:var(--accentText);font-size:11px;line-height:18px;font-weight:600">{{ f.tag }}</span></div><div style="font-size:12px;line-height:16px;color:var(--text2)">{{ f.desc }}</div></div>
+          </div>
+        </sc-for>
+        <div style="height:1px;background:var(--stroke);margin:6px 4px"></div>
+        <div style="padding:2px 10px 4px;font-size:12px;font-weight:600;color:var(--text2)">Other formats</div>
+        <sc-for list="{{ picker.other }}" as="f" hint-placeholder-count="4">
+          <div role="option" aria-selected="{{ f.on }}" onClick="{{ f.onClick }}" style="position:relative;display:flex;align-items:flex-start;gap:10px;padding:7px 10px;border-radius:4px;background:{{ f.bg }};cursor:pointer" style-hover="background:var(--subtleHover)">
+            <sc-if value="{{ f.on }}"><span style="position:absolute;left:0;top:10px;bottom:10px;width:3px;border-radius:2px;background:var(--accent)"></span></sc-if>
+            <span style="font-family:'Material Symbols Outlined';font-size:20px;line-height:20px;font-weight:300;color:var(--text2)">{{ f.icon }}</span>
+            <div style="flex:1;min-width:0"><div style="font-weight:600">{{ f.name }}</div><div style="font-size:12px;line-height:16px;color:var(--text2)">{{ f.desc }}</div></div>
+          </div>
+        </sc-for>
+      </div>
+    </div>
+  </sc-if>
+
+  <sc-if value="{{ ov.menu }}" hint-placeholder-val="{{ false }}">
+    <div onClick="{{ closeOverlay }}" style="position:absolute;inset:0"></div>
+    <div role="menu" aria-label="{{ menu.title }}" style="{{ menu.style }}">
+      <sc-for list="{{ menu.items }}" as="m" hint-placeholder-count="6">
+        <sc-if value="{{ m.divider }}"><div style="height:1px;background:var(--stroke);margin:4px 0"></div></sc-if>
+        <sc-if value="{{ m.label }}"><div role="menuitem" onClick="{{ m.onClick }}" style="display:flex;align-items:center;gap:12px;height:32px;padding:0 12px;border-radius:4px;cursor:pointer;color:{{ m.color }}" style-hover="background:var(--subtleHover)"><span style="font-family:'Material Symbols Outlined';font-size:18px;line-height:1;font-weight:300">{{ m.icon }}</span><span style="flex:1">{{ m.label }}</span><span style="font-size:12px;color:var(--text3)">{{ m.key }}</span></div></sc-if>
+      </sc-for>
+    </div>
+  </sc-if>
+
+  <sc-if value="{{ ov.details }}" hint-placeholder-val="{{ false }}">
+    <div style="position:absolute;inset:0;background:var(--smoke);display:flex;align-items:center;justify-content:center;padding:24px">
+      <div role="dialog" aria-modal="true" aria-labelledby="mc-det-title" style="width:100%;max-width:520px;background:var(--flyout);border:1px solid var(--strokeStrong);border-radius:8px;box-shadow:var(--shadow);overflow:hidden">
+        <div style="padding:24px;display:flex;flex-direction:column;gap:14px">
+          <div style="display:flex;gap:12px;align-items:flex-start"><span style="font-family:'Material Symbols Outlined';font-size:28px;line-height:28px;font-variation-settings:'FILL' 1;color:var(--err)">error</span><h2 id="mc-det-title" style="margin:0;font-size:20px;line-height:28px;font-weight:600;text-wrap:balance">{{ det.title }}</h2></div>
+          <p style="margin:0;color:var(--text);text-wrap:pretty">{{ det.body }}</p>
+          <p style="margin:0;color:var(--text2);text-wrap:pretty">{{ det.hint }}</p>
+          <div style="border:1px solid var(--stroke);border-radius:6px;overflow:hidden">
+            <div style="display:flex;align-items:center;justify-content:space-between;padding:10px 12px;background:var(--card)"><span style="font-size:13px;font-weight:600">Technical details</span><span style="font-family:'Material Symbols Outlined';font-size:18px;line-height:1;font-weight:300;color:var(--text2)">expand_less</span></div>
+            <pre style="margin:0;padding:10px 12px;font-family:Consolas,'Cascadia Mono',monospace;font-size:12px;line-height:18px;color:var(--text2);white-space:pre-wrap;background:var(--layer)">{{ det.tech }}</pre>
+          </div>
+        </div>
+        <div style="display:flex;gap:8px;padding:20px 24px;background:var(--layer);border-top:1px solid var(--stroke)">
+          <button onClick="{{ det.onRetry }}" style="flex:1;height:32px;border-radius:4px;background:var(--accent);border:1px solid var(--accent);color:var(--onAccent);font:inherit;font-weight:600;cursor:pointer" style-hover="background:var(--accentHover)">Retry</button>
+          <button style="flex:1;height:32px;border-radius:4px;background:var(--ctrl);border:1px solid var(--ctrlStroke);color:var(--text);font:inherit;cursor:pointer;box-sizing:border-box">Copy details</button>
+          <button onClick="{{ closeOverlay }}" style="flex:1;height:32px;border-radius:4px;background:var(--ctrl);border:1px solid var(--ctrlStroke);color:var(--text);font:inherit;cursor:pointer;box-sizing:border-box">Close</button>
+        </div>
+      </div>
+    </div>
+  </sc-if>
+
+  <sc-if value="{{ ov.presets }}" hint-placeholder-val="{{ false }}">
+    <div style="position:absolute;inset:0;background:var(--smoke);display:flex;align-items:center;justify-content:center;padding:24px">
+      <div role="dialog" aria-modal="true" aria-labelledby="mc-pre-title" style="width:100%;max-width:600px;max-height:100%;display:flex;flex-direction:column;background:var(--flyout);border:1px solid var(--strokeStrong);border-radius:8px;box-shadow:var(--shadow);overflow:hidden">
+        <div style="padding:24px 24px 12px;display:flex;flex-direction:column;gap:12px">
+          <h2 id="mc-pre-title" style="margin:0;font-size:20px;line-height:28px;font-weight:600">Presets</h2>
+          <p style="margin:0;color:var(--text2);text-wrap:pretty">A preset remembers a format, quality and size so you can repeat them in one click.</p>
+          <button style="align-self:flex-start;display:flex;align-items:center;gap:8px;height:32px;padding:0 12px;border-radius:4px;background:var(--ctrl);border:1px solid var(--ctrlStroke);color:var(--text);font:inherit;cursor:pointer;box-sizing:border-box"><span style="font-family:'Material Symbols Outlined';font-size:18px;line-height:1;font-weight:300">add</span><span>Save current settings as a preset</span></button>
+        </div>
+        <div role="list" style="flex:1;min-height:0;overflow:auto;padding:4px 24px 12px;display:flex;flex-direction:column;gap:4px">
+          <div style="font-size:12px;font-weight:600;color:var(--text2);padding:6px 0 2px">Yours</div>
+          <sc-for list="{{ userPresets }}" as="p" hint-placeholder-count="2">
+            <div role="listitem" style="display:flex;align-items:center;gap:12px;padding:10px 8px 10px 12px;border-radius:6px;background:var(--card);border:1px solid var(--stroke)">
+              <div style="flex:1;min-width:0"><div style="font-weight:600">{{ p.name }}</div><div style="font-size:12px;line-height:16px;color:var(--text2)">{{ p.sum }}</div></div>
+              <button aria-label="{{ p.renameAria }}" style="width:32px;height:32px;display:flex;align-items:center;justify-content:center;border-radius:4px;background:transparent;border:none;color:var(--text2);cursor:pointer" style-hover="background:var(--subtleHover)"><span style="font-family:'Material Symbols Outlined';font-size:18px;line-height:1;font-weight:300">edit</span></button>
+              <button aria-label="{{ p.deleteAria }}" style="width:32px;height:32px;display:flex;align-items:center;justify-content:center;border-radius:4px;background:transparent;border:none;color:var(--text2);cursor:pointer" style-hover="background:var(--subtleHover)"><span style="font-family:'Material Symbols Outlined';font-size:18px;line-height:1;font-weight:300">delete</span></button>
+            </div>
+          </sc-for>
+          <div style="font-size:12px;font-weight:600;color:var(--text2);padding:12px 0 2px">Built in</div>
+          <sc-for list="{{ builtinPresets }}" as="p" hint-placeholder-count="4">
+            <div role="listitem" style="display:flex;align-items:center;gap:12px;padding:8px 12px;border-radius:6px">
+              <span style="font-family:'Material Symbols Outlined';font-size:18px;line-height:1;font-weight:300;color:var(--text2)">{{ p.icon }}</span>
+              <div style="flex:1;min-width:0"><div>{{ p.name }}</div><div style="font-size:12px;line-height:16px;color:var(--text2)">{{ p.sum }}</div></div>
+            </div>
+          </sc-for>
+        </div>
+        <div style="display:flex;gap:8px;padding:20px 24px;background:var(--layer);border-top:1px solid var(--stroke)">
+          <button style="flex:1;height:32px;border-radius:4px;background:var(--ctrl);border:1px solid var(--ctrlStroke);color:var(--text);font:inherit;cursor:pointer;box-sizing:border-box">Import…</button>
+          <button style="flex:1;height:32px;border-radius:4px;background:var(--ctrl);border:1px solid var(--ctrlStroke);color:var(--text);font:inherit;cursor:pointer;box-sizing:border-box">Export…</button>
+          <button onClick="{{ closeOverlay }}" style="flex:1;height:32px;border-radius:4px;background:var(--accent);border:1px solid var(--accent);color:var(--onAccent);font:inherit;font-weight:600;cursor:pointer" style-hover="background:var(--accentHover)">Done</button>
+        </div>
+      </div>
+    </div>
+  </sc-if>
+
+  <sc-if value="{{ ov.tip }}" hint-placeholder-val="{{ false }}">
+    <div role="dialog" aria-labelledby="mc-tip-title" style="position:absolute;top:92px;right:12px;width:340px;background:var(--flyout);border:1px solid var(--strokeStrong);border-radius:8px;box-shadow:var(--shadow)">
+      <div style="position:absolute;top:-7px;right:24px;width:12px;height:12px;background:var(--flyout);border-left:1px solid var(--strokeStrong);border-top:1px solid var(--strokeStrong);transform:rotate(45deg)"></div>
+      <div style="padding:16px;display:flex;flex-direction:column;gap:10px;position:relative">
+        <div style="display:flex;justify-content:space-between;align-items:flex-start;gap:8px"><div id="mc-tip-title" style="font-weight:600;font-size:15px">Convert right from File Explorer</div><button aria-label="Close tip" onClick="{{ closeOverlay }}" style="width:28px;height:28px;margin:-4px -6px 0 0;display:flex;align-items:center;justify-content:center;border-radius:4px;background:transparent;border:none;color:var(--text2);cursor:pointer"><span style="font-family:'Material Symbols Outlined';font-size:18px;line-height:1">close</span></button></div>
+        <div style="color:var(--text2);font-size:13px;line-height:19px;text-wrap:pretty">Turn on the right-click menu to convert a file without opening this window. On Windows 11, right-click, then choose <b style="color:var(--text);font-weight:600">Show more options</b>.</div>
+        <div style="display:flex;gap:8px;padding-top:4px">
+          <button onClick="{{ tipOn }}" style="flex:1;height:32px;border-radius:4px;background:var(--accent);border:1px solid var(--accent);color:var(--onAccent);font:inherit;font-weight:600;cursor:pointer" style-hover="background:var(--accentHover)">Turn on</button>
+          <button onClick="{{ closeOverlay }}" style="flex:1;height:32px;border-radius:4px;background:var(--ctrl);border:1px solid var(--ctrlStroke);color:var(--text);font:inherit;cursor:pointer;box-sizing:border-box">Not now</button>
+        </div>
+        <div style="font-size:12px;color:var(--text3)">You can change this later in Settings.</div>
+      </div>
+    </div>
+  </sc-if>
+</div>
+</div>
+</x-dc>
+<script type="text/x-dc" data-dc-script data-props="{&quot;$preview&quot;:{&quot;width&quot;:1360,&quot;height&quot;:860},&quot;theme&quot;:{&quot;editor&quot;:&quot;enum&quot;,&quot;options&quot;:[&quot;dark&quot;,&quot;light&quot;],&quot;default&quot;:&quot;dark&quot;,&quot;tsType&quot;:&quot;string&quot;},&quot;scenario&quot;:{&quot;editor&quot;:&quot;enum&quot;,&quot;options&quot;:[&quot;empty&quot;,&quot;added&quot;,&quot;selected&quot;,&quot;mixed&quot;,&quot;converting&quot;,&quot;finished&quot;],&quot;default&quot;:&quot;empty&quot;,&quot;tsType&quot;:&quot;string&quot;},&quot;overlay&quot;:{&quot;editor&quot;:&quot;enum&quot;,&quot;options&quot;:[&quot;none&quot;,&quot;picker&quot;,&quot;menu&quot;,&quot;details&quot;,&quot;presets&quot;,&quot;tip&quot;,&quot;settings&quot;],&quot;default&quot;:&quot;none&quot;,&quot;tsType&quot;:&quot;string&quot;},&quot;width&quot;:{&quot;editor&quot;:&quot;int&quot;,&quot;default&quot;:1360,&quot;min&quot;:720,&quot;max&quot;:1920,&quot;tsType&quot;:&quot;number&quot;},&quot;height&quot;:{&quot;editor&quot;:&quot;int&quot;,&quot;default&quot;:860,&quot;min&quot;:520,&quot;max&quot;:1200,&quot;tsType&quot;:&quot;number&quot;},&quot;paneOpen&quot;:{&quot;editor&quot;:&quot;boolean&quot;,&quot;default&quot;:false,&quot;tsType&quot;:&quot;boolean&quot;}}">
+const KIND = {
+  photo: { label: 'Photos', one: 'photo', many: 'photos', icon: 'image' },
+  video: { label: 'Videos', one: 'video', many: 'videos', icon: 'movie' },
+  gif: { label: 'GIFs', one: 'GIF', many: 'GIFs', icon: 'gif_box' },
+  audio: { label: 'Audio', one: 'audio file', many: 'audio files', icon: 'music_note' },
+};
+const ORDER = ['photo', 'video', 'gif', 'audio'];
+const FMT = {
+  photo: [
+    { id: 'webp', name: 'WebP', desc: 'Small and sharp. Works on every website.', tag: 'Smallest for the web', lossy: 1, f: 0.16 },
+    { id: 'jpg', name: 'JPEG', desc: 'Opens in every app and on every device.', tag: 'Works everywhere', lossy: 1, f: 0.32 },
+    { id: 'jxl', name: 'JPEG XL', desc: 'Smallest at the same quality. Newer apps only.', lossy: 1, f: 0.12 },
+    { id: 'avif', name: 'AVIF', desc: 'Very small. Newer browsers and apps only.', lossy: 1, f: 0.13 },
+    { id: 'png', name: 'PNG', desc: 'No quality loss. Keeps see-through backgrounds.', lossy: 0, f: 1.05 },
+    { id: 'tif', name: 'TIFF', desc: 'For printing and archiving.', lossy: 0, f: 1.6 },
+    { id: 'pdf', name: 'PDF', desc: 'One page per photo.', lossy: 0, f: 0.9 },
+  ],
+  video: [
+    { id: 'mp4', name: 'MP4', desc: 'Plays on every phone, computer and TV.', tag: 'Plays everywhere', lossy: 1, f: 0.28 },
+    { id: 'webm', name: 'WebM', desc: 'Small files for websites.', tag: 'Smallest for the web', lossy: 1, f: 0.22 },
+    { id: 'mkv', name: 'MKV', desc: 'Keeps every audio track and subtitle.', lossy: 1, f: 0.3 },
+    { id: 'ogv', name: 'OGV', desc: 'Open format for some web players.', lossy: 1, f: 0.34 },
+    { id: 'avi', name: 'AVI', desc: 'For older players and TVs.', lossy: 1, f: 0.6 },
+  ],
+  gif: [
+    { id: 'gif', name: 'GIF', desc: 'Animated image that plays everywhere.', tag: 'Stays a GIF', lossy: 1, f: 0.75 },
+    { id: 'mp4', name: 'MP4 video', desc: 'Much smaller, but no longer a GIF.', lossy: 1, f: 0.12 },
+    { id: 'webm', name: 'WebM video', desc: 'Smallest, for websites.', lossy: 1, f: 0.1 },
+  ],
+  audio: [
+    { id: 'mp3', name: 'MP3', desc: 'Plays on every device.', tag: 'Plays everywhere', lossy: 1, f: 0.18 },
+    { id: 'aac', name: 'AAC', desc: 'Small. Good for iPhone and Apple apps.', lossy: 1, f: 0.15 },
+    { id: 'ogg', name: 'OGG', desc: 'Open format.', lossy: 1, f: 0.16 },
+    { id: 'flac', name: 'FLAC', desc: 'No quality loss, about half the size of WAV.', lossy: 0, f: 0.55 },
+    { id: 'wav', name: 'WAV', desc: 'Uncompressed. Very large files.', lossy: 0, f: 1.0 },
+  ],
+};
+const PRESETS = [
+  { label: 'Web photo', full: 'Web photo (WebP, 1920 px)', kind: 'photo', fmt: 'webp', q: 75, size: 'Fit within 1920 px' },
+  { label: 'Phone share', full: 'Phone share (JPEG, 1080 px)', kind: 'photo', fmt: 'jpg', q: 80, size: 'Fit within 1080 px tall' },
+  { label: 'Smallest photo', full: 'Smallest photo (JPEG XL)', kind: 'photo', fmt: 'jxl', q: 60 },
+  { label: 'Archive', full: 'Archive (lossless PNG)', kind: 'photo', fmt: 'png', q: 100 },
+  { label: 'Video for sharing', full: 'Video for sharing (MP4, 1080p)', kind: 'video', fmt: 'mp4', q: 75, size: '1080p (Full HD)' },
+  { label: 'Video for web', full: 'Video for web (WebM, 720p)', kind: 'video', fmt: 'webm', q: 70, size: '720p (HD)' },
+  { label: 'Short GIF', full: 'Short GIF (480 px)', kind: 'gif', fmt: 'gif', q: 70, size: 'Fit within 480 px' },
+  { label: 'Podcast audio', full: 'Podcast audio (MP3)', kind: 'audio', fmt: 'mp3', q: 70 },
+];
+const EXT = { jpg: 'photo', jpeg: 'photo', png: 'photo', heic: 'photo', tif: 'photo', webp: 'photo', mp4: 'video', mov: 'video', mkv: 'video', gif: 'gif', m4a: 'audio', wav: 'audio', mp3: 'audio' };
+const kindOf = n => EXT[n.split('.').pop().toLowerCase()] || 'photo';
+const MB = 1048576;
+const size = b => b < MB ? Math.max(1, Math.round(b / 1024)) + ' KB' : b < 1024 * MB ? (b / MB).toFixed(b < 10 * MB ? 1 : 0) + ' MB' : (b / 1024 / MB).toFixed(1) + ' GB';
+const hash = s => { let h = 0; for (const c of s) h = (h * 31 + c.charCodeAt(0)) % 360; return h; };
+const PHOTOS = [['Beach sunset.jpg', 4.2], ['IMG_2041.jpg', 3.8], ['IMG_2042.jpg', 3.9], ['Family dinner.heic', 2.6], ['Mountain trail.jpg', 5.1], ['Garden party.jpg', 4.4], ['Receipt scan.png', 1.2], ['Square logo.png', 0.52], ['Holiday photo.jpg', 3.3], ['Mandelbrot wallpaper.png', 6.6], ['City lights.jpg', 4.9], ['Old house.tif', 18.4]];
+const MIXED = [['Holiday photo.jpg', 3.3], ['Mandelbrot wallpaper.png', 6.6], ['Square logo.png', 0.52], ['Family dinner.heic', 2.6], ['Beach sunset.jpg', 4.2], ['IMG_2041.jpg', 3.8], ['Birthday video.mp4', 48, '1:12'], ['Drone footage.mov', 212, '3:05'], ['Wedding highlights.mp4', 164, '2:40'], ['Funny animation.gif', 2.1], ['Voice memo.m4a', 3.2, '4:18'], ['Podcast episode 12.wav', 58, '31:02']];
+
+class Component extends DCLogic {
+  rootRef = React.createRef();
+  S() {
+    if (this._s) return this._s;
+    const sc = this.props.scenario ?? 'empty', ov = this.props.overlay ?? null;
+    const mk = ([n, mb, dur], st = 'ready') => ({ id: n, name: n, kind: kindOf(n), size: mb * MB, dur, status: st, pct: 0 });
+    const s = { files: [], sel: new Set(), targets: { photo: 'webp', video: 'mp4', gif: 'gif', audio: 'mp3' }, quality: 75, never: true, more: false, overlay: null, pickerKind: 'photo', menuFor: null, menuPos: null, page: 'main', theme: null, filter: 'all', banner: false, batch: null, chip: null, sizeVal: 'Original size', rc: false, gpu: false, tb: true, paneOpen: !!this.props.paneOpen };
+    if (sc === 'added' || sc === 'presets') s.files = PHOTOS.map(p => mk(p));
+    if (sc === 'mixed' || sc === 'selected') s.files = MIXED.map(p => mk(p));
+    if (sc === 'selected') { s.sel = new Set(['Birthday video.mp4', 'Wedding highlights.mp4']); s.more = true; s.sizeVal = '1080p (Full HD)'; }
+    if (sc === 'finished') {
+      s.files = [...MIXED.slice(0, 7), ['Corrupted clip.mov', 96, '2:02'], ...MIXED.slice(7)].map(p => mk(p, 'done'));
+      s.files.forEach(f => { f.out = this.est(f, s); });
+      const c = s.files.find(f => f.name === 'Corrupted clip.mov'); c.status = 'failed'; c.msg = 'This video seems damaged, so it could not be read.';
+      const p = s.files.find(f => f.name === 'Podcast episode 12.wav'); p.status = 'cancelled';
+      s.banner = true;
+    }
+    if (sc === 'converting') {
+      const fs = [];
+      for (let i = 129; i <= 148; i++) {
+        const f = mk(['IMG_0' + i + '.jpg', 3.2 + ((i * 7) % 13) / 10]);
+        if (i <= 136) { f.status = 'done'; }
+        if (i >= 137 && i <= 140) { f.status = 'active'; f.pct = [82, 57, 31, 9][i - 137]; }
+        if (i > 140) f.status = 'waiting';
+        fs.push(f);
+      }
+      fs.forEach(f => { if (f.status === 'done') f.out = this.est(f, s); });
+      fs[4].status = 'failed'; fs[4].msg = 'This photo could not be read. It may be damaged.';
+      s.files = fs; s.batch = { total: 200, done: 134, failed: 2, active: 4, waiting: 60, eta: 'about 2 min left', above: 128 };
+    }
+    if (ov === 'picker') { s.overlay = 'picker'; s.pickerKind = 'photo'; }
+    if (ov === 'menu') { s.overlay = 'menu'; s.menuFor = 'Mandelbrot wallpaper.png'; }
+    if (ov === 'details') { s.overlay = 'details'; s.menuFor = 'Corrupted clip.mov'; }
+    if (ov === 'presets') s.overlay = 'presets';
+    if (ov === 'tip') s.overlay = 'tip';
+    if (ov === 'settings') s.page = 'settings';
+    return (this._s = s);
+  }
+  upd(fn) { fn(this.S()); this.forceUpdate(); }
+  componentDidMount() { if (this.S().menuFor && this.S().overlay === 'menu') setTimeout(() => this.placeMenu(this.S().menuFor), 60); }
+  componentWillUnmount() { clearInterval(this._t); }
+  placeMenu(id, el) {
+    const root = this.rootRef.current; if (!root) return;
+    el = el || root.querySelector(`[data-mid="${CSS.escape(id)}"] button`); if (!el) return;
+    const rr = root.getBoundingClientRect(), k = rr.width / root.offsetWidth || 1, r = el.getBoundingClientRect();
+    this.upd(s => { s.menuPos = { x: (r.left - rr.left) / k, y: (r.bottom - rr.top) / k + 4 }; });
+  }
+  fmt(kind, s) { s = s || this.S(); return FMT[kind].find(f => f.id === s.targets[kind]) || FMT[kind][0]; }
+  est(f, s) { const fm = this.fmt(f.kind, s); const q = s.quality; return f.size * fm.f * (fm.lossy ? 0.35 + q / 100 * 1.1 : 1); }
+  qLabel(q) { return q <= 30 ? 'Smallest file' : q <= 55 ? 'Small file' : q <= 80 ? 'Balanced' : q <= 92 ? 'High quality' : 'Best quality'; }
+  convert() {
+    const s = this.S(); if (s.running) return;
+    const pick = s.sel.size ? s.files.filter(f => s.sel.has(f.id)) : s.files;
+    pick.forEach(f => { if (f.status !== 'done') { f.status = 'waiting'; f.pct = 0; f.msg = null; } });
+    if (s.sel.size) pick.forEach(f => { if (f.status === 'done') { f.status = 'waiting'; f.pct = 0; } });
+    s.running = true; s.banner = false; s.batch = null; s.sel = new Set(); s.filter = 'all';
+    clearInterval(this._t);
+    this._t = setInterval(() => this.tick(), 110);
+    this.forceUpdate();
+  }
+  tick() {
+    const s = this.S(), sp = { photo: 11, gif: 7, audio: 4, video: 2.2 };
+    let act = s.files.filter(f => f.status === 'active');
+    s.files.filter(f => f.status === 'waiting').slice(0, Math.max(0, 3 - act.length)).forEach(f => { f.status = 'active'; f.pct = 0; });
+    s.files.forEach(f => {
+      if (f.status !== 'active') return;
+      f.pct = Math.min(100, f.pct + sp[f.kind] * (0.6 + Math.random() * 0.8));
+      if (f.name === 'Corrupted clip.mov' && f.pct > 34) { f.status = 'failed'; f.msg = 'This video seems damaged, so it could not be read.'; }
+      else if (f.pct >= 100) { f.status = 'done'; f.out = this.est(f, s); }
+    });
+    if (!s.files.some(f => f.status === 'active' || f.status === 'waiting')) { clearInterval(this._t); s.running = false; s.banner = true; }
+    this.forceUpdate();
+  }
+  cancel() { const s = this.S(); clearInterval(this._t); s.files.forEach(f => { if (f.status === 'active' || f.status === 'waiting') { f.status = 'cancelled'; f.pct = 0; } }); s.running = false; s.banner = true; this.forceUpdate(); }
+  retry(ids) { const s = this.S(); s.files.forEach(f => { if (ids.includes(f.id)) { f.status = 'ready'; f.msg = null; if (f.name === 'Corrupted clip.mov') f.name = f.id = 'Corrupted clip (repaired).mov'; } }); s.overlay = null; s.banner = false; this.forceUpdate(); this.convert(); }
+  sw(on) {
+    return [
+      { width: '40px', height: '20px', borderRadius: '10px', padding: 0, flex: 'none', cursor: 'pointer', position: 'relative', boxSizing: 'border-box', background: on ? 'var(--accent)' : 'transparent', border: on ? '1px solid var(--accent)' : '1px solid var(--text2)' },
+      { position: 'absolute', top: '3px', left: on ? '23px' : '4px', width: '12px', height: '12px', borderRadius: '6px', background: on ? 'var(--onAccent)' : 'var(--text2)', transition: 'left 150ms cubic-bezier(0,0,0,1)' },
+    ];
+  }
+  renderVals() {
+    const s = this.S();
+    const theme = s.theme || (this.props.theme ?? 'dark'), dark = theme === 'dark';
+    const W = this.props.width ?? 1360, H = this.props.height ?? 860;
+    const narrow = W < 900, wide = W >= 900, inspW = W >= 1700 ? 400 : 360;
+    const V = dark
+      ? { '--bg': '#1C1D22', '--winStroke': 'rgba(255,255,255,0.10)', '--layer': '#24262C', '--card': '#2C2E35', '--cardHover': '#32353D', '--stroke': 'rgba(255,255,255,0.07)', '--strokeStrong': 'rgba(255,255,255,0.14)', '--text': '#FFFFFF', '--text2': '#C8CAD2', '--text3': '#A2A6B1', '--ctrl': 'rgba(255,255,255,0.06)', '--ctrlHover': 'rgba(255,255,255,0.10)', '--ctrlStroke': 'rgba(255,255,255,0.10)', '--subtleHover': 'rgba(255,255,255,0.06)', '--input': 'rgba(255,255,255,0.05)', '--accent': '#7FA3FF', '--accentHover': '#9DB8F2', '--onAccent': '#0D1530', '--accentText': '#9DB8F2', '--accentSoft': 'rgba(127,163,255,0.14)', '--disabledFill': 'rgba(255,255,255,0.08)', '--disabledText': 'rgba(255,255,255,0.45)', '--track': 'rgba(255,255,255,0.16)', '--ok': '#6CCB5F', '--err': '#FF99A4', '--okSoft': '#263526', '--errSoft': '#442726', '--flyout': '#2C2E35', '--smoke': 'rgba(0,0,0,0.5)', '--shadow': '0 8px 32px rgba(0,0,0,0.5)' }
+      : { '--bg': '#F2F3F6', '--winStroke': 'rgba(0,0,0,0.12)', '--layer': '#FAFAFB', '--card': '#FFFFFF', '--cardHover': '#F6F7F9', '--stroke': 'rgba(0,0,0,0.08)', '--strokeStrong': 'rgba(0,0,0,0.16)', '--text': '#1A1B20', '--text2': '#464953', '--text3': '#5E626D', '--ctrl': '#FFFFFF', '--ctrlHover': '#F6F7F9', '--ctrlStroke': 'rgba(0,0,0,0.12)', '--subtleHover': 'rgba(0,0,0,0.05)', '--input': '#FFFFFF', '--accent': '#1F4FD6', '--accentHover': '#1A43B8', '--onAccent': '#FFFFFF', '--accentText': '#1F4FD6', '--accentSoft': 'rgba(31,79,214,0.08)', '--disabledFill': 'rgba(0,0,0,0.08)', '--disabledText': 'rgba(0,0,0,0.40)', '--track': 'rgba(0,0,0,0.12)', '--ok': '#0F7B0F', '--err': '#C42B1C', '--okSoft': '#DFF6DD', '--errSoft': '#FDE7E9', '--flyout': '#FFFFFF', '--smoke': 'rgba(0,0,0,0.3)', '--shadow': '0 8px 32px rgba(0,0,0,0.16)' };
+    const files = s.files, isEmpty = !files.length;
+    const reduce = typeof matchMedia !== 'undefined' && matchMedia('(prefers-reduced-motion: reduce)').matches;
+    const cnt = st => files.filter(f => f.status === st).length;
+    const B = s.batch;
+    const done = B ? B.done : cnt('done'), failed = B ? B.failed : cnt('failed'), active = B ? B.active : cnt('active'), waiting = B ? B.waiting : cnt('waiting'), cancelled = cnt('cancelled');
+    const total = B ? B.total : files.length;
+    const running = s.running || !!B;
+    const hasResults = done + failed + cancelled > 0 && !running;
+    const scope = s.sel.size ? files.filter(f => s.sel.has(f.id)) : files;
+    const kinds = ORDER.filter(k => scope.some(f => f.kind === k));
+    const kc = k => scope.filter(f => f.kind === k).length;
+    const plural = (n, k) => n + ' ' + (n === 1 ? KIND[k].one : KIND[k].many);
+    // pills
+    let pills;
+    const pill = (key, label, count, icon, iconColor) => { const on = s.filter === key; return { key, label, count, icon, iconColor, on, bg: on ? 'var(--accentSoft)' : 'transparent', border: on ? 'var(--accent)' : 'var(--ctrlStroke)', color: on ? 'var(--accentText)' : 'var(--text)', onClick: () => this.upd(x => { x.filter = key; }) }; };
+    if (running || hasResults) {
+      pills = [pill('all', 'All', total)];
+      if (active) pills.push(pill('active', 'Converting', active, 'sync', 'var(--accentText)'));
+      if (waiting) pills.push(pill('waiting', 'Waiting', waiting, 'schedule', 'var(--text2)'));
+      if (done) pills.push(pill('done', 'Done', done, 'check_circle', 'var(--ok)'));
+      if (failed) pills.push(pill('failed', 'Failed', failed, 'error', 'var(--err)'));
+      if (cancelled) pills.push(pill('cancelled', 'Cancelled', cancelled, 'block', 'var(--text2)'));
+    } else {
+      pills = [pill('all', 'All', files.length)];
+      ORDER.forEach(k => { const n = files.filter(f => f.kind === k).length; if (n && n < files.length) pills.push(pill(k, KIND[k].label, n, KIND[k].icon, 'var(--text2)')); });
+    }
+    const inSize = files.reduce((a, f) => a + f.size, 0), outEst = files.reduce((a, f) => a + this.est(f, s), 0);
+    const q = {
+      running,
+      title: running ? `${done + failed} of ${total} done` : hasResults ? 'Finished' : `${files.length} files`,
+      sub: running ? (B ? B.eta : `about ${Math.max(5, Math.round(files.filter(f => f.status !== 'done').reduce((a, f) => a + (f.kind === 'video' ? 18 : 2) * (1 - f.pct / 100), 0)))} s left`) : hasResults ? `${done} converted · ${size(files.filter(f => f.status === 'done').reduce((a, f) => a + f.size, 0))} → ${size(files.filter(f => f.status === 'done').reduce((a, f) => a + (f.out || 0), 0))}` : `${size(inSize)} → about ${size(outEst)}`,
+      pctNum: Math.round(((done + failed) / Math.max(1, total)) * 100 + (B ? 0 : files.filter(f => f.status === 'active').reduce((a, f) => a + f.pct, 0) / Math.max(1, total))),
+    };
+    q.pct = q.pctNum + '%';
+    // cards
+    let list = files;
+    if (s.filter !== 'all') list = files.filter(f => f.status === s.filter || f.kind === s.filter);
+    let waitIdx = 0;
+    const cards = list.map(f => {
+      const sel = s.sel.has(f.id), fm = this.fmt(f.kind, s);
+      const st = f.status;
+      let icon, iconColor = 'var(--text2)', statusText, detail = null, statusColor = 'var(--text2)', statusWeight = 400;
+      if (st === 'ready') { icon = KIND[f.kind].icon; statusText = `${size(f.size)} → ${fm.name}`; }
+      if (st === 'waiting') { icon = 'schedule'; statusText = 'Waiting'; }
+      if (st === 'active') { icon = 'sync'; iconColor = 'var(--accentText)'; statusText = `Converting · ${Math.round(f.pct)}%`; statusColor = 'var(--text)'; statusWeight = 600; }
+      if (st === 'done') { icon = 'check_circle'; iconColor = 'var(--ok)'; statusText = 'Done'; statusColor = 'var(--text)'; statusWeight = 600; detail = `${size(f.size)} → ${size(f.out)} (−${Math.max(1, Math.round((1 - f.out / f.size) * 100))}%)`; }
+      if (st === 'failed') { icon = 'error'; iconColor = 'var(--err)'; statusText = 'Failed'; statusColor = 'var(--err)'; statusWeight = 600; detail = f.msg; }
+      if (st === 'cancelled') { icon = 'block'; statusText = 'Cancelled'; detail = 'Stopped before it finished.'; }
+      const isWait = st === 'waiting';
+      let anim = null;
+      if (isWait && waitIdx++ < 4 && !reduce) anim = React.createElement('div', { key: 'a' + f.id, style: { position: 'absolute', top: 0, bottom: 0, left: 0, width: '40%', borderRadius: '2px', background: 'var(--accent)', opacity: 0.55, animation: `mcWait 1.6s ${(waitIdx * 0.2).toFixed(1)}s cubic-bezier(0.4,0,0.2,1) infinite` } });
+      const h = hash(f.name);
+      const tile = f.kind === 'audio' ? (dark ? '#363944' : '#E6E8EE') : dark ? `linear-gradient(140deg, oklch(0.46 0.07 ${h}), oklch(0.30 0.05 ${(h + 40) % 360}))` : `linear-gradient(140deg, oklch(0.86 0.06 ${h}), oklch(0.72 0.07 ${(h + 40) % 360}))`;
+      return {
+        id: f.id, name: f.name, selected: sel, tab: '-1', tile, tileIcon: f.kind === 'audio' ? 'var(--text2)' : dark ? 'rgba(255,255,255,0.55)' : 'rgba(255,255,255,0.85)', kindIcon: f.kind === 'video' ? 'play_circle' : KIND[f.kind].icon, dur: f.dur || null,
+        icon, iconColor, statusText, statusColor, statusWeight, detail,
+        canRetry: st === 'failed' || st === 'cancelled', onRetry: e => { e.stopPropagation(); this.retry([f.id]); },
+        showBar: st === 'active' || isWait, isActive: st === 'active', pct: Math.round(f.pct) + '%', pctNum: Math.round(f.pct), anim, barAria: `Progress for ${f.name}`,
+        aria: `${f.name}, ${KIND[f.kind].one}, ${statusText}${detail ? ', ' + detail : ''}${sel ? ', selected' : ''}`,
+        menuAria: `More options for ${f.name}`,
+        onClick: () => this.upd(x => { x.sel.has(f.id) ? x.sel.delete(f.id) : x.sel.add(f.id); x.chip = null; }),
+        onMenu: e => { e.stopPropagation(); const el = e.currentTarget; this.upd(x => { x.overlay = 'menu'; x.menuFor = f.id; }); this.placeMenu(f.id, el); },
+      };
+    });
+    if (cards.length) cards[0].tab = '0';
+    // inspector
+    const scopeIn = scope.reduce((a, f) => a + f.size, 0), scopeOut = scope.reduce((a, f) => a + this.est(f, s), 0);
+    const anyLossy = kinds.some(k => this.fmt(k, s).lossy);
+    const kindsDesc = kinds.map(k => plural(kc(k), k)).join(', ');
+    const first = scope[0];
+    const insp = {
+      hasSel: s.sel.size > 0,
+      title: s.sel.size ? `${s.sel.size} selected` : 'All files',
+      sub: s.sel.size ? `${kindsDesc}. Changes apply to the selected files only.` : kindsDesc,
+      lossy: anyLossy, lossless: !anyLossy && kinds.length > 0,
+      qLabel: `${this.qLabel(s.quality)} · ${s.quality}`, qAria: `${s.quality} of 100, ${this.qLabel(s.quality)}`,
+      estimate: `About ${size(scopeOut)} in total`,
+      saving: scopeOut < scopeIn ? `${Math.round((1 - scopeOut / scopeIn) * 100)}% smaller than now` : 'about the same as now',
+      resize: kinds.some(k => k !== 'audio'), rotate: kinds.some(k => k === 'photo' || k === 'video'), speed: kinds.includes('video'), audioOnly: kinds.length === 1 && kinds[0] === 'audio',
+      rotateNote: kinds.length > 1 && kinds.some(k => k === 'audio' || k === 'gif') ? 'Applies to photos and videos only.' : 'Turns or mirrors every file.',
+      sizeVal: s.sizeVal,
+      moreSummary: [kinds.some(k => k !== 'audio') ? 'Size' : null, kinds.some(k => k === 'photo' || k === 'video') ? 'rotate' : null, kinds.includes('video') ? 'video speed' : null, kinds.length === 1 && kinds[0] === 'audio' ? 'Channels' : null].filter(Boolean).join(', ').replace(/^./, c => c.toUpperCase()),
+      naming: first ? `${first.name} becomes ${first.name.replace(/\.[^.]+$/, '')}.${this.fmt(first.kind, s).id === 'jpg' ? 'jpg' : this.fmt(first.kind, s).id}. Existing files are never replaced.` : '',
+    };
+    const kindRows = kinds.map(k => {
+      const fm = this.fmt(k, s), open = s.overlay === 'picker' && s.pickerKind === k;
+      return { icon: KIND[k].icon, label: `${KIND[k].label} · ${kc(k)}`, fmtName: fm.name, fmtDesc: fm.desc, aria: `Convert ${KIND[k].many} to, ${fm.name}`, border: open ? 'var(--accent)' : 'var(--ctrlStroke)', ring: open ? '0 0 0 1px var(--accent)' : 'none', onClick: e => { const r = e.currentTarget; this.upd(x => { x.overlay = 'picker'; x.pickerKind = k; x.pickerTop = null; }); this.placePicker(r); } };
+    });
+    const chips = PRESETS.filter(p => kinds.includes(p.kind)).slice(0, 4).map(p => {
+      const on = s.chip === p.label;
+      return { label: p.label, full: p.full, on, bg: on ? 'var(--accentSoft)' : 'var(--ctrl)', border: on ? 'var(--accent)' : 'var(--ctrlStroke)', color: on ? 'var(--accentText)' : 'var(--text)', onClick: () => this.upd(x => { x.chip = on ? null : p.label; if (!on) { x.targets[p.kind] = p.fmt; x.quality = p.q; x.sizeVal = p.size || 'Original size'; } }) };
+    });
+    // picker
+    const pk = s.pickerKind, pf = FMT[pk];
+    const pItem = f => { const on = s.targets[pk] === f.id; return { ...f, on, icon: pk === 'audio' ? 'music_note' : pk === 'video' || f.id === 'mp4' || f.id === 'webm' ? 'movie' : f.id === 'pdf' ? 'picture_as_pdf' : f.id === 'gif' ? 'gif_box' : 'image', bg: on ? 'var(--accentSoft)' : 'transparent', onClick: () => this.upd(x => { x.targets[pk] = f.id; x.overlay = null; x.chip = null; }) }; };
+    const pTop = s.pickerTop ?? 238;
+    const picker = {
+      title: `Convert ${KIND[pk].many} to`, sub: `${plural(kc(pk) || 1, pk)} · pick what fits where they're going`,
+      rec: pf.filter(f => f.tag).map(pItem), other: pf.filter(f => !f.tag).map(pItem),
+      style: { position: 'absolute', top: pTop + 'px', right: narrow ? '24px' : inspW + 28 + 'px', width: '380px', maxHeight: `calc(100% - ${pTop + 16}px)`, overflow: 'auto', background: 'var(--flyout)', border: '1px solid var(--strokeStrong)', borderRadius: '8px', boxShadow: 'var(--shadow)', boxSizing: 'border-box' },
+    };
+    // menu
+    const mf = files.find(f => f.id === s.menuFor);
+    const mp = s.menuPos || { x: 180, y: 240 };
+    const menuItems = [];
+    if (mf) {
+      const d = mf.status === 'done', bad = mf.status === 'failed' || mf.status === 'cancelled';
+      if (d) menuItems.push({ icon: 'open_in_new', label: 'Open', key: 'Enter' }, { icon: 'folder_open', label: 'Show in folder', key: '' }, { divider: true });
+      if (!d) menuItems.push({ icon: 'folder_open', label: 'Show original in folder', key: '' });
+      menuItems.push({ icon: 'content_copy', label: d ? 'Copy saved file path' : 'Copy file path', key: 'Ctrl+Shift+C' });
+      menuItems.push({ divider: true });
+      if (bad) menuItems.push({ icon: 'refresh', label: 'Retry', key: 'F5', onClick: () => this.retry([mf.id]) });
+      if (d) menuItems.push({ icon: 'refresh', label: 'Convert again', key: '', onClick: () => this.retry([mf.id]) });
+      if (mf.status === 'failed') menuItems.push({ icon: 'info', label: 'Details', key: '', onClick: () => this.upd(x => { x.overlay = 'details'; }) });
+      menuItems.push({ icon: 'delete', label: 'Remove from list', key: 'Delete', onClick: () => this.upd(x => { x.files = x.files.filter(f => f.id !== mf.id); x.sel.delete(mf.id); x.overlay = null; }) });
+    }
+    const mW = 260;
+    const menu = { title: mf ? `Options for ${mf.name}` : '', items: menuItems.map(m => ({ ...m, color: m.icon === 'delete' ? 'var(--err)' : 'var(--text)', onClick: m.onClick || (() => this.upd(x => { x.overlay = null; })) })), style: { position: 'absolute', left: Math.min(Math.max(8, mp.x - mW + 28), W - mW - 12) + 'px', top: Math.min(mp.y, H - 300) + 'px', width: mW + 'px', padding: '4px', background: 'var(--flyout)', border: '1px solid var(--strokeStrong)', borderRadius: '8px', boxShadow: 'var(--shadow)', boxSizing: 'border-box' } };
+    const df = files.find(f => f.id === s.menuFor) || {};
+    const det = { title: `Couldn't convert ${df.name || 'this file'}`, body: df.msg || '', hint: 'Try opening it in a video player. If it does not play there either, the file itself is damaged and cannot be converted.', tech: 'Tool: ffmpeg  ·  Exit code 1\n[mov,mp4] moov atom not found\nInvalid data found when processing input', onRetry: () => this.retry([df.id]) };
+    // actions
+    const ready = files.filter(f => f.status === 'ready').length;
+    const act = { cancel: running, clear: !running && !isEmpty, primaryOn: false, primaryOff: true, label: 'Convert' };
+    if (!running && s.sel.size) { act.primaryOn = true; act.label = `Convert ${s.sel.size} selected`; }
+    else if (!running && ready) { act.primaryOn = true; act.label = `Convert ${ready} file${ready === 1 ? '' : 's'}`; }
+    else if (running) act.label = 'Converting…';
+    act.primaryOff = !act.primaryOn;
+    let summary = 'Drop files here, or press Ctrl+O to add files.';
+    if (!isEmpty && !running && !hasResults) summary = s.sel.size ? `${s.sel.size} of ${files.length} selected · Ctrl+A selects all` : `Ready · ${kinds.map(k => `${KIND[k].label} to ${this.fmt(k, s).name}`).join(', ')}`;
+    if (running) summary = `Converting ${active} at a time · ${waiting} waiting`;
+    if (hasResults) summary = `Finished. ${done} converted${failed ? `, ${failed} failed` : ''}${cancelled ? `, ${cancelled} cancelled` : ''}.`;
+    const banner = { show: s.banner && hasResults, bg: failed ? 'var(--errSoft)' : 'var(--okSoft)', icon: failed ? 'error' : 'check_circle', iconColor: failed ? 'var(--err)' : 'var(--ok)', title: failed ? `${done} converted, ${failed} failed` : `${done} converted`, body: failed ? 'Open the failed file to see why.' : 'Saved next to the originals.', canRetry: failed + cancelled > 0, retryLabel: failed && cancelled ? 'Retry failed and cancelled' : failed ? 'Retry failed' : 'Retry cancelled' };
+    const [rcS, rcK] = this.sw(s.rc), [gS, gK] = this.sw(s.gpu), [tS, tK] = this.sw(s.tb);
+    const themeOpts = ['Light', 'Dark', 'Use Windows setting'].map(l => { const on = l === 'Use Windows setting' ? !s.theme : s.theme === l.toLowerCase(); return { label: l, on, dot: { width: '20px', height: '20px', borderRadius: '10px', boxSizing: 'border-box', border: on ? '6px solid var(--accent)' : '1px solid var(--text2)', background: on ? 'var(--onAccent)' : 'transparent', flex: 'none' }, onClick: () => this.upd(x => { x.theme = l === 'Use Windows setting' ? null : l.toLowerCase(); }) }; });
+    const inspStyle = narrow
+      ? { display: s.paneOpen ? 'flex' : 'none', flexDirection: 'column', position: 'absolute', top: '96px', right: '12px', bottom: '72px', width: '340px', background: 'var(--flyout)', border: '1px solid var(--strokeStrong)', borderRadius: '8px', boxShadow: 'var(--shadow)', overflow: 'hidden', zIndex: 2 }
+      : { width: inspW + 'px', flex: 'none', display: 'flex', flexDirection: 'column', background: 'var(--layer)', border: '1px solid var(--stroke)', borderRadius: '8px', overflow: 'hidden' };
+    return {
+      rootRef: this.rootRef, rootStyle: { ...V, width: W + 'px', height: H + 'px', position: 'relative' },
+      isMain: s.page === 'main', isSettings: s.page === 'settings', narrow, wide, paneOpen: s.paneOpen,
+      isEmpty, hasFiles: !isEmpty, banner, q, pills, cards, aboveNote: B && s.filter === 'all' ? `${B.above} done files above` : null,
+      insp, kindRows, chips, inspStyle, quality: s.quality, never: s.never, notNever: !s.never, more: s.more, moreIcon: s.more ? 'expand_less' : 'expand_more',
+      summary, act, picker, menu, det,
+      ov: { picker: s.overlay === 'picker', menu: s.overlay === 'menu' && !!mf, details: s.overlay === 'details', presets: s.overlay === 'presets', tip: s.overlay === 'tip' },
+      userPresets: [{ name: 'Shop listing', sum: 'WebP · Quality 70 · Fit within 1200 px' }, { name: 'Client proofs', sum: 'JPEG · Quality 85 · Fit within 2000 px tall' }].map(p => ({ ...p, renameAria: `Rename ${p.name}`, deleteAria: `Delete ${p.name}` })),
+      builtinPresets: PRESETS.map(p => ({ name: p.full, icon: KIND[p.kind].icon, sum: `${FMT[p.kind].find(f => f.id === p.fmt).name} · Quality ${p.q}${p.size ? ' · ' + p.size : ''}` })),
+      licenses: [{ name: 'FFmpeg', use: 'Video and audio', lic: 'GNU GPL v3' }, { name: 'ImageMagick 7', use: 'Photos', lic: 'ImageMagick License' }, { name: 'libjxl', use: 'JPEG XL', lic: 'BSD 3-Clause' }, { name: 'Windows App SDK', use: 'App framework', lic: 'Microsoft license' }, { name: 'CommunityToolkit.Mvvm', use: 'App framework', lic: 'MIT' }],
+      themeOpts, rcOn: s.rc, rcLabel: s.rc ? 'On' : 'Off', rcSwitch: rcS, rcKnob: rcK, gpuOn: s.gpu, gpuLabel: s.gpu ? 'On' : 'Off', gpuSwitch: gS, gpuKnob: gK, tbOn: s.tb, tbLabel: s.tb ? 'On' : 'Off', tbSwitch: tS, tbKnob: tK,
+      noop: () => {},
+      addFiles: () => this.upd(x => { if (!x.files.length) x.files = MIXED.map(([n, mb, dur]) => ({ id: n, name: n, kind: kindOf(n), size: mb * MB, dur, status: 'ready', pct: 0 })).concat([{ id: 'Corrupted clip.mov', name: 'Corrupted clip.mov', kind: 'video', size: 96 * MB, dur: '2:02', status: 'ready', pct: 0 }]); x.overlay = null; }),
+      convert: () => this.convert(), cancelRun: () => this.cancel(),
+      clearList: () => this.upd(x => { x.files = []; x.sel = new Set(); x.banner = false; x.batch = null; x.filter = 'all'; }),
+      clearSel: () => this.upd(x => { x.sel = new Set(); }),
+      retryFailed: () => this.retry(files.filter(f => f.status === 'failed' || f.status === 'cancelled').map(f => f.id)),
+      dismissBanner: () => this.upd(x => { x.banner = false; }),
+      jumpActive: () => this.upd(x => { x.filter = 'active'; }),
+      onQuality: e => { const v = +e.target.value; this.upd(x => { x.quality = v; x.chip = null; }); },
+      toggleNever: () => this.upd(x => { x.never = !x.never; }),
+      toggleMore: () => this.upd(x => { x.more = !x.more; }),
+      togglePane: () => this.upd(x => { x.paneOpen = !x.paneOpen; }),
+      openSettings: () => this.upd(x => { x.page = 'settings'; x.overlay = null; }),
+      closeSettings: () => this.upd(x => { x.page = 'main'; }),
+      openPresets: () => this.upd(x => { x.overlay = 'presets'; }),
+      closeOverlay: () => this.upd(x => { x.overlay = null; }),
+      tipOn: () => this.upd(x => { x.rc = true; x.overlay = null; }),
+      toggleRc: () => this.upd(x => { x.rc = !x.rc; }), toggleGpu: () => this.upd(x => { x.gpu = !x.gpu; }), toggleTb: () => this.upd(x => { x.tb = !x.tb; }),
+    };
+  }
+  placePicker(el) {
+    const root = this.rootRef.current; if (!root || !el) return;
+    const rr = root.getBoundingClientRect(), k = rr.width / root.offsetWidth || 1, r = el.getBoundingClientRect();
+    const H = this.props.height ?? 860;
+    this.upd(s => { s.pickerTop = Math.max(56, Math.min((r.top - rr.top) / k - 40, H - 520)); });
+  }
+}
+</script>
+</body>
+</html>

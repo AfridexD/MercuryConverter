@@ -14,6 +14,7 @@ AppPublisherURL=https://github.com/
 DefaultDirName={autopf}\Mercury Converter
 DefaultGroupName={#AppName}
 UninstallDisplayIcon={app}\{#AppExe}
+SetupIconFile=..\src\Mercury.Converter.App\Assets\AppIcon.ico
 OutputDir=..\dist
 OutputBaseFilename=MercuryConverter-{#AppVersion}-x64-setup
 Compression=lzma2/max
