@@ -1,0 +1,197 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Guide: Mercury Converter</title>
+<meta name="description" content="Step-by-step guide to Mercury Converter: install, convert files, use presets and the right-click menu, settings and keyboard shortcuts.">
+<link rel="icon" href="images/favicon.png">
+<link rel="stylesheet" href="style.css">
+</head>
+<body>
+
+<header class="nav">
+  <div class="nav-inner">
+    <a class="brand" href="./"><img src="images/logo.png" alt=""> Mercury Converter</a>
+    <nav class="nav-links">
+      <a class="on" href="guide.html">Guide</a>
+      <a href="faq.html">Questions</a>
+      <a class="hide-s" href="https://github.com/AfridexD/MercuryConverter">GitHub</a>
+      <a class="btn small primary" href="https://github.com/AfridexD/MercuryConverter/releases/latest/download/MercuryConverter-x64-setup.exe">Download</a>
+    </nav>
+  </div>
+</header>
+
+<div class="wrap doc">
+  <aside class="toc">
+    <strong>On this page</strong>
+    <a href="#install">Install</a>
+    <a href="#first">Your first conversion</a>
+    <a href="#window">The window</a>
+    <a href="#formats">Choosing a format</a>
+    <a href="#quality">Quality and size</a>
+    <a href="#more">More options</a>
+    <a href="#presets">Presets</a>
+    <a href="#saving">Where files are saved</a>
+    <a href="#right-click">Right-click menu</a>
+    <a href="#settings">Settings</a>
+    <a href="#shortcuts">Keyboard shortcuts</a>
+    <a href="#uninstall">Uninstall</a>
+  </aside>
+
+  <article class="article">
+    <h1>Guide</h1>
+    <p class="lead">Everything you need to know to use Mercury Converter. Short on time? Read <a href="#first">Your first conversion</a> and you are set.</p>
+
+    <h2 id="install">Install</h2>
+    <ol class="steps">
+      <li><strong>Download</strong> the <a href="https://github.com/AfridexD/MercuryConverter/releases/latest/download/MercuryConverter-x64-setup.exe">installer</a>. Prefer no install? Get the <a href="https://github.com/AfridexD/MercuryConverter/releases/latest/download/MercuryConverter-x64-portable.zip">portable zip</a>, unzip it anywhere, and run <code>MercuryConverter.exe</code>.</li>
+      <li><strong>Run it.</strong> If Windows says "Windows protected your PC", choose <em>More info</em>, then <em>Run anyway</em>. This appears because Mercury is new and not code-signed yet (<a href="faq.html#smartscreen">more</a>).</li>
+      <li><strong>Choose who it is for.</strong> "Just me" needs no administrator password. "All users" installs for everyone on the PC.</li>
+    </ol>
+    <p>Mercury needs Windows 10 (version 2004 or later) or Windows 11, 64-bit. It includes everything it needs. There is nothing else to install.</p>
+
+    <h2 id="first">Your first conversion</h2>
+    <ol class="steps">
+      <li><strong>Add your files.</strong> Drag them anywhere onto the window, or press <kbd>Ctrl</kbd>+<kbd>O</kbd>. Whole folders work too (<kbd>Ctrl</kbd>+<kbd>Shift</kbd>+<kbd>O</kbd>).</li>
+      <li><strong>Pick a format.</strong> On the right, under <em>Convert to</em>, each kind of file has a recommended format already chosen.</li>
+      <li><strong>Press Convert.</strong> Each file shows its progress. When it finishes you see how much smaller it became.</li>
+    </ol>
+    <img src="images/main.png" alt="Six files added, with the format and quality options on the right">
+    <p>That is it. Your converted files appear next to the originals unless you choose a different folder.</p>
+
+    <h2 id="window">The window</h2>
+    <h3>Files</h3>
+    <p>Every file is a card with a preview, its name, its size, and what it will become. Click a card to <strong>select</strong> it. Selected cards get a blue outline and a check mark. When you select files, the options on the right change <em>only those files</em>. Press <kbd>Ctrl</kbd>+<kbd>A</kbd> to select all, or choose <em>Clear selection</em>.</p>
+    <p>The <strong>⋯</strong> button on a card opens its menu: open the result, show it in its folder, copy its path, convert again, or remove it from the list.</p>
+    <h3>Filters</h3>
+    <p>The pills above the cards (<em>All</em>, <em>Photos</em>, <em>Videos</em> and so on) filter the list. While converting, they become <em>Converting</em>, <em>Waiting</em>, <em>Done</em>, <em>Failed</em> and <em>Cancelled</em>. <em>Jump to active</em> shows what is being converted right now.</p>
+    <h3>View and sort</h3>
+    <p>Use <strong>View</strong> to turn previews off or choose their size, and <strong>Sort</strong> to order by when files were added, name, size or type.</p>
+    <h3>Small windows</h3>
+    <p>If you make the window narrow, the options panel hides. Press <strong>Options</strong> in the top bar to slide it open.</p>
+    <img src="images/main-done.png" alt="Two finished files with the size saved shown on each card">
+
+    <h2 id="formats">Choosing a format</h2>
+    <p>Select <em>Convert to</em> for a kind of file to see its formats. The best choices for most people are marked with a tag like <em>Works everywhere</em>.</p>
+    <div class="table-wrap">
+      <table>
+        <thead><tr><th>Convert</th><th>Good choices</th></tr></thead>
+        <tbody>
+          <tr><td><strong>Photos</strong></td><td><strong>WebP</strong> is the smallest for websites. <strong>JPEG</strong> opens everywhere. <strong>JPEG XL</strong> and <strong>AVIF</strong> are smaller still, for newer apps. <strong>PNG</strong> keeps every pixel and see-through backgrounds. <strong>TIFF</strong> is for printing. <strong>PDF</strong> puts each photo on a page.</td></tr>
+          <tr><td><strong>GIFs</strong></td><td><strong>GIF</strong> stays a GIF. <strong>MP4</strong> and <strong>WebM</strong> are far smaller but no longer GIFs.</td></tr>
+          <tr><td><strong>Video</strong></td><td><strong>MP4</strong> plays on every phone, computer and TV. <strong>WebM</strong> is small, for websites. <strong>MKV</strong> keeps every audio track and subtitle. <strong>GIF</strong> makes a short silent animation (files get much larger).</td></tr>
+          <tr><td><strong>Audio</strong></td><td><strong>MP3</strong> plays everywhere. <strong>AAC</strong> is good for Apple devices. <strong>FLAC</strong> keeps full quality at about half the size of WAV. <strong>WAV</strong> is uncompressed.</td></tr>
+        </tbody>
+      </table>
+    </div>
+
+    <h2 id="quality">Quality and size</h2>
+    <p>The <strong>Quality</strong> slider runs from 10 to 100. Next to it you see the name for that level (for example <em>Balanced</em>) and below it the expected total size and how much smaller that is. The estimate is a close guess, not a promise.</p>
+    <ul>
+      <li><strong>Smallest file</strong> (30 and below): tiny files, some visible loss.</li>
+      <li><strong>Balanced</strong> (about 55 to 80): looks the same to most eyes. This is the default.</li>
+      <li><strong>Best quality</strong> (above 92): largest files, closest to the original.</li>
+    </ul>
+    <p>Formats that never lose quality (PNG, TIFF, PDF, FLAC, WAV) hide the slider, because there is nothing to adjust.</p>
+    <div class="callout"><strong>Never make a file larger than the original</strong> is on by default. If a result would come out bigger, Mercury lowers the quality and tries again, a few times. Some files are already so compact that no setting can shrink them. Turn the option off to skip the check.</div>
+    <p><strong>JPEG to JPEG XL without loss:</strong> choose JPEG XL at quality 100 for JPEG photos. Mercury repacks them without changing a single pixel, usually 20% smaller, and the original JPEG can be rebuilt exactly.</p>
+
+    <h2 id="more">More options</h2>
+    <p>Open <em>More options</em> for extras. Only the ones that apply to your files appear.</p>
+    <ul>
+      <li><strong>Size:</strong> keep the original size, half size, fit within 1920 px or 480 px, 1080p or 720p.</li>
+      <li><strong>Rotate and flip:</strong> turn a photo or video left or right, or mirror it.</li>
+      <li><strong>Video speed:</strong> <em>Slower</em> makes smaller files, <em>Faster</em> finishes sooner. <em>Balanced</em> is the default.</li>
+      <li><strong>Channels</strong> (audio only): keep as is, mono, or stereo.</li>
+    </ul>
+
+    <h2 id="presets">Presets</h2>
+    <p>Presets save a whole set of choices under one name. The chips at the top of the options panel apply a preset in one click. Press <strong>Manage presets</strong> to see them all.</p>
+    <p>Built-in presets:</p>
+    <ul>
+      <li><strong>Web photo</strong>: WebP, up to 1920 px wide</li>
+      <li><strong>Phone share</strong>: JPEG, up to 1080 px tall</li>
+      <li><strong>Smallest photo</strong>: JPEG XL</li>
+      <li><strong>Archive</strong>: lossless PNG</li>
+      <li><strong>Video for sharing</strong>: MP4, 1080p</li>
+      <li><strong>Video for web</strong>: WebM, 720p</li>
+      <li><strong>Short GIF</strong>: GIF, 480 px wide</li>
+      <li><strong>Podcast audio</strong>: MP3</li>
+      <li><strong>Keep exact JPEG</strong>: reversible JPEG XL</li>
+      <li><strong>Photos to PDF</strong></li>
+    </ul>
+    <p>To make your own, set things up the way you like, open <em>Manage presets</em>, type a name and choose <em>Save current settings as a preset</em>. You can rename or delete your own presets, and <em>Import</em> and <em>Export</em> them to share with other computers.</p>
+
+    <h2 id="saving">Where files are saved</h2>
+    <p>By default, <strong>next to the originals</strong>. Under <em>Save to</em> choose <em>Change</em> to pick another folder.</p>
+    <ul>
+      <li>The new file keeps the name and gets the new ending: <code>holiday.jpg</code> becomes <code>holiday.webp</code>.</li>
+      <li>If the ending is the same (for example MP4 to MP4), Mercury adds <code>-converted</code>.</li>
+      <li>If that name is taken, a number is added: <code>holiday (2).webp</code>. <strong>Existing files are never replaced.</strong></li>
+      <li>While working, the file has a temporary name. It gets its final name only when it is complete, so you never find a half-finished file.</li>
+    </ul>
+
+    <h2 id="right-click">Right-click menu</h2>
+    <p>Convert without opening the window.</p>
+    <ol class="steps">
+      <li>Open <strong>Settings</strong> (the gear, top right) and turn on <em>Show in the right-click menu</em>. Mercury also offers this once, the first time you add files.</li>
+      <li>In File Explorer, right-click a photo, video or song. <strong>On Windows 11, choose <em>Show more options</em></strong> (or hold <kbd>Shift</kbd> while you right-click).</li>
+      <li>Choose <em>Mercury Converter</em>, then a line like <em>To Mp4</em> or <em>To Webp</em>.</li>
+    </ol>
+    <p>For one file, a <strong>Quick Convert</strong> window opens beside your mouse. It shows progress, then <em>Saved as photo.webp · 1.1 MB (−74%)</em> with a <em>Show in folder</em> button. Press <kbd>Esc</kbd> to close it at any time. Select several files first and they all convert in the main window.</p>
+    <img src="images/quick-done.png" alt="The Quick Convert window after a finished conversion" style="max-width:360px">
+    <p>Lines marked <em>(low quality)</em> make smaller files for one conversion only. They do not change your saved settings. If a video is damaged part-way through, Quick Convert offers <em>Save first 0:41</em>, which keeps the part that can be read.</p>
+    <p>Prefer the main window? In Settings, change <em>When converting from the menu</em> to <em>Open the full window</em>.</p>
+
+    <h2 id="settings">Settings</h2>
+    <img src="images/settings.png" alt="The Settings page">
+    <div class="table-wrap">
+      <table>
+        <thead><tr><th>Setting</th><th>What it does</th></tr></thead>
+        <tbody>
+          <tr><td>Show in the right-click menu</td><td>Adds or removes the Mercury entries in File Explorer.</td></tr>
+          <tr><td>When converting from the menu</td><td>Small Quick Convert window, or the full window.</td></tr>
+          <tr><td>Save converted files</td><td>Next to the originals, or in a folder you choose.</td></tr>
+          <tr><td>Previews</td><td>Off, small, medium or large previews on the cards.</td></tr>
+          <tr><td>Speed</td><td><em>Gentle</em> leaves lots of room for other apps. <em>Balanced</em> adapts to how busy your PC is. <em>Fastest</em> uses everything.</td></tr>
+          <tr><td>Encode video on the graphics card</td><td>Uses less processor, but files are about 60% larger. Off by default. Mercury always uses the graphics card to <em>decode</em> video when it can.</td></tr>
+          <tr><td>Show progress on the taskbar</td><td>The green bar on Mercury's taskbar button.</td></tr>
+        </tbody>
+      </table>
+    </div>
+    <p>Settings and presets are stored in <code>%LOCALAPPDATA%\MercuryConverter</code>.</p>
+
+    <h2 id="shortcuts">Keyboard shortcuts</h2>
+    <div class="table-wrap">
+      <table>
+        <thead><tr><th>Keys</th><th>Action</th></tr></thead>
+        <tbody>
+          <tr><td><kbd>Ctrl</kbd> + <kbd>O</kbd></td><td>Add files</td></tr>
+          <tr><td><kbd>Ctrl</kbd> + <kbd>Shift</kbd> + <kbd>O</kbd></td><td>Add a folder</td></tr>
+          <tr><td><kbd>Ctrl</kbd> + <kbd>A</kbd></td><td>Select all files</td></tr>
+          <tr><td><kbd>Space</kbd></td><td>Select or deselect the focused file</td></tr>
+          <tr><td><kbd>Delete</kbd></td><td>Remove the selected files from the list</td></tr>
+          <tr><td><kbd>Enter</kbd></td><td>Convert</td></tr>
+          <tr><td><kbd>Esc</kbd></td><td>Cancel the run, close the options pane, Settings or Quick Convert</td></tr>
+          <tr><td><kbd>F5</kbd></td><td>Retry the selected files</td></tr>
+          <tr><td><kbd>Ctrl</kbd> + <kbd>Shift</kbd> + <kbd>C</kbd></td><td>Copy the path of the selected file</td></tr>
+        </tbody>
+      </table>
+    </div>
+
+    <h2 id="uninstall">Uninstall</h2>
+    <p>Use <em>Settings &rarr; Apps &rarr; Installed apps</em> in Windows. Uninstalling removes the right-click entries. Your settings and presets are kept, so a reinstall picks up where you left off. To remove them too, delete <code>%LOCALAPPDATA%\MercuryConverter</code>. For the portable version, turn off the right-click menu in Settings first, then delete the folder.</p>
+
+    <div class="callout">Something not working? Try the <a href="faq.html">questions and fixes</a> page, or <a href="https://github.com/AfridexD/MercuryConverter/issues/new">open an issue</a>.</div>
+  </article>
+</div>
+
+<footer>
+  <div class="wrap">
+    <span>Mercury Converter is free software under the MIT license.</span>
+    <span><a href="https://github.com/AfridexD/MercuryConverter">Source code</a> &middot; <a href="https://github.com/AfridexD/MercuryConverter/issues/new">Report a problem</a></span>
+  </div>
+</footer>
+</body>
+</html>
