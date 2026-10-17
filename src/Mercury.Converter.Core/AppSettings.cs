@@ -58,6 +58,17 @@ public sealed record AppSettings
 
     public AudioChannels AudioChannels { get; init; } = AudioChannels.KeepAsIs;
 
+    /// <summary>Ask GitHub once a day whether a newer version exists. Off until the user says yes.</summary>
+    public bool CheckForUpdates { get; init; }
+
+    /// <summary>The first-run question about update checks has been answered, either way.</summary>
+    public bool UpdatePromptAnswered { get; init; }
+
+    /// <summary>A version the user chose not to hear about again, such as "1.1.0".</summary>
+    public string? SkippedVersion { get; init; }
+
+    public DateTime? LastUpdateCheckUtc { get; init; }
+
     /// <summary>Gets the saved format for a kind of file.</summary>
     public TargetFormat TargetFor(MediaGroup group) => group switch
     {

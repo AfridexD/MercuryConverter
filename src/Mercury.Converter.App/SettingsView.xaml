@@ -189,6 +189,25 @@
                                               AutomationProperties.Name="Show progress on the taskbar" MinWidth="0" />
                             </Grid>
                         </Border>
+
+                        <TextBlock Text="Updates" Style="{StaticResource McSectionLabel}" Margin="0,14,0,4" />
+
+                        <Border Style="{StaticResource McSettingCard}">
+                            <Grid ColumnSpacing="14">
+                                <Grid.ColumnDefinitions>
+                                    <ColumnDefinition Width="Auto" />
+                                    <ColumnDefinition Width="*" />
+                                    <ColumnDefinition Width="Auto" />
+                                </Grid.ColumnDefinitions>
+                                <FontIcon Glyph="&#xE895;" FontSize="20" Foreground="{StaticResource McText2}" VerticalAlignment="Center" />
+                                <StackPanel Grid.Column="1" VerticalAlignment="Center">
+                                    <TextBlock Text="Tell me when a new version is out" Style="{StaticResource McBodyText}" />
+                                    <TextBlock Text="Once a day Mercury asks GitHub if there is a newer version. Nothing else is sent, and nothing is installed without you." Style="{StaticResource McCaptionText}" />
+                                </StackPanel>
+                                <ToggleSwitch x:Name="UpdateSwitch" Grid.Column="2" OnContent="On" OffContent="Off" Toggled="Update_Toggled"
+                                              AutomationProperties.Name="Tell me when a new version is out" MinWidth="0" />
+                            </Grid>
+                        </Border>
                     </StackPanel>
 
                     <!-- Right column -->

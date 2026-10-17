@@ -12,6 +12,7 @@
         <Grid.RowDefinitions>
             <RowDefinition Height="32" />
             <RowDefinition Height="48" />
+            <RowDefinition Height="Auto" />
             <RowDefinition Height="*" />
             <RowDefinition Height="Auto" />
         </Grid.RowDefinitions>
@@ -85,8 +86,46 @@
             </Button>
         </Grid>
 
+        <!-- Update notice. The question is asked once; the notice appears only if the user said yes. -->
+        <StackPanel Grid.Row="2">
+            <Border Padding="24,10" Background="{StaticResource McAccentSoft}" Visibility="{x:Bind local:UiHelpers.Show(ViewModel.ShowUpdateQuestion), Mode=OneWay}">
+                <Grid ColumnSpacing="12">
+                    <Grid.ColumnDefinitions>
+                        <ColumnDefinition Width="*" />
+                        <ColumnDefinition Width="Auto" />
+                    </Grid.ColumnDefinitions>
+                    <StackPanel VerticalAlignment="Center">
+                        <TextBlock Text="Tell me when a new version is out?" FontWeight="SemiBold" Foreground="{StaticResource McText}" />
+                        <TextBlock Text="Once a day Mercury asks GitHub if there is a newer version. Nothing else is sent. You can change this in Settings." Style="{StaticResource McCaptionText}" />
+                    </StackPanel>
+                    <StackPanel Grid.Column="1" Orientation="Horizontal" Spacing="8" VerticalAlignment="Center">
+                        <Button Content="Yes, tell me" Style="{StaticResource McPrimaryButton}" Command="{x:Bind ViewModel.AnswerUpdateQuestionCommand}" CommandParameter="yes" />
+                        <Button Content="No thanks" Style="{StaticResource McButton}" Command="{x:Bind ViewModel.AnswerUpdateQuestionCommand}" CommandParameter="no" />
+                    </StackPanel>
+                </Grid>
+            </Border>
+            <Border Padding="24,10" Background="{StaticResource McAccentSoft}" Visibility="{x:Bind local:UiHelpers.Show(ViewModel.ShowUpdateAvailable), Mode=OneWay}">
+                <Grid ColumnSpacing="12">
+                    <Grid.ColumnDefinitions>
+                        <ColumnDefinition Width="Auto" />
+                        <ColumnDefinition Width="*" />
+                        <ColumnDefinition Width="Auto" />
+                    </Grid.ColumnDefinitions>
+                    <FontIcon Glyph="&#xE896;" FontSize="18" Foreground="{StaticResource McAccentText}" VerticalAlignment="Center" />
+                    <TextBlock Grid.Column="1" Text="{x:Bind ViewModel.UpdateText, Mode=OneWay}" FontWeight="SemiBold" Foreground="{StaticResource McText}" VerticalAlignment="Center" />
+                    <StackPanel Grid.Column="2" Orientation="Horizontal" Spacing="8" VerticalAlignment="Center">
+                        <Button Content="Download" Style="{StaticResource McPrimaryButton}" Command="{x:Bind ViewModel.OpenUpdatePageCommand}" />
+                        <Button Content="Skip this version" Style="{StaticResource McButton}" Command="{x:Bind ViewModel.SkipUpdateCommand}" />
+                        <Button Style="{StaticResource McSubtleButton}" Command="{x:Bind ViewModel.DismissUpdateCommand}" AutomationProperties.Name="Dismiss" Width="32" Padding="0">
+                            <FontIcon Glyph="&#xE711;" FontSize="12" />
+                        </Button>
+                    </StackPanel>
+                </Grid>
+            </Border>
+        </StackPanel>
+
         <!-- Content: files and inspector -->
-        <Grid x:Name="Content" Grid.Row="2">
+        <Grid x:Name="Content" Grid.Row="3">
             <Grid.ColumnDefinitions>
                 <ColumnDefinition Width="*" />
                 <ColumnDefinition x:Name="InspectorColumn" Width="360" />
@@ -435,11 +474,11 @@
         </Grid>
 
         <!-- Settings page, shown over the content -->
-        <local:SettingsView x:Name="SettingsPage" Grid.Row="1" Grid.RowSpan="3" ViewModel="{x:Bind ViewModel}"
+        <local:SettingsView x:Name="SettingsPage" Grid.Row="1" Grid.RowSpan="4" ViewModel="{x:Bind ViewModel}"
                             Visibility="{x:Bind local:UiHelpers.Show(ViewModel.IsSettingsOpen), Mode=OneWay}" />
 
         <!-- Action bar: 64 px -->
-        <Grid Grid.Row="3" Height="64" Padding="24,0" ColumnSpacing="8" Background="{StaticResource McLayer}" BorderBrush="{StaticResource McStroke}" BorderThickness="0,1,0,0"
+        <Grid Grid.Row="4" Height="64" Padding="24,0" ColumnSpacing="8" Background="{StaticResource McLayer}" BorderBrush="{StaticResource McStroke}" BorderThickness="0,1,0,0"
               Visibility="{x:Bind local:UiHelpers.Hide(ViewModel.IsSettingsOpen), Mode=OneWay}">
             <Grid.ColumnDefinitions>
                 <ColumnDefinition Width="*" />

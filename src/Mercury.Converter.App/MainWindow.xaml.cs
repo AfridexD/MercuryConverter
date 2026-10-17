@@ -37,6 +37,7 @@ public sealed partial class MainWindow : Window
         AddKeyboardShortcuts();
 
         ViewModel.PropertyChanged += ViewModel_PropertyChanged;
+        _ = ViewModel.CheckForUpdateAsync();
         Closed += (_, _) => OnClosed();
 
         var startup = App.Startup;

@@ -58,12 +58,14 @@ public sealed partial class MainViewModel : ObservableObject
         UseGraphicsCardEncoder = settings.UseGraphicsCardEncoder;
         UseQuickWindow = settings.UseQuickWindow;
         RightClickTipShown = settings.RightClickTipShown;
+        CheckForUpdates = settings.CheckForUpdates;
         ThumbnailSetting = settings.Thumbnails;
         SelectedMode = ModeChoices.First(choice => choice.Value == settings.Performance);
         SelectedSpeed = SpeedChoices.First(choice => choice.Value == settings.VideoSpeed);
         SelectedChannels = ChannelChoices.First(choice => choice.Value == settings.AudioChannels);
         SelectedSize = SizeChoices.All[0];
         RightClickOn = Services.ShellIntegration.IsInstalled();
+        LoadUpdateState(settings);
         initializing = false;
 
         View.Apply(ThumbnailSetting);
@@ -185,6 +187,9 @@ public sealed partial class MainViewModel : ObservableObject
     public partial bool UseQuickWindow { get; set; }
 
     [ObservableProperty]
+    public partial bool CheckForUpdates { get; set; }
+
+    [ObservableProperty]
     public partial bool RightClickOn { get; set; }
 
     [ObservableProperty]
@@ -257,6 +262,24 @@ public sealed partial class MainViewModel : ObservableObject
     partial void OnShowTaskbarProgressChanged(bool value) => SaveUnlessLoading();
 
     partial void OnUseQuickWindowChanged(bool value) => SaveUnlessLoading();
+
+    partial void OnCheckForUpdatesChanged(bool value)
+    {
+        if (initializing)
+        {
+            return;
+        }
+
+        SaveSettings();
+        if (value)
+        {
+            _ = CheckForUpdateAsync();
+        }
+        else
+        {
+            DismissUpdateCommand.Execute(null);
+        }
+    }
 
     partial void OnOutputFolderChanged(string? value)
     {
@@ -549,6 +572,10 @@ public sealed partial class MainViewModel : ObservableObject
                 RightClickTipShown = RightClickTipShown,
                 VideoSpeed = SelectedSpeed.Value,
                 AudioChannels = SelectedChannels.Value,
+                CheckForUpdates = CheckForUpdates,
+                UpdatePromptAnswered = UpdateQuestionAnswered,
+                SkippedVersion = skippedVersion,
+                LastUpdateCheckUtc = lastUpdateCheck,
             });
         }
         catch (IOException)
