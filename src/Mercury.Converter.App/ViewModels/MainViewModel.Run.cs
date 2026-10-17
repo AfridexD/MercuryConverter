@@ -177,17 +177,39 @@ public sealed partial class MainViewModel
     [RelayCommand(CanExecute = nameof(CanConvert))]
     private async Task ConvertAsync()
     {
-        var selected = SelectedItems.Where(f => f.State == ItemState.Ready).ToList();
-        var batch = selected.Count > 0 ? selected : Files.Where(f => f.State == ItemState.Ready).ToList();
+        var batch = FilesToConvert();
         if (batch.Count == 0)
         {
             return;
         }
 
+        // Files that were already converted, failed or were cancelled are converted again with the current choices.
+        // The earlier results stay where they are: a new file gets its own name.
+        foreach (var item in batch.Where(i => i.State != ItemState.Ready))
+        {
+            item.AllowLarger = false;
+            item.ResetForRetry();
+        }
+
         await RunBatchAsync(batch);
     }
 
-    private bool CanConvert() => !IsBusy && Files.Any(f => f.State == ItemState.Ready);
+    private bool CanConvert() => !IsBusy && FilesToConvert().Count > 0;
+
+    /// <summary>The selected files if there are any, otherwise the new ones, otherwise everything already converted.</summary>
+    internal List<FileItem> FilesToConvert()
+    {
+        static bool Idle(FileItem item) => item.State is not (ItemState.Active or ItemState.Waiting);
+
+        var selected = Files.Where(f => f.IsSelected && Idle(f)).ToList();
+        if (selected.Count > 0)
+        {
+            return selected;
+        }
+
+        var ready = Files.Where(f => f.State == ItemState.Ready).ToList();
+        return ready.Count > 0 ? ready : Files.Where(Idle).ToList();
+    }
 
     public async Task RunBatchAsync(List<FileItem> batch)
     {

@@ -384,15 +384,13 @@ public sealed partial class MainViewModel
         {
             ConvertLabel = "Converting…";
         }
-        else if (selected.Count > 0)
+        else if (FilesToConvert() is { Count: > 0 } toConvert)
         {
             ConvertIsEnabled = true;
-            ConvertLabel = $"Convert {selected.Count} selected";
-        }
-        else if (ready > 0)
-        {
-            ConvertIsEnabled = true;
-            ConvertLabel = $"Convert {Plural(ready, "file", "files")}";
+            var again = toConvert.All(f => f.State != ItemState.Ready) ? " again" : string.Empty;
+            ConvertLabel = selected.Count > 0
+                ? $"Convert {selected.Count} selected{again}"
+                : $"Convert {Plural(toConvert.Count, "file", "files")}{again}";
         }
 
         ShowCancel = running;
