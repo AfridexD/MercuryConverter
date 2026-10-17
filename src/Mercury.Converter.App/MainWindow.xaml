@@ -237,7 +237,7 @@
                     <ScrollViewer Grid.Row="3" x:Name="CardScroller" VerticalScrollBarVisibility="Auto" Padding="24,4,24,16">
                         <ItemsRepeater x:Name="Cards" ItemsSource="{x:Bind ViewModel.VisibleFiles}">
                             <ItemsRepeater.Layout>
-                                <UniformGridLayout MinItemWidth="176" MinItemHeight="206" MinColumnSpacing="12" MinRowSpacing="12" ItemsStretch="Fill" />
+                                <UniformGridLayout MinItemWidth="176" MinItemHeight="236" MinColumnSpacing="12" MinRowSpacing="12" ItemsStretch="Fill" />
                             </ItemsRepeater.Layout>
                             <ItemsRepeater.ItemTemplate>
                                 <DataTemplate x:DataType="vm:FileItem">
@@ -280,7 +280,7 @@
                                             </StackPanel>
                                             <TextBlock Text="{x:Bind Detail, Mode=OneWay}" Visibility="{x:Bind DetailVisibility, Mode=OneWay}" Style="{StaticResource McCaptionText}"
                                                        MaxLines="2" TextTrimming="CharacterEllipsis" />
-                                            <Button Content="Retry" Style="{StaticResource McCompactButton}" Visibility="{x:Bind RetryVisibility, Mode=OneWay}"
+                                            <Button Content="{x:Bind RetryLabel, Mode=OneWay}" Style="{StaticResource McCompactButton}" Visibility="{x:Bind RetryVisibility, Mode=OneWay}"
                                                     Click="CardRetry_Click" Margin="0,4,0,0" />
                                             <ProgressBar Height="3" Margin="0,6,0,0" Minimum="0" Maximum="100" Foreground="{StaticResource McAccent}"
                                                          Value="{x:Bind Progress, Mode=OneWay}" IsIndeterminate="{x:Bind BarIsMoving, Mode=OneWay}"
@@ -445,6 +445,10 @@
                                         <TextBlock Text="Channels" Style="{StaticResource McSectionLabel}" />
                                         <ComboBox Style="{StaticResource McComboBox}" ItemsSource="{x:Bind ViewModel.ChannelChoices}" DisplayMemberPath="Label"
                                                   SelectedItem="{x:Bind ViewModel.SelectedChannels, Mode=TwoWay}" AutomationProperties.Name="Channels" />
+                                    </StackPanel>
+                                    <StackPanel Spacing="4" Visibility="{x:Bind local:UiHelpers.Show(ViewModel.ShowStripOption), Mode=OneWay}">
+                                        <CheckBox Content="Remove location and camera details" IsChecked="{x:Bind ViewModel.StripMetadata, Mode=TwoWay}" />
+                                        <TextBlock Text="Photos, videos and songs lose their GPS position, camera model and date tags. Good before sharing online." Style="{StaticResource McCaptionText}" Margin="32,0,0,0" />
                                     </StackPanel>
                                 </StackPanel>
                             </StackPanel>

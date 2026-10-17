@@ -59,6 +59,8 @@ public sealed partial class MainViewModel : ObservableObject
         UseQuickWindow = settings.UseQuickWindow;
         RightClickTipShown = settings.RightClickTipShown;
         CheckForUpdates = settings.CheckForUpdates;
+        StripMetadata = settings.StripMetadata;
+        NotifyWhenDone = settings.NotifyWhenDone;
         ThumbnailSetting = settings.Thumbnails;
         SelectedMode = ModeChoices.First(choice => choice.Value == settings.Performance);
         SelectedSpeed = SpeedChoices.First(choice => choice.Value == settings.VideoSpeed);
@@ -190,6 +192,12 @@ public sealed partial class MainViewModel : ObservableObject
     public partial bool CheckForUpdates { get; set; }
 
     [ObservableProperty]
+    public partial bool StripMetadata { get; set; }
+
+    [ObservableProperty]
+    public partial bool NotifyWhenDone { get; set; }
+
+    [ObservableProperty]
     public partial bool RightClickOn { get; set; }
 
     [ObservableProperty]
@@ -262,6 +270,10 @@ public sealed partial class MainViewModel : ObservableObject
     partial void OnShowTaskbarProgressChanged(bool value) => SaveUnlessLoading();
 
     partial void OnUseQuickWindowChanged(bool value) => SaveUnlessLoading();
+
+    partial void OnStripMetadataChanged(bool value) => SaveUnlessLoading();
+
+    partial void OnNotifyWhenDoneChanged(bool value) => SaveUnlessLoading();
 
     partial void OnCheckForUpdatesChanged(bool value)
     {
@@ -573,6 +585,8 @@ public sealed partial class MainViewModel : ObservableObject
                 VideoSpeed = SelectedSpeed.Value,
                 AudioChannels = SelectedChannels.Value,
                 CheckForUpdates = CheckForUpdates,
+                StripMetadata = StripMetadata,
+                NotifyWhenDone = NotifyWhenDone,
                 UpdatePromptAnswered = UpdateQuestionAnswered,
                 SkippedVersion = skippedVersion,
                 LastUpdateCheckUtc = lastUpdateCheck,
@@ -606,6 +620,11 @@ public sealed partial class MainViewModel : ObservableObject
     /// <summary>The size, rotation, and flips that apply to a kind of file.</summary>
     internal Transform ChangesFor(MediaGroup group)
     {
+        if (MediaGroups.Of(targets[group]) == MediaGroup.Audio)
+        {
+            return Transform.None;
+        }
+
         var size = SelectedSize.Changes;
         return group switch
         {

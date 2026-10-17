@@ -61,6 +61,12 @@ public sealed record AppSettings
     /// <summary>Ask GitHub once a day whether a newer version exists. Off until the user says yes.</summary>
     public bool CheckForUpdates { get; init; }
 
+    /// <summary>Remove location, camera and date details from photos, video and audio. Off unless the user turns it on.</summary>
+    public bool StripMetadata { get; init; }
+
+    /// <summary>Show a Windows notification when a run finishes while the window is not in front.</summary>
+    public bool NotifyWhenDone { get; init; } = true;
+
     /// <summary>The first-run question about update checks has been answered, either way.</summary>
     public bool UpdatePromptAnswered { get; init; }
 

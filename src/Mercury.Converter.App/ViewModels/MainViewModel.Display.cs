@@ -89,6 +89,8 @@ public sealed partial class MainViewModel
 
     public bool ShowChannelsOption { get; private set; }
 
+    public bool ShowStripOption { get; private set; }
+
     public string RotateNote { get; private set; } = string.Empty;
 
     public string OutputFolderText => OutputFolder ?? "Next to the originals";
@@ -254,10 +256,15 @@ public sealed partial class MainViewModel
         BannerGlyph = bad ? Glyphs.Error : Glyphs.CheckCircle;
         BannerBackground = Tokens.Brush(bad ? "McErrSoft" : "McOkSoft");
         BannerGlyphBrush = Tokens.Brush(bad ? "McErr" : "McOk");
-        BannerTitle = bad ? $"{done} converted, {failed} failed" : $"{done} converted";
-        BannerBody = bad ? "Open the failed file to see why." : OutputFolder is null ? "Saved next to the originals." : $"Saved to {OutputFolder}.";
-        BannerCanRetry = failed + cancelled > 0;
-        BannerRetryLabel = failed > 0 && cancelled > 0 ? "Retry failed and cancelled" : failed > 0 ? "Retry failed" : "Retry cancelled";
+        var notSmaller = Files.Count(f => f.State == ItemState.Failed && f.NotSmaller);
+        var realFailures = failed - notSmaller;
+
+        BannerTitle = bad ? $"{done} converted, {failed} {(notSmaller == failed ? "not made smaller" : "failed")}" : $"{done} converted";
+        BannerBody = notSmaller == failed && bad
+            ? "These files are already compact, so nothing was saved. Use Save anyway on a card to keep a larger copy."
+            : bad ? "Open the failed file to see why." : OutputFolder is null ? "Saved next to the originals." : $"Saved to {OutputFolder}.";
+        BannerCanRetry = realFailures + cancelled > 0;
+        BannerRetryLabel = realFailures > 0 && cancelled > 0 ? "Retry failed and cancelled" : realFailures > 0 ? "Retry failed" : "Retry cancelled";
     }
 
     private void BuildVisibleFiles(List<FileItem> files)
@@ -329,10 +336,12 @@ public sealed partial class MainViewModel
         QualityLabel = $"{label} · {quality}";
         QualityAutomationText = $"{quality} of 100, {label}";
 
-        ShowSizeOption = kinds.Any(k => k != MediaGroup.Audio);
-        ShowRotateOption = kinds.Any(k => k is MediaGroup.Photo or MediaGroup.Video);
-        ShowSpeedOption = kinds.Contains(MediaGroup.Video) || kinds.Contains(MediaGroup.Gif) && targets[MediaGroup.Gif] is TargetFormat.Mp4;
-        ShowChannelsOption = kinds.Count == 1 && kinds[0] == MediaGroup.Audio;
+        bool AudioOut(MediaGroup g) => g == MediaGroup.Audio || MediaGroups.Of(targets[g]) == MediaGroup.Audio;
+        ShowSizeOption = kinds.Any(k => !AudioOut(k));
+        ShowRotateOption = kinds.Any(k => k is MediaGroup.Photo or MediaGroup.Video && !AudioOut(k));
+        ShowSpeedOption = kinds.Contains(MediaGroup.Video) && !AudioOut(MediaGroup.Video) || kinds.Contains(MediaGroup.Gif) && targets[MediaGroup.Gif] is TargetFormat.Mp4;
+        ShowChannelsOption = kinds.Any(AudioOut);
+        ShowStripOption = kinds.Any(k => k != MediaGroup.Gif);
         RotateNote = kinds.Count > 1 && kinds.Any(k => k is MediaGroup.Audio or MediaGroup.Gif)
             ? "Applies to photos and videos only."
             : "Turns or mirrors every file.";
@@ -340,8 +349,9 @@ public sealed partial class MainViewModel
         var parts = new List<string>();
         if (ShowSizeOption) parts.Add("Size");
         if (ShowRotateOption) parts.Add("rotate");
-        if (ShowSpeedOption) parts.Add("video speed");
+        if (ShowSpeedOption) parts.Add("speed");
         if (ShowChannelsOption) parts.Add("Channels");
+        if (ShowStripOption) parts.Add("privacy");
         MoreSummary = parts.Count == 0 ? string.Empty : string.Join(", ", parts).Replace("Size, ", "Size, ", StringComparison.Ordinal);
         if (MoreSummary.Length > 0)
         {

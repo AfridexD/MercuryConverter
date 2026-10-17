@@ -124,7 +124,8 @@ public class RunnerIntegrationTests : IDisposable
 
         var result = await Runner().RunAsync(
             new ConversionRequest(input, TargetFormat.WebP, Quality: 60),
-            Path.Combine(folder, "photo.webp"));
+            Path.Combine(folder, "photo.webp"),
+            keepSmallerThanOriginal: false);
 
         Assert.True(result.Succeeded, result.Error);
         Assert.EndsWith(".webp", result.OutputPath);
@@ -142,7 +143,8 @@ public class RunnerIntegrationTests : IDisposable
             new ConversionRequest(input, TargetFormat.Mp4, Quality: 75),
             Path.Combine(folder, "clip-out.mp4"),
             durationSeconds: 3.0,
-            progress: progress);
+            progress: progress,
+            keepSmallerThanOriginal: false);
 
         Assert.True(result.Succeeded, result.Error);
         Assert.True(File.Exists(result.OutputPath));
@@ -176,11 +178,31 @@ public class RunnerIntegrationTests : IDisposable
 
         var result = await Runner().RunAsync(
             new ConversionRequest(input, TargetFormat.WebP),
-            existing);
+            existing,
+            keepSmallerThanOriginal: false);
 
         Assert.True(result.Succeeded, result.Error);
         Assert.Equal(Path.Combine(folder, "keep (2).webp"), result.OutputPath);
         Assert.Equal("my original file", File.ReadAllText(existing));
+    }
+
+    [Fact]
+    public async Task A_result_that_cannot_be_made_smaller_is_not_saved()
+    {
+        if (ToolsMissing) return;
+        var input = MakeTestMedia("clip.mp4", "-hide_banner -loglevel error -y -f lavfi -i testsrc=duration=2:size=320x240:rate=10 -c:v libx264 -crf 45 -preset veryslow {out}");
+        var wanted = Path.Combine(folder, "clip-out.avi");
+
+        var result = await Runner().RunAsync(new ConversionRequest(input, TargetFormat.Avi, Quality: 90), wanted, durationSeconds: 2.0);
+
+        Assert.False(result.Succeeded);
+        Assert.True(result.WasNotSmaller);
+        Assert.False(File.Exists(wanted));
+        Assert.Empty(Directory.GetFiles(folder, "*.tmp*"));
+
+        // Saving it anyway still works.
+        var again = await Runner().RunAsync(new ConversionRequest(input, TargetFormat.Avi, Quality: 90), wanted, durationSeconds: 2.0, keepSmallerThanOriginal: false);
+        Assert.True(again.Succeeded, again.Error);
     }
 
     [Fact]

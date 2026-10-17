@@ -15,6 +15,8 @@ public sealed record ConversionResult(
     double? PartialSeconds = null)
 {
     public bool WasCancelled => Error == ConversionRunner.CancelledMessage;
+
+    public bool WasNotSmaller => Error == ConversionRunner.NotSmallerMessage;
 }
 
 /// <summary>What a conversion has done so far. Read after a failure to see how far it got.</summary>
@@ -31,6 +33,9 @@ internal sealed class RunState
 public sealed class ConversionRunner(ToolLocator tools)
 {
     public const string CancelledMessage = "Cancelled.";
+
+    /// <summary>The result would have been bigger than the original even at the lowest quality, so nothing was saved.</summary>
+    public const string NotSmallerMessage = "Could not make this file smaller.";
 
     /// <summary>How much lower each retry's quality is, when the output would be larger than the original.</summary>
     private const int QualityStep = 15;
@@ -55,7 +60,10 @@ public sealed class ConversionRunner(ToolLocator tools)
         var inputBytes = new FileInfo(request.InputPath).Length;
         var finalPath = SafeOutput.UniquePath(outputPath);
         var lossy = Targets.Get(request.Target).Lossy;
-        var qualities = keepSmallerThanOriginal && lossy
+        // Video to GIF is bigger by nature, so the "never larger" check does not apply to it.
+        var growsByNature = request.Target == TargetFormat.Gif && InputFormats.TryGetKind(request.InputPath, out var inputKind) && inputKind != MediaKind.Animation;
+        var enforce = keepSmallerThanOriginal && lossy && !growsByNature;
+        var qualities = enforce
             ? SizeAttempts(request.Quality)
             : [QualityMapper.Clamp(request.Quality)];
 
@@ -76,8 +84,7 @@ public sealed class ConversionRunner(ToolLocator tools)
                     }
 
                     var outputBytes = new FileInfo(temp).Length;
-                    var isLast = attempt == qualities.Count - 1;
-                    if (outputBytes < inputBytes || isLast || !lossy || !keepSmallerThanOriginal)
+                    if (outputBytes < inputBytes || !enforce)
                     {
                         SafeOutput.Commit(temp, finalPath);
                         committed = true;
@@ -86,7 +93,7 @@ public sealed class ConversionRunner(ToolLocator tools)
                             OutputPath: finalPath,
                             InputBytes: inputBytes,
                             OutputBytes: outputBytes,
-                            Warning: SizeWarning(inputBytes, outputBytes, quality, lossy, keepSmallerThanOriginal),
+                            Warning: SizeWarning(inputBytes, outputBytes, quality, lossy, enforce),
                             Error: null,
                             AdjustedQuality: quality == QualityMapper.Clamp(request.Quality) ? null : quality);
                     }
@@ -100,7 +107,8 @@ public sealed class ConversionRunner(ToolLocator tools)
                 }
             }
 
-            return Fail("No output was produced.", inputBytes);
+            // Every attempt was larger than the original, so nothing was saved.
+            return Fail(NotSmallerMessage, inputBytes);
         }
         catch (OperationCanceledException)
         {

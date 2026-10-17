@@ -214,6 +214,13 @@ public partial class FileItem : ObservableObject
     [ObservableProperty]
     public partial bool IsSelected { get; set; }
 
+    /// <summary>The result would have been larger than the original, so nothing was saved.</summary>
+    [ObservableProperty]
+    public partial bool NotSmaller { get; set; }
+
+    /// <summary>The user chose to save the file even though it comes out larger.</summary>
+    public bool AllowLarger { get; set; }
+
     /// <summary>Only the next few queued files animate, so a long queue stays calm.</summary>
     [ObservableProperty]
     public partial bool AnimateWait { get; set; }
@@ -260,7 +267,7 @@ public partial class FileItem : ObservableObject
         ItemState.Waiting => "Waiting",
         ItemState.Active => string.Create(CultureInfo.InvariantCulture, $"Converting · {Progress:0}%"),
         ItemState.Done => "Done",
-        ItemState.Failed => "Failed",
+        ItemState.Failed => NotSmaller ? "Not made smaller" : "Failed",
         ItemState.Cancelled => "Cancelled",
         _ => PlannedText,
     };
@@ -325,6 +332,14 @@ public partial class FileItem : ObservableObject
 
     partial void OnMessageChanged(string? value) => NotifyDisplay();
 
+    partial void OnNotSmallerChanged(bool value)
+    {
+        NotifyDisplay();
+        OnPropertyChanged(nameof(RetryLabel));
+    }
+
+    public string RetryLabel => NotSmaller ? "Save anyway" : "Retry";
+
     partial void OnDoneDetailChanged(string? value) => NotifyDisplay();
 
     partial void OnIsSelectedChanged(bool value)
@@ -361,6 +376,7 @@ public partial class FileItem : ObservableObject
         PartialSeconds = null;
         OutputPath = null;
         OutputBytes = 0;
+        NotSmaller = false;
     }
 }
 

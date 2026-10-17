@@ -250,6 +250,7 @@ public sealed partial class MainViewModel
             (int)Math.Round(Quality),
             Changes: ChangesFor(item.Group),
             ExtraFfmpegArguments: ConversionOptions.FfmpegOptions(target, SelectedSpeed.Value, SelectedChannels.Value, useGpu),
+            StripMetadata: StripMetadata && item.Group != MediaGroup.Gif,
             Execution: new ExecutionOptions(
                 budget.ThreadsPerJob,
                 UseHardwareDecode: true,
@@ -263,7 +264,7 @@ public sealed partial class MainViewModel
         }
 
         var progress = new Progress<double>(value => item.Progress = Math.Round(value * 100));
-        var result = await runner.RunAsync(request, OutputPathFor(item), duration, progress, NeverLarger, token);
+        var result = await runner.RunAsync(request, OutputPathFor(item), duration, progress, NeverLarger && !item.AllowLarger, token);
 
         if (result.Succeeded)
         {
@@ -279,7 +280,10 @@ public sealed partial class MainViewModel
         }
         else
         {
-            item.Message = FriendlyError(result.Error);
+            item.NotSmaller = result.WasNotSmaller;
+            item.Message = result.WasNotSmaller
+                ? "Already compact. Original untouched."
+                : FriendlyError(result.Error);
             item.Technical = result.Error;
             item.PartialSeconds = result.PartialSeconds;
             item.State = ItemState.Failed;
@@ -324,6 +328,8 @@ public sealed partial class MainViewModel
 
         foreach (var item in again)
         {
+            // Asking again for a file that could not be made smaller means "save it anyway".
+            item.AllowLarger = item.AllowLarger || item.NotSmaller;
             item.ResetForRetry();
         }
 
@@ -332,5 +338,5 @@ public sealed partial class MainViewModel
 
     [RelayCommand]
     private Task RetryProblems() =>
-        RetryAsync(Files.Where(f => f.State is ItemState.Failed or ItemState.Cancelled));
+        RetryAsync(Files.Where(f => f.State is ItemState.Failed or ItemState.Cancelled && !f.NotSmaller));
 }

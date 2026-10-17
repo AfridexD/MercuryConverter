@@ -22,6 +22,8 @@ public sealed partial class MainWindow : Window
     private const double WideFrom = 1700;
 
     private TaskbarProgress? taskbar;
+    private bool isActive = true;
+    private bool wasBusy;
     private bool narrow;
 
     public MainWindow()
@@ -36,6 +38,8 @@ public sealed partial class MainWindow : Window
         TrySetIcon();
         AddKeyboardShortcuts();
 
+        Activated += (_, args) => isActive = args.WindowActivationState != WindowActivationState.Deactivated;
+        Notifier.Register();
         ViewModel.PropertyChanged += ViewModel_PropertyChanged;
         _ = ViewModel.CheckForUpdateAsync();
         Closed += (_, _) => OnClosed();
@@ -102,6 +106,19 @@ public sealed partial class MainWindow : Window
         else if (e.PropertyName == nameof(MainViewModel.IsBusy) && !ViewModel.IsBusy)
         {
             taskbar?.Clear();
+
+            // A run that ended while the user was in another app gets a Windows notification.
+            if (wasBusy && ViewModel.NotifyWhenDone && !isActive)
+            {
+                Notifier.Show("Conversions finished", ViewModel.SummaryText, WindowNative.GetWindowHandle(this));
+            }
+
+            wasBusy = false;
+        }
+
+        if (e.PropertyName == nameof(MainViewModel.IsBusy) && ViewModel.IsBusy)
+        {
+            wasBusy = true;
         }
 
         if (e.PropertyName is nameof(MainViewModel.IsPaneOpen))

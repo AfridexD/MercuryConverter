@@ -105,6 +105,9 @@ public static class FormatCatalog
         new(MediaGroup.Video, TargetFormat.Ogv, "OGV", "Open format for some web players.", null, true, 0.34),
         new(MediaGroup.Video, TargetFormat.Avi, "AVI", "For older players and TVs.", null, true, 0.60),
         new(MediaGroup.Video, TargetFormat.Gif, "GIF", "Short silent animation. Files get much larger.", null, true, 2.5),
+        new(MediaGroup.Video, TargetFormat.Mp3, "MP3 (audio only)", "Keeps just the sound, as a small file.", null, true, 0.06),
+        new(MediaGroup.Video, TargetFormat.Aac, "AAC (audio only)", "Just the sound. Good for Apple apps.", null, true, 0.05),
+        new(MediaGroup.Video, TargetFormat.Flac, "FLAC (audio only)", "Just the sound, with no quality loss.", null, false, 0.12),
 
         new(MediaGroup.Gif, TargetFormat.Gif, "GIF", "Animated image that plays everywhere.", "Stays a GIF", true, 0.75),
         new(MediaGroup.Gif, TargetFormat.Mp4, "MP4 video", "Much smaller, but no longer a GIF.", null, true, 0.12),

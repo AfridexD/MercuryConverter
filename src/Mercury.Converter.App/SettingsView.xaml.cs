@@ -80,6 +80,7 @@ public sealed partial class SettingsView : UserControl
         GpuText.Text = viewModel.GraphicsEncoderText;
         TaskbarSwitch.IsOn = viewModel.ShowTaskbarProgress;
         UpdateSwitch.IsOn = viewModel.CheckForUpdates;
+        NotifySwitch.IsOn = viewModel.NotifyWhenDone;
         FolderText.Text = viewModel.OutputFolderText;
         UseOriginalButton.Visibility = viewModel.OutputFolderIsCustom ? Visibility.Visible : Visibility.Collapsed;
         loading = false;
@@ -159,6 +160,14 @@ public sealed partial class SettingsView : UserControl
         if (!loading && viewModel is not null)
         {
             viewModel.ShowTaskbarProgress = TaskbarSwitch.IsOn;
+        }
+    }
+
+    private void Notify_Toggled(object sender, RoutedEventArgs e)
+    {
+        if (!loading && viewModel is not null)
+        {
+            viewModel.NotifyWhenDone = NotifySwitch.IsOn;
         }
     }
 

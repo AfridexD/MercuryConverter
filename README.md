@@ -88,9 +88,12 @@ Pick *Mercury Converter → To MP4* in File Explorer. A small window shows progr
 <td width="50%" valign="top">
 
 ### Smarter than a slider
-- Files never get bigger by surprise: quality is lowered and retried.
+- Files never get bigger by surprise: quality is lowered and retried, and if it still cannot shrink, nothing is saved and your original is left alone.
 - JPEG to **JPEG XL without any loss**, and back to the exact original.
 - Resize, rotate and flip.
+- **Remove location and camera details** from photos, videos and songs before you share them.
+- **Pull the sound out of a video** as MP3, AAC or FLAC.
+- A notification when a long batch finishes, and an optional heads-up when a new version is out (off until you say yes).
 - Taskbar progress, drag and drop, and full keyboard control.
 
 </td>

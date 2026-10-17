@@ -27,7 +27,8 @@ public sealed record ConversionRequest(
     bool LosslessJpegRecompression = false,
     Transform? Changes = null,
     string? ExtraFfmpegArguments = null,
-    ExecutionOptions? Execution = null);
+    ExecutionOptions? Execution = null,
+    bool StripMetadata = false);
 
 /// <summary>Turns a request into an ordered list of tool runs. Temp files are listed for cleanup.</summary>
 public sealed record ConversionPlan(
@@ -72,7 +73,7 @@ public static class CommandBuilder
                 throw new NotSupportedException("Video and audio files cannot be converted to PDF.");
             }
 
-            steps.Add(ImageStep(request.InputPath, TargetFormat.Pdf, quality, changes, exec, outputPath));
+            steps.Add(ImageStep(request.InputPath, TargetFormat.Pdf, quality, changes, exec, outputPath, request.StripMetadata));
         }
         else if (target.Kind == MediaKind.Image)
         {
@@ -81,7 +82,7 @@ public static class CommandBuilder
                 throw new NotSupportedException("Video and audio files cannot be converted to still images yet.");
             }
 
-            steps.Add(ImageStep(request.InputPath, request.Target, quality, changes, exec, outputPath));
+            steps.Add(ImageStep(request.InputPath, request.Target, quality, changes, exec, outputPath, request.StripMetadata));
         }
         else if (request.Target == TargetFormat.Gif)
         {
@@ -94,7 +95,7 @@ public static class CommandBuilder
                 throw new NotSupportedException("Still images cannot be converted to video yet.");
             }
 
-            steps.Add(VideoStep(request.InputPath, request.Target, quality, changes, request.ExtraFfmpegArguments, exec, outputPath));
+            steps.Add(VideoStep(request.InputPath, request.Target, quality, changes, request.ExtraFfmpegArguments, exec, outputPath, request.StripMetadata));
         }
         else
         {
@@ -103,7 +104,7 @@ public static class CommandBuilder
                 throw new NotSupportedException("Images cannot be converted to audio.");
             }
 
-            steps.Add(AudioStep(request.InputPath, request.Target, quality, exec, request.ExtraFfmpegArguments, outputPath));
+            steps.Add(AudioStep(request.InputPath, request.Target, quality, exec, request.ExtraFfmpegArguments, outputPath, request.StripMetadata));
         }
 
         return new ConversionPlan(steps, intermediates);
@@ -133,7 +134,7 @@ public static class CommandBuilder
             : [];
 
         // Lossless JPEG recompression keeps the exact pixels, so it can't be combined with resizing or rotating.
-        if (isJpeg && request.LosslessJpegRecompression && changes.IsNone)
+        if (isJpeg && request.LosslessJpegRecompression && changes.IsNone && !request.StripMetadata)
         {
             // Keeps every JPEG pixel and can be turned back into the original JPEG byte-for-byte.
             steps.Add(new ToolCommand(Tool.CJxl, [request.InputPath, outputPath, "--lossless_jpeg=1", .. threadArgs]));
@@ -142,7 +143,7 @@ public static class CommandBuilder
 
         var distance = QualityMapper.JxlDistance(quality);
         var distanceText = distance.ToString("0.0#", CultureInfo.InvariantCulture);
-        var cjxlReads = changes.IsNone && inputExtension is "png" or "jpg" or "jpeg" or "jfif" or "gif";
+        var cjxlReads = changes.IsNone && !request.StripMetadata && inputExtension is "png" or "jpg" or "jpeg" or "jfif" or "gif";
 
         if (cjxlReads)
         {
@@ -153,11 +154,11 @@ public static class CommandBuilder
         // Any other format, or any image with changes, is first decoded to a temporary PNG, then encoded.
         var png = Path.Combine(tempDirectory, $"{Guid.NewGuid():N}.png");
         intermediates.Add(png);
-        steps.Add(ImageStep(request.InputPath, TargetFormat.Png, quality, changes, exec, png));
+        steps.Add(ImageStep(request.InputPath, TargetFormat.Png, quality, changes, exec, png, request.StripMetadata));
         steps.Add(new ToolCommand(Tool.CJxl, [png, outputPath, "-d", distanceText, "-e", "7", .. threadArgs]));
     }
 
-    private static ToolCommand ImageStep(string input, TargetFormat target, int quality, Transform changes, ExecutionOptions exec, string output)
+    private static ToolCommand ImageStep(string input, TargetFormat target, int quality, Transform changes, ExecutionOptions exec, string output, bool strip = false)
     {
         var args = new List<string>();
 
@@ -168,6 +169,12 @@ public static class CommandBuilder
 
         // "[0]" takes the first frame of multi-frame files such as animated GIF or PDF.
         args.AddRange([input + "[0]", "-auto-orient"]);
+
+        // Removes location, camera and date details, and keeps the color profile so colors do not change.
+        if (strip)
+        {
+            args.AddRange(["+profile", "!icc,*"]);
+        }
 
         if (changes.Rotation != 0)
         {
@@ -324,7 +331,8 @@ public static class CommandBuilder
         Transform changes,
         string? extraArguments,
         ExecutionOptions exec,
-        string output)
+        string output,
+        bool strip = false)
     {
         var args = FfmpegStart(input, exec);
 
@@ -384,10 +392,20 @@ public static class CommandBuilder
                 throw new NotSupportedException($"{target} is not a video format.");
         }
 
+        AddStripArguments(args, strip);
         AddExtraArguments(args, extraArguments);
 
         args.Add(output);
         return new ToolCommand(Tool.FFmpeg, args);
+    }
+
+    /// <summary>Drops tags, location and chapter details from the result.</summary>
+    private static void AddStripArguments(List<string> args, bool strip)
+    {
+        if (strip)
+        {
+            args.AddRange(["-map_metadata", "-1", "-map_chapters", "-1"]);
+        }
     }
 
     /// <summary>Adds the user's extra FFmpeg options after checking them against the allowlist.</summary>
@@ -425,7 +443,7 @@ public static class CommandBuilder
             ["-c:v", "libx264", "-preset", "medium", "-crf", crf, "-pix_fmt", "yuv420p"],
     };
 
-    private static ToolCommand AudioStep(string input, TargetFormat target, int quality, ExecutionOptions exec, string? extraArguments, string output)
+    private static ToolCommand AudioStep(string input, TargetFormat target, int quality, ExecutionOptions exec, string? extraArguments, string output, bool strip = false)
     {
         var args = FfmpegStart(input, exec with { UseHardwareDecode = false });
         args.Add("-vn");
@@ -451,6 +469,7 @@ public static class CommandBuilder
                 throw new NotSupportedException($"{target} is not an audio format.");
         }
 
+        AddStripArguments(args, strip);
         AddExtraArguments(args, extraArguments);
 
         args.Add(output);

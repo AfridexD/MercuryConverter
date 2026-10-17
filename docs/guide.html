@@ -80,7 +80,7 @@
         <tbody>
           <tr><td><strong>Photos</strong></td><td><strong>WebP</strong> is the smallest for websites. <strong>JPEG</strong> opens everywhere. <strong>JPEG XL</strong> and <strong>AVIF</strong> are smaller still, for newer apps. <strong>PNG</strong> keeps every pixel and see-through backgrounds. <strong>TIFF</strong> is for printing. <strong>PDF</strong> puts each photo on a page.</td></tr>
           <tr><td><strong>GIFs</strong></td><td><strong>GIF</strong> stays a GIF. <strong>MP4</strong> and <strong>WebM</strong> are far smaller but no longer GIFs.</td></tr>
-          <tr><td><strong>Video</strong></td><td><strong>MP4</strong> plays on every phone, computer and TV. <strong>WebM</strong> is small, for websites. <strong>MKV</strong> keeps every audio track and subtitle. <strong>GIF</strong> makes a short silent animation (files get much larger).</td></tr>
+          <tr><td><strong>Video</strong></td><td><strong>MP4</strong> plays on every phone, computer and TV. <strong>WebM</strong> is small, for websites. <strong>MKV</strong> keeps every audio track and subtitle. <strong>GIF</strong> makes a short silent animation (files get much larger). <strong>MP3, AAC and FLAC (audio only)</strong> keep just the sound, so you can pull the music or speech out of a video.</td></tr>
           <tr><td><strong>Audio</strong></td><td><strong>MP3</strong> plays everywhere. <strong>AAC</strong> is good for Apple devices. <strong>FLAC</strong> keeps full quality at about half the size of WAV. <strong>WAV</strong> is uncompressed.</td></tr>
         </tbody>
       </table>
@@ -94,7 +94,7 @@
       <li><strong>Best quality</strong> (above 92): largest files, closest to the original.</li>
     </ul>
     <p>Formats that never lose quality (PNG, TIFF, PDF, FLAC, WAV) hide the slider, because there is nothing to adjust.</p>
-    <div class="callout"><strong>Never make a file larger than the original</strong> is on by default. If a result would come out bigger, Mercury lowers the quality and tries again, a few times. Some files are already so compact that no setting can shrink them. Turn the option off to skip the check.</div>
+    <div class="callout"><strong>Never make a file larger than the original</strong> is on by default. If a result would come out bigger, Mercury lowers the quality and tries again, a few times. If it still cannot be made smaller, nothing is saved: the card says <em>Not made smaller</em> and your original is untouched. Choose <em>Save anyway</em> on the card if you want the larger copy. Turn the option off to skip the check. (Video to GIF is exempt, since GIFs are larger by nature.)</div>
     <p><strong>JPEG to JPEG XL without loss:</strong> choose JPEG XL at quality 100 for JPEG photos. Mercury repacks them without changing a single pixel, usually 20% smaller, and the original JPEG can be rebuilt exactly.</p>
 
     <h2 id="more">More options</h2>
@@ -104,6 +104,7 @@
       <li><strong>Rotate and flip:</strong> turn a photo or video left or right, or mirror it.</li>
       <li><strong>Video speed:</strong> <em>Slower</em> makes smaller files, <em>Faster</em> finishes sooner. <em>Balanced</em> is the default.</li>
       <li><strong>Channels</strong> (audio only): keep as is, mono, or stereo.</li>
+      <li><strong>Remove location and camera details:</strong> strips GPS position, camera model, date and similar tags from photos, videos and songs, and keeps the picture looking the same. Good before you share files online. Off by default.</li>
     </ul>
 
     <h2 id="presets">Presets</h2>
@@ -156,6 +157,7 @@
           <tr><td>Previews</td><td>Off, small, medium or large previews on the cards.</td></tr>
           <tr><td>Speed</td><td><em>Gentle</em> leaves lots of room for other apps. <em>Balanced</em> adapts to how busy your PC is. <em>Fastest</em> uses everything.</td></tr>
           <tr><td>Encode video on the graphics card</td><td>Uses less processor, but files are about 60% larger. Off by default. Mercury always uses the graphics card to <em>decode</em> video when it can.</td></tr>
+          <tr><td>Tell me when conversions finish</td><td>When a run ends while Mercury is not in front, the taskbar button flashes and Windows shows a notification (if Windows notifications are on and not silenced by Focus Assist).</td></tr>
           <tr><td>Show progress on the taskbar</td><td>The green bar on Mercury's taskbar button.</td></tr>
           <tr><td>Tell me when a new version is out</td><td>Once a day Mercury asks GitHub whether a newer version exists, and shows a notice with a Download button. Nothing else is sent and nothing is installed for you. Off until you say yes (Mercury asks once, the first time you open it).</td></tr>
         </tbody>

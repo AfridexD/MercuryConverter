@@ -37,6 +37,8 @@ public sealed partial class QuickWindow : Window
     private Phase phase;
     private string? savedPath;
     private double? partialSeconds;
+    private bool notSmaller;
+    private bool allowLarger;
 
     public QuickWindow(string filePath, TargetFormat? chosen, int? quality)
     {
@@ -248,7 +250,7 @@ public sealed partial class QuickWindow : Window
             duration = await MediaProbe.GetDurationSecondsAsync(path, ToolLocator.Default);
         }
 
-        var request = new ConversionRequest(path, target, quality, Changes: changes, ExtraFfmpegArguments: extras);
+        var request = new ConversionRequest(path, target, quality, Changes: changes, ExtraFfmpegArguments: extras, StripMetadata: settings.StripMetadata && group != MediaGroup.Gif);
         var progress = new Progress<double>(value =>
         {
             RunBar.Value = value * 100;
@@ -256,7 +258,7 @@ public sealed partial class QuickWindow : Window
         });
 
         cancellation = new CancellationTokenSource();
-        var result = await runner.RunAsync(request, output, duration, progress, settings.KeepSmallerThanOriginal, cancellation.Token);
+        var result = await runner.RunAsync(request, output, duration, progress, settings.KeepSmallerThanOriginal && !allowLarger, cancellation.Token);
 
         if (result.Succeeded && result.OutputPath is { } saved)
         {
@@ -272,6 +274,16 @@ public sealed partial class QuickWindow : Window
         else if (result.WasCancelled)
         {
             Close();
+        }
+        else if (result.WasNotSmaller)
+        {
+            notSmaller = true;
+            partialSeconds = null;
+            ShowResult(
+                done: false,
+                "This file is already compact, so Mercury could not make it smaller. Your original is untouched.",
+                "Save anyway",
+                "Close");
         }
         else
         {
@@ -305,7 +317,13 @@ public sealed partial class QuickWindow : Window
 
     private void ResultPrimary_Click(object sender, RoutedEventArgs e)
     {
-        if (phase == Phase.Done && savedPath is not null)
+        if (phase == Phase.Problem && notSmaller)
+        {
+            notSmaller = false;
+            allowLarger = true;
+            Start(null);
+        }
+        else if (phase == Phase.Done && savedPath is not null)
         {
             MainViewModel.ShowInFolder(savedPath);
             Close();
