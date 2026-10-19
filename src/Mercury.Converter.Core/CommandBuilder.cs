@@ -288,7 +288,8 @@ public static class CommandBuilder
             args.AddRange(["-hwaccel", "auto"]);
         }
 
-        args.AddRange(["-i", input]);
+        // A file can name other addresses inside itself (a playlist, for example). Only local files are allowed.
+        args.AddRange(["-protocol_whitelist", "file,pipe", "-i", input]);
 
         if (exec.Threads is { } threads)
         {

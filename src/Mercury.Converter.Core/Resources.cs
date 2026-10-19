@@ -188,10 +188,12 @@ public sealed partial class SystemResourceSampler : IResourceSampler
         public ulong AvailableExtendedVirtual;
     }
 
+    [DefaultDllImportSearchPaths(DllImportSearchPath.System32)]
     [LibraryImport("kernel32.dll", SetLastError = true)]
     [return: MarshalAs(UnmanagedType.Bool)]
     private static partial bool GetSystemTimes(out FileTime idle, out FileTime kernel, out FileTime user);
 
+    [DefaultDllImportSearchPaths(DllImportSearchPath.System32)]
     [LibraryImport("kernel32.dll", SetLastError = true)]
     [return: MarshalAs(UnmanagedType.Bool)]
     private static partial bool GlobalMemoryStatusEx(ref MemoryStatus status);

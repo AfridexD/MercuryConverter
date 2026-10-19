@@ -104,6 +104,27 @@
 
 <section>
   <div class="wrap">
+    <p class="eyebrow">See it in action</p>
+    <h2>Watch it work</h2>
+    <p class="lead">A walkthrough of Mercury Converter, from the person who built it.</p>
+    <div class="video" id="video">
+      <button type="button" class="video-play" aria-label="Play the video: I Built My Own Free File Converter" onclick="playVideo()">
+        <img src="https://img.youtube.com/vi/6eQDlNcv1mk/maxresdefault.jpg" alt="" loading="lazy">
+        <span class="play-icon"><svg viewBox="0 0 24 24" fill="currentColor"><path d="M8 5v14l11-7z"/></svg></span>
+      </button>
+    </div>
+    <p class="video-note">Loads from YouTube only when you press play. <a href="https://youtu.be/6eQDlNcv1mk">Open on YouTube</a></p>
+
+    <div class="review">
+      <p class="eyebrow">Reviewed</p>
+      <p style="margin:0 0 6px;font-size:20px;font-weight:600"><a href="https://sudoreview.dev/reviews/mercury-converter-review/">Mercury Converter Review: Free File Converter</a></p>
+      <p style="margin:0;color:var(--ink2)">An independent review on Sudo Review.</p>
+    </div>
+  </div>
+</section>
+
+<section>
+  <div class="wrap">
     <div class="download">
       <div>
         <h2>Get Mercury Converter</h2>
@@ -122,11 +143,16 @@
 <footer>
   <div class="wrap">
     <span>Mercury Converter is free software under the MIT license.</span>
-    <span><a href="https://github.com/AfridexD/MercuryConverter">Source code</a> &middot; <a href="https://github.com/AfridexD/MercuryConverter/issues/new">Report a problem</a> &middot; <a href="https://github.com/AfridexD/MercuryConverter/blob/main/THIRD-PARTY-NOTICES.md">Third-party licenses</a></span>
+    <span><a href="https://youtu.be/6eQDlNcv1mk">Video</a> &middot; <a href="https://sudoreview.dev/reviews/mercury-converter-review/">Review</a> &middot; <a href="https://github.com/AfridexD/MercuryConverter">Source code</a> &middot; <a href="https://github.com/AfridexD/MercuryConverter/issues/new">Report a problem</a> &middot; <a href="https://github.com/AfridexD/MercuryConverter/blob/main/THIRD-PARTY-NOTICES.md">Third-party licenses</a></span>
   </div>
 </footer>
 
 <script>
+  // Loads the video only when asked, so visiting this page sends nothing to YouTube.
+  function playVideo() {
+    document.getElementById('video').innerHTML = '<iframe src="https://www.youtube-nocookie.com/embed/6eQDlNcv1mk?autoplay=1" title="I Built My Own Free File Converter" allow="autoplay; encrypted-media; picture-in-picture; fullscreen" allowfullscreen referrerpolicy="strict-origin-when-cross-origin"></iframe>';
+  }
+
   // Show the real version number on the page.
   fetch('https://api.github.com/repos/AfridexD/MercuryConverter/releases/latest')
     .then(function (r) { return r.ok ? r.json() : null; })

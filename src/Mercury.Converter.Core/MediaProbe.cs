@@ -28,6 +28,8 @@ public static partial class MediaProbe
         };
         startInfo.ArgumentList.Add("-hide_banner");
         startInfo.ArgumentList.Add("-nostdin");
+        startInfo.ArgumentList.Add("-protocol_whitelist");
+        startInfo.ArgumentList.Add("file,pipe");
         startInfo.ArgumentList.Add("-i");
         startInfo.ArgumentList.Add(path);
 

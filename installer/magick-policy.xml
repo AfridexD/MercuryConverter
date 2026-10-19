@@ -1,0 +1,70 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!--
+  ImageMagick security policy for Mercury Converter.
+
+  Mercury only converts picture files that a person chose. A picture file can still be crafted to make ImageMagick do
+  more than read pixels: fetch web addresses, run scripts, or read other files. This policy switches those abilities off.
+  It also puts a ceiling on memory and disk use, so one damaged or hostile file cannot fill the computer.
+
+  The app points ImageMagick at this file with MAGICK_CONFIGURE_PATH. scripts\fetch-tools.ps1 copies it to
+  tools\imagemagick\policy.xml.
+-->
+<!DOCTYPE policymap [
+  <!ELEMENT policymap (policy)*>
+  <!ATTLIST policymap xmlns CDATA #FIXED "">
+  <!ELEMENT policy EMPTY>
+  <!ATTLIST policy
+    xmlns   CDATA   #FIXED ""
+    domain  NMTOKEN #REQUIRED
+    name    NMTOKEN #IMPLIED
+    pattern CDATA   #IMPLIED
+    rights  NMTOKEN #IMPLIED
+    stealth NMTOKEN #IMPLIED
+    value   CDATA   #IMPLIED
+  >
+]>
+<policymap>
+  <!-- Limits. Large photos are fine: 100000 px on a side, 2 gigapixels in all. -->
+  <policy domain="resource" name="memory" value="2GiB"/>
+  <policy domain="resource" name="map" value="4GiB"/>
+  <policy domain="resource" name="disk" value="8GiB"/>
+  <policy domain="resource" name="width" value="100KP"/>
+  <policy domain="resource" name="height" value="100KP"/>
+  <policy domain="resource" name="area" value="2GP"/>
+  <policy domain="resource" name="list-length" value="64"/>
+
+  <!-- Never read other files named inside a picture, and never use a file list as input. -->
+  <policy domain="path" rights="none" pattern="@*"/>
+
+  <!-- Never reach the network or run scripts. -->
+  <policy domain="coder" rights="none" pattern="URL"/>
+  <policy domain="coder" rights="none" pattern="HTTP"/>
+  <policy domain="coder" rights="none" pattern="HTTPS"/>
+  <policy domain="coder" rights="none" pattern="FTP"/>
+  <policy domain="coder" rights="none" pattern="MVG"/>
+  <policy domain="coder" rights="none" pattern="MSL"/>
+  <policy domain="coder" rights="none" pattern="EPHEMERAL"/>
+  <policy domain="coder" rights="none" pattern="TEXT"/>
+  <policy domain="coder" rights="none" pattern="LABEL"/>
+  <policy domain="coder" rights="none" pattern="CAPTION"/>
+  <policy domain="coder" rights="none" pattern="PANGO"/>
+  <policy domain="coder" rights="none" pattern="SHOW"/>
+  <policy domain="coder" rights="none" pattern="WIN"/>
+  <policy domain="coder" rights="none" pattern="X"/>
+  <policy domain="delegate" rights="none" pattern="URL"/>
+  <policy domain="delegate" rights="none" pattern="HTTP"/>
+  <policy domain="delegate" rights="none" pattern="HTTPS"/>
+  <policy domain="delegate" rights="none" pattern="FTP"/>
+
+  <!-- Page-description formats are handed to Ghostscript, which has a long history of security problems.
+       Mercury does not open them. PDF can still be written. -->
+  <policy domain="coder" rights="write" pattern="PDF"/>
+  <policy domain="coder" rights="none" pattern="PS"/>
+  <policy domain="coder" rights="none" pattern="PS2"/>
+  <policy domain="coder" rights="none" pattern="PS3"/>
+  <policy domain="coder" rights="none" pattern="EPS"/>
+  <policy domain="coder" rights="none" pattern="EPI"/>
+  <policy domain="coder" rights="none" pattern="EPSI"/>
+  <policy domain="coder" rights="none" pattern="EPT"/>
+  <policy domain="coder" rights="none" pattern="XPS"/>
+</policymap>

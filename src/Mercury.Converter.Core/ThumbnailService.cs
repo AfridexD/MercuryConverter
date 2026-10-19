@@ -161,6 +161,7 @@ public sealed class ThumbnailService(ToolLocator tools, string cacheFolder) : ID
             "-hide_banner", "-nostdin", "-loglevel", "error", "-y",
             "-threads", "1",
             "-ss", seek.ToString("0.###", CultureInfo.InvariantCulture),
+            "-protocol_whitelist", "file,pipe",
             "-i", path,
             "-frames:v", "1",
             "-vf", $"scale='min({size},iw)':'min({size},ih)':force_original_aspect_ratio=decrease",
@@ -184,6 +185,8 @@ public sealed class ThumbnailService(ToolLocator tools, string cacheFolder) : ID
             RedirectStandardError = true,
             RedirectStandardOutput = true,
         };
+
+        ToolEnvironment.Apply(startInfo, tool, fileName);
 
         foreach (var argument in arguments)
         {

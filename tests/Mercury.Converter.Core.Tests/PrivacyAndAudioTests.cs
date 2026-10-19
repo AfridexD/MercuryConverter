@@ -88,3 +88,75 @@ public class PrivacyAndAudioTests
         Assert.InRange(estimate, 1_000_000, 15_000_000);
     }
 }
+
+public class HardeningTests
+{
+    [Fact]
+    public void Ffmpeg_may_only_read_local_files_and_pipes()
+    {
+        var plan = CommandBuilder.Build(
+            new ConversionRequest(@"C:\clip.mp4", TargetFormat.Mp4),
+            @"C:\Out\clip.mp4",
+            @"C:\Temp");
+
+        var arguments = plan.Steps[0].Arguments.ToList();
+        var index = arguments.IndexOf("-protocol_whitelist");
+        Assert.True(index >= 0);
+        Assert.Equal("file,pipe", arguments[index + 1]);
+
+        // The option belongs to the input, so it must come before it.
+        Assert.True(index < arguments.IndexOf("-i"));
+    }
+
+    [Fact]
+    public void ImageMagick_is_pointed_at_its_own_folder_for_its_security_policy()
+    {
+        var info = new System.Diagnostics.ProcessStartInfo(@"C:\App\tools\imagemagick\magick.exe");
+
+        ToolEnvironment.Apply(info, Tool.ImageMagick, @"C:\App\tools\imagemagick\magick.exe");
+
+        Assert.Equal(@"C:\App\tools\imagemagick", info.Environment["MAGICK_CONFIGURE_PATH"]);
+    }
+
+    [Fact]
+    public void Other_tools_are_left_alone()
+    {
+        var info = new System.Diagnostics.ProcessStartInfo(@"C:\App\tools\ffmpeg\ffmpeg.exe");
+
+        ToolEnvironment.Apply(info, Tool.FFmpeg, @"C:\App\tools\ffmpeg\ffmpeg.exe");
+
+        Assert.False(info.Environment.ContainsKey("MAGICK_CONFIGURE_PATH"));
+    }
+
+    [Fact]
+    public void An_oversized_preset_file_is_refused()
+    {
+        var path = Path.Combine(Path.GetTempPath(), $"big-{Guid.NewGuid():N}.json");
+        try
+        {
+            File.WriteAllText(path, new string(' ', 1_200_000));
+
+            var result = PresetStore.Import(path);
+
+            Assert.Empty(result.Accepted);
+            Assert.NotEmpty(result.Rejected);
+        }
+        finally
+        {
+            File.Delete(path);
+        }
+    }
+
+    [Fact]
+    public void The_shipped_magick_policy_blocks_network_and_script_access()
+    {
+        var policy = File.ReadAllText(Path.Combine(AppContext.BaseDirectory, "magick-policy.xml"));
+
+        foreach (var coder in new[] { "URL", "HTTPS", "MVG", "MSL", "EPHEMERAL", "PS", "EPS" })
+        {
+            Assert.Contains($"pattern=\"{coder}\"", policy);
+        }
+
+        Assert.Contains("pattern=\"@*\"", policy);
+    }
+}

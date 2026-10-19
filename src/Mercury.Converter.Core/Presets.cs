@@ -179,6 +179,12 @@ public sealed class PresetStore(string userFilePath)
         List<Preset>? parsed;
         try
         {
+            // A preset file is a few kilobytes. A huge one is not a preset file.
+            if (new FileInfo(path).Length > 1_000_000)
+            {
+                return new ImportResult([], ["The file is too large to be a preset file."]);
+            }
+
             parsed = JsonSerializer.Deserialize<List<Preset>>(File.ReadAllText(path), JsonOptions);
         }
         catch (JsonException)
@@ -186,7 +192,7 @@ public sealed class PresetStore(string userFilePath)
             return new ImportResult([], ["The file is not a valid preset file."]);
         }
 
-        foreach (var preset in parsed ?? [])
+        foreach (var preset in (parsed ?? []).Take(500))
         {
             var problem = preset.Validate();
             if (problem is null)

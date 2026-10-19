@@ -172,3 +172,14 @@ footer .wrap { display: flex; gap: 24px; flex-wrap: wrap; justify-content: space
   section { padding: 52px 0; }
   .download { padding: 30px; }
 }
+
+/* Video and review */
+.video { position: relative; margin-top: 28px; aspect-ratio: 16 / 9; max-width: 860px; border-radius: 14px; overflow: hidden; background: #000; box-shadow: 0 24px 60px rgba(13, 21, 48, 0.25); }
+.video iframe, .video-play { position: absolute; inset: 0; width: 100%; height: 100%; border: 0; }
+.video-play { padding: 0; cursor: pointer; background: #000; }
+.video-play img { width: 100%; height: 100%; object-fit: cover; opacity: 0.92; transition: opacity 0.15s ease; }
+.video-play:hover img { opacity: 1; }
+.play-icon { position: absolute; left: 50%; top: 50%; width: 76px; height: 76px; margin: -38px 0 0 -38px; border-radius: 50%; background: var(--blue); color: #fff; display: grid; place-items: center; box-shadow: 0 10px 30px rgba(0, 0, 0, 0.4); }
+.play-icon svg { width: 34px; height: 34px; margin-left: 4px; }
+.video-note { color: var(--ink3); font-size: 14px; margin: 12px 0 0; }
+.review { margin-top: 40px; max-width: 860px; background: var(--card); border: 1px solid var(--line); border-radius: var(--radius); padding: 24px 26px; }

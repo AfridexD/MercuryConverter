@@ -37,6 +37,7 @@ public sealed partial class SettingsView : UserControl
     {
         InitializeComponent();
         LicenseList.ItemsSource = Licenses;
+        AboutText.Text = $"Version {MainViewModel.CurrentVersion.ToString(3)} · Free and open source (MIT) · Collects no usage data";
         OnVisibleChanged();
         RegisterPropertyChangedCallback(VisibilityProperty, (_, _) => OnVisibleChanged());
     }

@@ -236,7 +236,7 @@
                                 <Image Source="ms-appx:///Assets/AppIcon64.png" Width="48" Height="48" />
                                 <StackPanel VerticalAlignment="Center">
                                     <TextBlock Text="Mercury Converter" FontSize="16" FontWeight="SemiBold" Foreground="{StaticResource McText}" />
-                                    <TextBlock Text="Version 1.0.0 · Free and open source (MIT) · Collects no usage data" Style="{StaticResource McCaptionText}" MaxWidth="260" />
+                                    <TextBlock x:Name="AboutText" Style="{StaticResource McCaptionText}" MaxWidth="260" />
                                 </StackPanel>
                             </StackPanel>
                         </Border>

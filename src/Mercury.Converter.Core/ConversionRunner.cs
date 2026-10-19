@@ -259,6 +259,8 @@ public sealed class ConversionRunner(ToolLocator tools)
             StandardErrorEncoding = Encoding.UTF8,
         };
 
+        ToolEnvironment.Apply(startInfo, step.Tool, fileName);
+
         foreach (var argument in step.Arguments)
         {
             startInfo.ArgumentList.Add(argument);

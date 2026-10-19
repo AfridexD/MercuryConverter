@@ -282,7 +282,7 @@ public sealed partial class MainViewModel
         double? duration = null;
         if (item.Group is MediaGroup.Video or MediaGroup.Audio)
         {
-            duration = await MediaProbe.GetDurationSecondsAsync(item.Path, tools);
+            duration = await MediaProbe.GetDurationSecondsAsync(item.Path, tools, token);
         }
 
         var progress = new Progress<double>(value => item.Progress = Math.Round(value * 100));

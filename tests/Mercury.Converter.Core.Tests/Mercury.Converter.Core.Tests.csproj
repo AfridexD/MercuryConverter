@@ -15,6 +15,7 @@
   </ItemGroup>
 
   <ItemGroup>
+    <None Include="..\..\installer\magick-policy.xml" Link="magick-policy.xml" CopyToOutputDirectory="PreserveNewest" />
     <ProjectReference Include="..\..\src\Mercury.Converter.Core\Mercury.Converter.Core.csproj" />
   </ItemGroup>
 

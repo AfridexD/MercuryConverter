@@ -108,6 +108,7 @@ public sealed partial class QuickWindow : Window
 
     // ----- Position and size ------------------------------------------------------------------------------------
 
+    [DefaultDllImportSearchPaths(DllImportSearchPath.System32)]
     [DllImport("user32.dll")]
     private static extern bool GetCursorPos(out Windows.Graphics.PointInt32 point);
 

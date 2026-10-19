@@ -75,6 +75,8 @@ try {
     if (-not $installed) { throw "ImageMagick 7 is not installed. Run: winget install ImageMagick.ImageMagick   then run this script again." }
     if (Test-Path $magickDir) { Remove-Item $magickDir -Recurse -Force }
     Copy-Item $installed.FullName $magickDir -Recurse -Force
+    # The installed copy has an open policy. Mercury uses its own, which switches off network, script and Ghostscript access.
+    Copy-Item (Join-Path (Split-Path -Parent $PSScriptRoot) "installer\magick-policy.xml") (Join-Path $magickDir "policy.xml") -Force
     Write-Host "Copied ImageMagick from $($installed.FullName)"
 
     Write-Host ""

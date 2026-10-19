@@ -6,7 +6,7 @@ namespace Mercury.Converter.App.ViewModels;
 /// <summary>Telling the user a newer version exists. Off until the user says yes, and it only ever shows a link.</summary>
 public sealed partial class MainViewModel
 {
-    private static readonly HttpClient UpdateHttp = new() { Timeout = TimeSpan.FromSeconds(8) };
+    private static readonly HttpClient UpdateHttp = new() { Timeout = TimeSpan.FromSeconds(8), MaxResponseContentBufferSize = 1_000_000 };
 
     private UpdateInfo? update;
     private string? skippedVersion;

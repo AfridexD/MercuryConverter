@@ -2,7 +2,7 @@
 ; Build it with scripts\build-installer.ps1, which publishes the app first.
 
 #define AppName "Mercury Converter"
-#define AppVersion "1.0.0"
+#define AppVersion "1.0.1"
 #define AppExe "MercuryConverter.exe"
 
 [Setup]
@@ -10,7 +10,7 @@ AppId={{6E2B4C1A-3F7D-4B8E-9A21-5D0C7E9F4B13}
 AppName={#AppName}
 AppVersion={#AppVersion}
 AppPublisher=Mercury Converter contributors
-AppPublisherURL=https://github.com/
+AppPublisherURL=https://github.com/AfridexD/MercuryConverter
 DefaultDirName={autopf}\Mercury Converter
 DefaultGroupName={#AppName}
 UninstallDisplayIcon={app}\{#AppExe}

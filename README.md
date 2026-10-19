@@ -24,6 +24,20 @@ Free, open source, and nothing is ever uploaded.
 
 <br>
 
+## See it in action
+
+<div align="center">
+
+[![Watch the video: I Built My Own Free File Converter](https://img.youtube.com/vi/6eQDlNcv1mk/maxresdefault.jpg)](https://youtu.be/6eQDlNcv1mk)
+
+**[Watch the video](https://youtu.be/6eQDlNcv1mk)**: *I Built My Own Free File Converter: Free, Open Source, Local*
+
+</div>
+
+## What people are saying
+
+- **[Mercury Converter Review: Free File Converter](https://sudoreview.dev/reviews/mercury-converter-review/)** on Sudo Review.
+
 ## Why Mercury
 
 Most converters make you pick a codec, a bitrate and a container before you can do anything. Mercury asks one question: *what do you want it to become?* Drop your files in, pick a format, and press **Convert**.
@@ -135,7 +149,7 @@ dotnet test MercuryConverter.slnx
 
 ## Credits and licenses
 
-Mercury Converter is [MIT licensed](LICENSE). It runs these excellent programs, each as a separate process under its own license: [FFmpeg](https://ffmpeg.org/) (GPL v3), [ImageMagick](https://imagemagick.org/) and [libjxl](https://github.com/libjxl/libjxl). See [THIRD-PARTY-NOTICES.md](THIRD-PARTY-NOTICES.md).
+Mercury Converter is [MIT licensed](LICENSE). How it keeps you safe is described in [SECURITY.md](SECURITY.md). It runs these excellent programs, each as a separate process under its own license: [FFmpeg](https://ffmpeg.org/) (GPL v3), [ImageMagick](https://imagemagick.org/) and [libjxl](https://github.com/libjxl/libjxl). See [THIRD-PARTY-NOTICES.md](THIRD-PARTY-NOTICES.md).
 
 ## Known limits
 

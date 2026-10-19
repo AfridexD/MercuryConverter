@@ -1,4 +1,6 @@
 using System.IO.Pipes;
+using System.Security.AccessControl;
+using System.Security.Principal;
 using System.Text.Json;
 using Mercury.Converter.Core;
 
@@ -57,6 +59,14 @@ public sealed class StartupCoordinator : IDisposable
         }
     }
 
+    /// <summary>Only the person running this copy of Mercury may send it files. Other accounts on the computer cannot.</summary>
+    private static PipeSecurity OnlyThisUser()
+    {
+        var security = new PipeSecurity();
+        security.AddAccessRule(new PipeAccessRule(WindowsIdentity.GetCurrent().User!, PipeAccessRights.ReadWrite | PipeAccessRights.CreateNewInstance, AccessControlType.Allow));
+        return security;
+    }
+
     private void Listen()
     {
         _ = Task.Run(async () =>
@@ -65,7 +75,8 @@ public sealed class StartupCoordinator : IDisposable
             {
                 try
                 {
-                    await using var server = new NamedPipeServerStream(PipeName, PipeDirection.In, 1, PipeTransmissionMode.Byte, PipeOptions.Asynchronous);
+                    await using var server = NamedPipeServerStreamAcl.Create(
+                        PipeName, PipeDirection.In, 1, PipeTransmissionMode.Byte, PipeOptions.Asynchronous, 0, 0, OnlyThisUser());
                     await server.WaitForConnectionAsync(stop.Token);
                     using var reader = new StreamReader(server);
                     var line = await reader.ReadLineAsync(stop.Token);
