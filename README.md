@@ -7,7 +7,7 @@
 **Convert photos, GIFs, video and audio on your own computer.**<br>
 Free, open source, and nothing is ever uploaded.
 
-[![Download for Windows](https://img.shields.io/badge/Download-for%20Windows-1F4FD6?style=for-the-badge&logo=windows11&logoColor=white)](https://github.com/AfridexD/MercuryConverter/releases/latest/download/MercuryConverter-x64-setup.exe)
+[![Download for Windows](https://img.shields.io/badge/Download%20for%20Windows-1F4FD6?style=for-the-badge)](https://github.com/AfridexD/MercuryConverter/releases/latest/download/MercuryConverter-x64-setup.exe)
 &nbsp;
 [![Documentation](https://img.shields.io/badge/Read%20the-documentation-0D1530?style=for-the-badge)](https://afridexd.github.io/MercuryConverter/)
 
