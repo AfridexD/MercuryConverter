@@ -234,6 +234,9 @@ public partial class FileItem : ObservableObject
 
     public bool HasThumbnail => Thumbnail is not null;
 
+    /// <summary>The shared card sizes, so every card changes when the View menu does.</summary>
+    public ViewOptions View => ViewOptions.Shared;
+
     /// <summary>The icon over the colored tile, shown only until a real preview exists.</summary>
     public Visibility TileIconVisibility => Thumbnail is null ? Visibility.Visible : Visibility.Collapsed;
 
@@ -466,12 +469,46 @@ public sealed class FormatRow(FormatChoice choice, bool isSelected)
     public string AutomationName => $"{Choice.Name}, {Choice.Description}{(Choice.Tag is null ? string.Empty : ", " + Choice.Tag)}";
 }
 
-/// <summary>Whether cards show previews. The cards themselves are a fixed size in the design.</summary>
-public sealed class ViewOptions
+/// <summary>
+/// How big the file cards are. "No previews" gives a compact card with just an icon. The other three show the
+/// picture at three sizes. One shared instance is used by every card.
+/// </summary>
+public sealed partial class ViewOptions : ObservableObject
 {
+    public static ViewOptions Shared { get; } = new();
+
+    /// <summary>Room the text under the picture needs: name, status, detail, retry button, progress bar.</summary>
+    private const double TextArea = 120;
+
     public bool ShowThumbnails { get; private set; } = true;
 
-    public void Apply(ThumbnailSize size) => ShowThumbnails = size != ThumbnailSize.Off;
+    public double TileHeight { get; private set; } = 116;
+
+    public GridLength TileRowHeight => new(TileHeight);
+
+    public double CardMinWidth { get; private set; } = 176;
+
+    public double CardMinHeight => TileHeight + TextArea;
+
+    public double TileIconSize { get; private set; } = 28;
+
+    /// <summary>The longest side of the preview picture to make. Larger than the card, so it stays sharp on sharp screens.</summary>
+    public int ThumbnailPixels { get; private set; } = 320;
+
+    public Visibility ImageVisibility => ShowThumbnails ? Visibility.Visible : Visibility.Collapsed;
+
+    public void Apply(ThumbnailSize size)
+    {
+        (ShowThumbnails, TileHeight, CardMinWidth, TileIconSize, ThumbnailPixels) = size switch
+        {
+            ThumbnailSize.Small => (true, 76d, 140d, 22d, 200),
+            ThumbnailSize.Large => (true, 176d, 264d, 40d, 560),
+            ThumbnailSize.Off => (false, 44d, 200d, 20d, 0),
+            _ => (true, 116d, 176d, 28d, 320),
+        };
+
+        OnPropertyChanged(string.Empty);
+    }
 }
 
 /// <summary>A choice in a small list such as Speed or Channels.</summary>

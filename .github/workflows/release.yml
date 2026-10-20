@@ -1,0 +1,141 @@
+name: Build release
+
+# Builds the installer and the portable zip from source, tests them, and (when signing is set up) signs them.
+# Push a tag like v1.0.2 to make a draft release. You can also run it by hand from the Actions tab to try the build.
+
+on:
+  push:
+    tags: ["v*"]
+  workflow_dispatch:
+
+permissions:
+  contents: write
+
+jobs:
+  build:
+    runs-on: windows-latest
+    env:
+      # Signing through SignPath only happens when this repository variable is set (Settings > Secrets and variables > Actions > Variables).
+      SIGNPATH_ORGANIZATION_ID: ${{ vars.SIGNPATH_ORGANIZATION_ID }}
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: actions/setup-dotnet@v4
+        with:
+          dotnet-version: 10.0.x
+
+      - name: Install the tools the build needs
+        shell: pwsh
+        run: choco install imagemagick.app innosetup 7zip --no-progress -y
+
+      - name: Fetch FFmpeg, libjxl and ImageMagick
+        shell: pwsh
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+        run: ./scripts/fetch-tools.ps1
+
+      - name: Test
+        run: dotnet test MercuryConverter.slnx --configuration Release
+
+      - name: Publish the app
+        run: dotnet publish src/Mercury.Converter.App/Mercury.Converter.App.csproj -c Release -r win-x64 -p:Platform=x64 -p:PublishDir=${{ github.workspace }}\publish\win-x64\ --nologo
+
+      # --- Sign Mercury's own program files (only if SignPath is set up) ---
+      - name: Gather the files to sign
+        if: ${{ env.SIGNPATH_ORGANIZATION_ID != '' }}
+        shell: pwsh
+        run: |
+          New-Item -ItemType Directory unsigned-app | Out-Null
+          foreach ($name in "MercuryConverter.exe", "MercuryConverter.dll", "Mercury.Converter.Core.dll") {
+            Copy-Item "publish/win-x64/$name" unsigned-app/
+          }
+
+      - name: Upload the files to sign
+        if: ${{ env.SIGNPATH_ORGANIZATION_ID != '' }}
+        id: upload-app
+        uses: actions/upload-artifact@v4
+        with:
+          name: unsigned-app
+          path: unsigned-app/*
+
+      - name: Sign the app with SignPath
+        if: ${{ env.SIGNPATH_ORGANIZATION_ID != '' }}
+        uses: signpath/github-action-submit-signing-request@v1
+        with:
+          api-token: ${{ secrets.SIGNPATH_API_TOKEN }}
+          organization-id: ${{ vars.SIGNPATH_ORGANIZATION_ID }}
+          project-slug: MercuryConverter
+          signing-policy-slug: release-signing
+          artifact-configuration-slug: app
+          github-artifact-id: ${{ steps.upload-app.outputs.artifact-id }}
+          wait-for-completion: true
+          output-artifact-directory: signed-app
+
+      - name: Put the signed files back
+        if: ${{ env.SIGNPATH_ORGANIZATION_ID != '' }}
+        shell: pwsh
+        run: Copy-Item signed-app/* publish/win-x64/ -Force
+
+      # --- Build the installer from the (signed) files ---
+      - name: Build the installer
+        shell: pwsh
+        run: ./scripts/build-installer.ps1 -SkipPublish -InnoCompiler "${env:ProgramFiles(x86)}\Inno Setup 6\ISCC.exe"
+
+      - name: Gather the installer to sign
+        if: ${{ env.SIGNPATH_ORGANIZATION_ID != '' }}
+        shell: pwsh
+        run: |
+          New-Item -ItemType Directory unsigned-installer | Out-Null
+          Copy-Item dist/MercuryConverter-*-setup.exe unsigned-installer/
+
+      - name: Upload the installer to sign
+        if: ${{ env.SIGNPATH_ORGANIZATION_ID != '' }}
+        id: upload-installer
+        uses: actions/upload-artifact@v4
+        with:
+          name: unsigned-installer
+          path: unsigned-installer/*
+
+      - name: Sign the installer with SignPath
+        if: ${{ env.SIGNPATH_ORGANIZATION_ID != '' }}
+        uses: signpath/github-action-submit-signing-request@v1
+        with:
+          api-token: ${{ secrets.SIGNPATH_API_TOKEN }}
+          organization-id: ${{ vars.SIGNPATH_ORGANIZATION_ID }}
+          project-slug: MercuryConverter
+          signing-policy-slug: release-signing
+          artifact-configuration-slug: installer
+          github-artifact-id: ${{ steps.upload-installer.outputs.artifact-id }}
+          wait-for-completion: true
+          output-artifact-directory: signed-installer
+
+      - name: Put the signed installer back
+        if: ${{ env.SIGNPATH_ORGANIZATION_ID != '' }}
+        shell: pwsh
+        run: Copy-Item signed-installer/*.exe dist/ -Force
+
+      # --- Release files ---
+      - name: Make the release files
+        shell: pwsh
+        run: ./scripts/make-release-assets.ps1
+
+      - name: Check signatures
+        shell: pwsh
+        run: |
+          foreach ($file in "publish/win-x64/MercuryConverter.exe", "dist/release/MercuryConverter-x64-setup.exe") {
+            $signature = Get-AuthenticodeSignature $file
+            "$file : $($signature.Status) $($signature.SignerCertificate.Subject)"
+          }
+
+      - uses: actions/upload-artifact@v4
+        with:
+          name: release-files
+          path: dist/release/*
+
+      - name: Make a draft release
+        if: startsWith(github.ref, 'refs/tags/v')
+        shell: pwsh
+        env:
+          GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+        run: |
+          gh release create "${{ github.ref_name }}" dist/release/* --draft --title "Mercury Converter ${{ github.ref_name }}" --notes "Draft: add the release notes, then publish."

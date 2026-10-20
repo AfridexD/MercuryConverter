@@ -1,0 +1,16 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!-- SignPath artifact configuration "app": Mercury's own program files, signed before the installer is built.
+     The converter programs in tools\ (FFmpeg, ImageMagick, libjxl) belong to their makers and are not touched. -->
+<artifact-configuration xmlns="http://signpath.io/artifact-configuration/v1">
+  <zip-file>
+    <pe-file path="MercuryConverter.exe">
+      <authenticode-sign />
+    </pe-file>
+    <pe-file path="Mercury.Converter.Core.dll">
+      <authenticode-sign />
+    </pe-file>
+    <pe-file path="MercuryConverter.dll">
+      <authenticode-sign />
+    </pe-file>
+  </zip-file>
+</artifact-configuration>

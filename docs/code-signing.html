@@ -1,0 +1,63 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Code signing policy: Mercury Converter</title>
+<meta name="description" content="How Mercury Converter's program files and installer are built and signed.">
+<link rel="icon" href="images/favicon.png">
+<link rel="stylesheet" href="style.css">
+</head>
+<body>
+
+<header class="nav">
+  <div class="nav-inner">
+    <a class="brand" href="./"><img src="images/logo.png" alt=""> Mercury Converter</a>
+    <nav class="nav-links">
+      <a href="guide.html">Guide</a>
+      <a href="faq.html">Questions</a>
+      <a class="hide-s" href="https://github.com/AfridexD/MercuryConverter">GitHub</a>
+      <a class="btn small primary" href="https://github.com/AfridexD/MercuryConverter/releases/latest/download/MercuryConverter-x64-setup.exe">Download</a>
+    </nav>
+  </div>
+</header>
+
+<div class="wrap">
+  <article class="article" style="padding:48px 0 96px;max-width:760px">
+    <h1>Code signing policy</h1>
+    <p class="lead">How the files you download are built and signed, and who is responsible for them.</p>
+
+    <div class="callout warn"><strong>Status:</strong> the current downloads are not code-signed yet. Windows may show a SmartScreen warning the first time (choose <em>More info</em>, then <em>Run anyway</em>). Signing is being set up, and this page will be updated when it is switched on.</div>
+
+    <h2>What is signed</h2>
+    <ul>
+      <li>Mercury's own program files: <code>MercuryConverter.exe</code>, <code>MercuryConverter.dll</code> and <code>Mercury.Converter.Core.dll</code>.</li>
+      <li>The installer, and its uninstaller.</li>
+    </ul>
+    <p>The converter programs inside the download (FFmpeg, ImageMagick and libjxl) are made by other projects. Mercury does not change or re-sign them. See the <a href="https://github.com/AfridexD/MercuryConverter/blob/main/THIRD-PARTY-NOTICES.md">third-party licenses</a>.</p>
+
+    <h2>How files are built</h2>
+    <p>Releases are built from the public source code on GitHub, by a script anyone can read: <a href="https://github.com/AfridexD/MercuryConverter/blob/main/.github/workflows/release.yml"><code>.github/workflows/release.yml</code></a>. Only files produced by that build are signed. The build runs the automated tests first, and every release comes with SHA-256 checksums.</p>
+
+    <h2>Who is responsible</h2>
+    <ul>
+      <li><strong>Maintainer, reviewer and approver of releases:</strong> <a href="https://github.com/AfridexD">AfridexD</a>.</li>
+      <li>Changes arrive as pull requests and are reviewed before they are merged. A release is made as a draft first, and is published only after the maintainer has checked it.</li>
+    </ul>
+
+    <h2>Privacy</h2>
+    <p>This program will not transfer any information to other networked systems unless specifically requested by the user or the person installing or operating it. Files are converted on your own computer. The only network request the app can make is the optional update check, which is off until you turn it on. <a href="https://github.com/AfridexD/MercuryConverter/blob/main/SECURITY.md">Read more about security</a>.</p>
+
+    <h2>Reporting a problem</h2>
+    <p>If you think a signed file is wrong or has been tampered with, please send a <a href="https://github.com/AfridexD/MercuryConverter/security/advisories/new">private security report</a>, and do not run the file.</p>
+  </article>
+</div>
+
+<footer>
+  <div class="wrap">
+    <span>Mercury Converter is free software under the MIT license.</span>
+    <span><a href="https://github.com/AfridexD/MercuryConverter">Source code</a> &middot; <a href="https://github.com/AfridexD/MercuryConverter/issues/new">Report a problem</a></span>
+  </div>
+</footer>
+</body>
+</html>

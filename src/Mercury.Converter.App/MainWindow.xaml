@@ -245,16 +245,16 @@
                                           IsTabStop="False" Tapped="Card_Tapped" KeyDown="Card_KeyDown" RightTapped="Card_RightTapped"
                                           AutomationProperties.Name="{x:Bind AutomationText, Mode=OneWay}" Tag="{x:Bind}">
                                         <Grid.RowDefinitions>
-                                            <RowDefinition Height="116" />
+                                            <RowDefinition Height="{x:Bind View.TileRowHeight, Mode=OneWay}" />
                                             <RowDefinition Height="*" />
                                         </Grid.RowDefinitions>
 
                                         <!-- Tile -->
                                         <Grid Grid.Row="0" CornerRadius="7,7,0,0" Background="{x:Bind TileBrush}">
-                                            <Image Source="{x:Bind Thumbnail, Mode=OneWay}" Stretch="UniformToFill" />
-                                            <FontIcon Glyph="{x:Bind KindGlyph}" FontSize="28" Foreground="{x:Bind TileIconBrush}"
-                                                      Visibility="{x:Bind TileIconVisibility, Mode=OneWay}" HorizontalAlignment="Center" VerticalAlignment="Center" />
-                                            <Border Visibility="{x:Bind DurationVisibility, Mode=OneWay}" HorizontalAlignment="Right" VerticalAlignment="Bottom" Margin="8"
+                                            <Image Source="{x:Bind Thumbnail, Mode=OneWay}" Stretch="UniformToFill" Visibility="{x:Bind View.ImageVisibility, Mode=OneWay}" />
+                                            <FontIcon Glyph="{x:Bind KindGlyph}" FontSize="{x:Bind View.TileIconSize, Mode=OneWay}" Foreground="{x:Bind TileIconBrush}"
+                                                      Visibility="{x:Bind local:UiHelpers.IconVisible(HasThumbnail, View.ShowThumbnails), Mode=OneWay}" HorizontalAlignment="Center" VerticalAlignment="Center" />
+                                            <Border Visibility="{x:Bind local:UiHelpers.BadgeVisible(DurationText, View.ShowThumbnails), Mode=OneWay}" HorizontalAlignment="Right" VerticalAlignment="Bottom" Margin="8"
                                                     Padding="6,2" CornerRadius="4" Background="#99000000">
                                                 <TextBlock Text="{x:Bind DurationText, Mode=OneWay}" FontSize="11" Foreground="White" />
                                             </Border>

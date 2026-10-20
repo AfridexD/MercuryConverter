@@ -28,6 +28,11 @@ PrivilegesRequiredOverridesAllowed=dialog
 WizardStyle=modern
 LicenseFile=..\LICENSE
 ShowLanguageDialog=auto
+#ifdef Sign
+; Added by scripts\build-installer.ps1 -Sign, which also supplies the "mercurysign" command.
+SignTool=mercurysign
+SignedUninstaller=yes
+#endif
 
 [Languages]
 Name: "english"; MessagesFile: "compiler:Default.isl"

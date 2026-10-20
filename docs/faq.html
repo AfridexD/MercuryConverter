@@ -50,6 +50,7 @@
       <p>SmartScreen warns about any new program that few people have downloaded yet and that is not code-signed. Code-signing certificates cost money each year, and Mercury does not have one yet. The warning does not mean the file is bad.</p>
       <p>To run it: choose <strong>More info</strong>, then <strong>Run anyway</strong>. To be extra careful, compare the file's checksum with the one on the <a href="https://github.com/AfridexD/MercuryConverter/releases/latest">release page</a>. In PowerShell: <code>Get-FileHash .\MercuryConverter-x64-setup.exe</code>. The two long strings should match.</p>
     </details>
+    <details><summary>When will the Windows warning go away?</summary><p>The warning appears for new programs that are not code-signed. Signing is being set up (see the <a href="code-signing.html">code signing policy</a>). Even after signing, the warning can take a few weeks to fade, because Windows also counts how many people have run the file.</p></details>
     <details><summary>My antivirus flagged something.</summary><p>Mercury includes FFmpeg, ImageMagick and libjxl, which some antivirus programs treat with suspicion because they are powerful tools that unsigned programs also use. If you want certainty, build Mercury yourself from the <a href="https://github.com/AfridexD/MercuryConverter/blob/main/docs/BUILDING.md">source code</a>.</p></details>
 
     <h2 id="menu">Right-click menu</h2>

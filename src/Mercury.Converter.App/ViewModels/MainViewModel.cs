@@ -87,7 +87,7 @@ public sealed partial class MainViewModel : ObservableObject
     /// <summary>The files shown: filtered and sorted. Rebuilt by <see cref="Refresh"/>.</summary>
     public ObservableCollection<FileItem> VisibleFiles { get; } = [];
 
-    public ViewOptions View { get; } = new();
+    public ViewOptions View => ViewOptions.Shared;
 
     public ObservableCollection<Preset> Presets { get; }
 
@@ -492,15 +492,18 @@ public sealed partial class MainViewModel : ObservableObject
 
     private async Task LoadThumbnailAsync(FileItem item)
     {
-        var pixels = ThumbnailSizes.Pixels(ThumbnailSetting == ThumbnailSize.Off ? ThumbnailSize.Medium : ThumbnailSetting);
-
-        // The cards are 116 px tall at any width, so one medium-size preview is sharp enough for all of them.
-        pixels = Math.Max(pixels, 160);
+        // The picture size follows the View setting. With previews off there is nothing to load.
+        var pixels = View.ThumbnailPixels;
+        if (pixels <= 0)
+        {
+            return;
+        }
 
         try
         {
             var picture = await thumbnails.GetAsync(item.Path, pixels);
-            if (picture is not null && Files.Contains(item))
+            // If the size was changed while this picture was being made, a newer one is on its way.
+            if (picture is not null && Files.Contains(item) && pixels == View.ThumbnailPixels)
             {
                 item.Thumbnail = new BitmapImage { DecodePixelWidth = pixels, UriSource = new Uri(picture) };
             }

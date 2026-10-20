@@ -151,6 +151,10 @@ dotnet test MercuryConverter.slnx
 
 Mercury Converter is [MIT licensed](LICENSE). How it keeps you safe is described in [SECURITY.md](SECURITY.md). It runs these excellent programs, each as a separate process under its own license: [FFmpeg](https://ffmpeg.org/) (GPL v3), [ImageMagick](https://imagemagick.org/) and [libjxl](https://github.com/libjxl/libjxl). See [THIRD-PARTY-NOTICES.md](THIRD-PARTY-NOTICES.md).
 
+## Code signing
+
+The downloads are not code-signed yet, so Windows SmartScreen may warn you the first time. Signing is being set up: see the [code signing policy](https://afridexd.github.io/MercuryConverter/code-signing.html) and [docs/SIGNING.md](docs/SIGNING.md). Until then, compare the SHA-256 checksum on the release page.
+
 ## Known limits
 
 - On Windows 11 the right-click menu is under **Show more options** (or hold Shift while you right-click).

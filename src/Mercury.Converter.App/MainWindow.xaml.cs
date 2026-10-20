@@ -1,6 +1,7 @@
 using Mercury.Converter.App.Services;
 using Mercury.Converter.App.ViewModels;
 using Mercury.Converter.Core;
+using Microsoft.UI.Dispatching;
 using Microsoft.UI.Input;
 using Microsoft.UI.Xaml;
 using Microsoft.UI.Xaml.Controls;
@@ -42,6 +43,32 @@ public sealed partial class MainWindow : Window
         Notifier.Register();
         ViewModel.PropertyChanged += ViewModel_PropertyChanged;
         _ = ViewModel.CheckForUpdateAsync();
+
+        // The View menu changes how big the cards are.
+        ViewModel.View.PropertyChanged += (_, _) => ApplyCardSize();
+        ApplyCardSize();
+
+#if DEBUG
+        // For testing only: MERCURY_TEST_VIEW=Large,Small cycles the View setting every few seconds, like clicking the menu.
+        if (Environment.GetEnvironmentVariable("MERCURY_TEST_VIEW") is { Length: > 0 } sizes)
+        {
+            var queue = new Queue<ThumbnailSize>(sizes.Split(',').Select(Enum.Parse<ThumbnailSize>));
+            var timer = DispatcherQueue.CreateTimer();
+            timer.Interval = TimeSpan.FromSeconds(4);
+            timer.Tick += (t, _) =>
+            {
+                if (queue.Count > 0)
+                {
+                    ViewModel.ThumbnailSetting = queue.Dequeue();
+                }
+                else
+                {
+                    t.Stop();
+                }
+            };
+            timer.Start();
+        }
+#endif
         Closed += (_, _) => OnClosed();
 
         var startup = App.Startup;
@@ -186,6 +213,15 @@ public sealed partial class MainWindow : Window
             Inspector.Width = double.NaN;
             Inspector.Visibility = Visibility.Visible;
             PaneScrim.Visibility = Visibility.Collapsed;
+        }
+    }
+
+    private void ApplyCardSize()
+    {
+        if (Cards.Layout is UniformGridLayout layout)
+        {
+            layout.MinItemWidth = ViewModel.View.CardMinWidth;
+            layout.MinItemHeight = ViewModel.View.CardMinHeight;
         }
     }
 
