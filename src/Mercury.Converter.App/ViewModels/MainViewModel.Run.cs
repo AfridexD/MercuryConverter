@@ -172,11 +172,40 @@ public sealed partial class MainViewModel
     [RelayCommand]
     private void ToggleMoreOptions() => MoreOptionsOpen = !MoreOptionsOpen;
 
+    /// <summary>
+    /// Asked, when the chosen output folder cannot be written to: (folder, reason) and answers true once the problem is
+    /// solved (a new folder chosen, or "next to the originals" picked). The window shows the question.
+    /// </summary>
+    public Func<string, string, Task<bool>>? ResolveOutputFolder { get; set; }
+
+    /// <summary>
+    /// Checks the output folder before any work starts. A folder that looks fine but refuses new files (the top of a
+    /// drive, an unplugged drive) used to make every file fail with a message about the file instead of the folder.
+    /// </summary>
+    private async Task<bool> EnsureOutputFolderAsync()
+    {
+        while (OutputFolder is { } folder && SafeOutput.CheckWritable(folder) is { } reason)
+        {
+            if (ResolveOutputFolder is null || !await ResolveOutputFolder(folder, reason))
+            {
+                SetNotice("Nothing was converted: the Save to folder cannot be used.");
+                return false;
+            }
+        }
+
+        return true;
+    }
+
     // ----- Running ----------------------------------------------------------------------------------------------
 
     [RelayCommand(CanExecute = nameof(CanConvert))]
     private async Task ConvertAsync()
     {
+        if (!await EnsureOutputFolderAsync())
+        {
+            return;
+        }
+
         var batch = FilesToConvert();
         if (batch.Count == 0)
         {
@@ -324,8 +353,21 @@ public sealed partial class MainViewModel
         return result.OutputBytes > result.InputBytes ? text + "\nLarger than the original." : text;
     }
 
-    private static string FriendlyError(string? error) =>
-        string.IsNullOrWhiteSpace(error) ? "This file could not be converted." : "This file could not be converted. Open it to see why.";
+    private static string FriendlyError(string? error)
+    {
+        if (string.IsNullOrWhiteSpace(error))
+        {
+            return "This file could not be converted.";
+        }
+
+        // The output folder refused the new file. Say so, because "could not be converted" would send people looking at the file.
+        if (error.Contains("denied", StringComparison.OrdinalIgnoreCase) || error.Contains("not permitted", StringComparison.OrdinalIgnoreCase))
+        {
+            return "Mercury could not save here. Choose another folder under Save to.";
+        }
+
+        return "This file could not be converted. Open it to see why.";
+    }
 
     private string EstimateTimeLeft(double fraction)
     {
@@ -346,7 +388,7 @@ public sealed partial class MainViewModel
     public async Task RetryAsync(IEnumerable<FileItem> items)
     {
         var again = items.Where(i => i.State is ItemState.Failed or ItemState.Cancelled or ItemState.Done).ToList();
-        if (again.Count == 0 || IsBusy)
+        if (again.Count == 0 || IsBusy || !await EnsureOutputFolderAsync())
         {
             return;
         }

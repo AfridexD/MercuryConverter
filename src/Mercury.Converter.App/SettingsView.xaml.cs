@@ -203,6 +203,13 @@ public sealed partial class SettingsView : UserControl
         var folder = await picker.PickSingleFolderAsync();
         if (folder is not null)
         {
+            // Refuse a folder that cannot take new files, and say why, instead of failing later on every file.
+            if (SafeOutput.CheckWritable(folder.Path) is { } problem)
+            {
+                FolderText.Text = problem;
+                return;
+            }
+
             viewModel.OutputFolder = folder.Path;
             Load();
         }

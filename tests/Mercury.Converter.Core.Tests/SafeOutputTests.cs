@@ -135,3 +135,45 @@ public class CommitUniqueTests
         }
     }
 }
+
+public class CheckWritableTests
+{
+    [Fact]
+    public void A_normal_folder_works_and_nothing_is_left_behind()
+    {
+        var folder = Path.Combine(Path.GetTempPath(), $"check-{Guid.NewGuid():N}");
+        Directory.CreateDirectory(folder);
+        try
+        {
+            Assert.Null(SafeOutput.CheckWritable(folder));
+            Assert.Empty(Directory.GetFileSystemEntries(folder));
+        }
+        finally
+        {
+            Directory.Delete(folder, recursive: true);
+        }
+    }
+
+    [Fact]
+    public void A_missing_folder_is_explained()
+    {
+        var problem = SafeOutput.CheckWritable(Path.Combine(Path.GetTempPath(), $"missing-{Guid.NewGuid():N}"));
+
+        Assert.NotNull(problem);
+        Assert.Contains("not found", problem);
+    }
+
+    [Fact]
+    public void A_folder_that_refuses_new_files_is_explained()
+    {
+        // The Windows folder cannot be written to without administrator rights, as the top of some drives cannot.
+        // If this test runs elevated, the folder accepts the check file, so there is nothing to assert.
+        var windows = Environment.GetFolderPath(Environment.SpecialFolder.Windows);
+        var problem = SafeOutput.CheckWritable(windows);
+
+        if (problem is not null)
+        {
+            Assert.Contains("does not let Mercury save", problem);
+        }
+    }
+}

@@ -243,7 +243,10 @@ public sealed partial class QuickWindow : Window
         var baseName = System.IO.Path.GetFileNameWithoutExtension(path);
         var sameExtension = string.Equals(System.IO.Path.GetExtension(path).TrimStart('.'), info.Extension, StringComparison.OrdinalIgnoreCase);
         var suffix = extraArguments is not null ? "-part" : sameExtension ? "-converted" : string.Empty;
-        var folder = settings.OutputFolder ?? System.IO.Path.GetDirectoryName(path) ?? string.Empty;
+        // A saved folder that refuses new files (the top of a drive, an unplugged drive) must not make the file fail.
+        var folder = settings.OutputFolder is { } chosenFolder && SafeOutput.CheckWritable(chosenFolder) is null
+            ? chosenFolder
+            : System.IO.Path.GetDirectoryName(path) ?? string.Empty;
         var output = System.IO.Path.Combine(folder, $"{baseName}{suffix}.{info.Extension}");
 
         double? duration = null;

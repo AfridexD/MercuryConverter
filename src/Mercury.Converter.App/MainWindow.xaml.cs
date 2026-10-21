@@ -41,6 +41,7 @@ public sealed partial class MainWindow : Window
 
         Activated += (_, args) => isActive = args.WindowActivationState != WindowActivationState.Deactivated;
         Notifier.Register();
+        ViewModel.ResolveOutputFolder = ResolveOutputFolderAsync;
         ViewModel.PropertyChanged += ViewModel_PropertyChanged;
         _ = ViewModel.CheckForUpdateAsync();
 
@@ -360,10 +361,22 @@ public sealed partial class MainWindow : Window
     private async void ChooseFolder_Click(object sender, RoutedEventArgs e)
     {
         var folder = await PickFolderAsync();
-        if (folder is not null)
+        if (folder is null)
         {
-            ViewModel.OutputFolder = folder;
+            return;
         }
+
+        if (SafeOutput.CheckWritable(folder) is { } problem)
+        {
+            var dialog = NewDialog("Mercury can't save there");
+            dialog.CloseButtonText = "OK";
+            dialog.DefaultButton = ContentDialogButton.Close;
+            dialog.Content = new TextBlock { Text = problem + "\n\nPlease choose a different folder.", TextWrapping = TextWrapping.Wrap, MaxWidth = 420 };
+            await dialog.ShowAsync();
+            return;
+        }
+
+        ViewModel.OutputFolder = folder;
     }
 
     private void UseOriginalFolder_Click(object sender, RoutedEventArgs e) => ViewModel.OutputFolder = null;

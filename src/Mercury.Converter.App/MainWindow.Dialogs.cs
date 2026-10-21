@@ -24,6 +24,44 @@ public sealed partial class MainWindow
         DefaultButton = ContentDialogButton.Primary,
     };
 
+    // ----- The Save to folder does not work -----------------------------------------------------------------------
+
+    /// <summary>
+    /// Shown when the chosen folder refuses new files. Answers true when the person picked a way forward.
+    /// Without this, every file just failed with a message that did not mention the folder.
+    /// </summary>
+    private async Task<bool> ResolveOutputFolderAsync(string folder, string reason)
+    {
+        var dialog = NewDialog("Mercury can't save there");
+        dialog.PrimaryButtonText = "Next to the originals";
+        dialog.SecondaryButtonText = "Choose a folder";
+        dialog.CloseButtonText = "Cancel";
+        dialog.Content = new TextBlock
+        {
+            Text = $"{reason}\n\nWhere should the converted files go?",
+            TextWrapping = TextWrapping.Wrap,
+            MaxWidth = 420,
+        };
+
+        switch (await dialog.ShowAsync())
+        {
+            case ContentDialogResult.Primary:
+                ViewModel.OutputFolder = null;
+                return true;
+            case ContentDialogResult.Secondary:
+                var chosen = await PickFolderAsync();
+                if (chosen is null)
+                {
+                    return false;
+                }
+
+                ViewModel.OutputFolder = chosen;
+                return true;
+            default:
+                return false;
+        }
+    }
+
     // ----- Manage presets ---------------------------------------------------------------------------------------
 
     private async void ManagePresets_Click(object sender, RoutedEventArgs e) => await ShowPresetsAsync();

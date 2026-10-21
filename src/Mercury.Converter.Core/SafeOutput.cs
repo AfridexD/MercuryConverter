@@ -74,6 +74,38 @@ public static class SafeOutput
         throw new IOException($"Could not find a free file name for '{wantedPath}'.");
     }
 
+    /// <summary>
+    /// Checks that files can really be saved in a folder, by making and removing a small hidden file there.
+    /// Some places look fine but refuse new files: the top of a drive, or a drive that has been unplugged.
+    /// </summary>
+    /// <returns>Null if the folder works, or a plain sentence saying why not.</returns>
+    public static string? CheckWritable(string folder)
+    {
+        if (!Directory.Exists(folder))
+        {
+            return $"The folder {folder} was not found. If it is on a drive that can be unplugged, check that the drive is connected.";
+        }
+
+        var probe = Path.Combine(folder, $".Mercury.Converter-check-{Guid.NewGuid():N}.tmp");
+        try
+        {
+            File.WriteAllBytes(probe, []);
+            return null;
+        }
+        catch (UnauthorizedAccessException)
+        {
+            return $"Windows does not let Mercury save files in {folder}. The top of a drive often works this way.";
+        }
+        catch (IOException ex)
+        {
+            return $"Mercury cannot save files in {folder}: {ex.Message}";
+        }
+        finally
+        {
+            TryDelete(probe);
+        }
+    }
+
     /// <summary>Deletes a temp file if it exists. Never throws, so it is safe in cleanup code.</summary>
     public static void TryDelete(string path)
     {
