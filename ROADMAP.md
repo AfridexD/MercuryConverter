@@ -13,6 +13,7 @@ What is done, what is being worked on, and what may come next for Mercury Conver
 - Previews at three sizes (or none)
 - Remove location and camera details from photos, videos and songs
 - Pull the sound out of a video
+- Animated WebP: turn short videos and GIFs into small looping pictures
 - Dark mode, following Windows or your choice
 - Optional "new version available" notice (off until you turn it on)
 - A notification when a long batch finishes
@@ -26,7 +27,7 @@ What is done, what is being worked on, and what may come next for Mercury Conver
 
 - **winget listing**, so you can install and update with one command
 - **Translations.** The app is English only. Spanish, French, German, Portuguese, Hindi and Arabic would reach the most people. [Help with a translation](https://github.com/AfridexD/MercuryConverter/discussions) is very welcome.
-- **More output formats**, such as animated WebP and HEIC
+- **More output formats**, such as HEIC
 - **Merge photos into one PDF**, and rename files while converting
 - **Pause and resume** a batch
 - **Remember the list** after the app is closed

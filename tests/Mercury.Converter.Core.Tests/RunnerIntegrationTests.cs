@@ -168,6 +168,49 @@ public class RunnerIntegrationTests : IDisposable
         Assert.Equal("GIF89a", System.Text.Encoding.ASCII.GetString(header));
     }
 
+    private static string WebpKind(string path)
+    {
+        var bytes = File.ReadAllBytes(path);
+        var text = System.Text.Encoding.ASCII.GetString(bytes, 0, Math.Min(bytes.Length, 400));
+        Assert.StartsWith("RIFF", text);
+        Assert.Equal("WEBP", text.Substring(8, 4));
+
+        // An animated WebP holds an "ANIM" block and one "ANMF" block per frame. A still picture has neither.
+        return text.Contains("ANIM", StringComparison.Ordinal) ? "animated" : "still";
+    }
+
+    [Fact]
+    public async Task A_video_becomes_a_looping_animated_webp()
+    {
+        if (ToolsMissing) return;
+        var input = MakeTestMedia("clip.mp4", "-hide_banner -loglevel error -y -f lavfi -i testsrc=duration=2:size=320x240:rate=15 -f lavfi -i sine=duration=2 -c:v libx264 -c:a aac -shortest {out}");
+
+        var result = await Runner().RunAsync(
+            new ConversionRequest(input, TargetFormat.WebPAnimated, Quality: 70),
+            Path.Combine(folder, "clip.webp"),
+            durationSeconds: 2.0,
+            keepSmallerThanOriginal: false);
+
+        Assert.True(result.Succeeded, result.Error);
+        Assert.Equal("animated", WebpKind(result.OutputPath!));
+    }
+
+    [Fact]
+    public async Task A_gif_becomes_a_smaller_animated_webp()
+    {
+        if (ToolsMissing) return;
+        var gif = MakeTestMedia("loop.gif", "-hide_banner -loglevel error -y -f lavfi -i testsrc=duration=2:size=320x240:rate=12 {out}");
+
+        var result = await Runner().RunAsync(
+            new ConversionRequest(gif, TargetFormat.WebPAnimated, Quality: 70),
+            Path.Combine(folder, "loop.webp"),
+            keepSmallerThanOriginal: false);
+
+        Assert.True(result.Succeeded, result.Error);
+        Assert.Equal("animated", WebpKind(result.OutputPath!));
+        Assert.True(result.OutputBytes < result.InputBytes, $"{result.OutputBytes} should be smaller than {result.InputBytes}");
+    }
+
     [Fact]
     public async Task Existing_file_is_never_overwritten()
     {

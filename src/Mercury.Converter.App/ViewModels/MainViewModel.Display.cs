@@ -339,7 +339,9 @@ public sealed partial class MainViewModel
         bool AudioOut(MediaGroup g) => g == MediaGroup.Audio || MediaGroups.Of(targets[g]) == MediaGroup.Audio;
         ShowSizeOption = kinds.Any(k => !AudioOut(k));
         ShowRotateOption = kinds.Any(k => k is MediaGroup.Photo or MediaGroup.Video && !AudioOut(k));
-        ShowSpeedOption = kinds.Contains(MediaGroup.Video) && !AudioOut(MediaGroup.Video) || kinds.Contains(MediaGroup.Gif) && targets[MediaGroup.Gif] is TargetFormat.Mp4;
+        // The speed setting only matters for the formats made with the x264 encoder.
+        ShowSpeedOption = kinds.Contains(MediaGroup.Video) && targets[MediaGroup.Video] is TargetFormat.Mp4 or TargetFormat.Mkv
+            || kinds.Contains(MediaGroup.Gif) && targets[MediaGroup.Gif] is TargetFormat.Mp4;
         ShowChannelsOption = kinds.Any(AudioOut);
         ShowStripOption = kinds.Any(k => k != MediaGroup.Gif);
         RotateNote = kinds.Count > 1 && kinds.Any(k => k is MediaGroup.Audio or MediaGroup.Gif)

@@ -65,8 +65,8 @@ Needs Windows 10 (version 2004 or later) or Windows 11, 64-bit.
 | Kind | Open | Convert to |
 |---|---|---|
 | **Photos** | JPEG, PNG, HEIC, WebP, AVIF, JPEG XL, TIFF, BMP, camera RAW (DNG, CR2, NEF, ARW, RAF) and more | WebP, JPEG, JPEG XL, AVIF, PNG, TIFF, PDF |
-| **GIFs** | GIF | GIF, MP4, WebM |
-| **Video** | MP4, MOV, MKV, WebM, AVI, WMV, FLV, MPEG, 3GP, TS and more | MP4, WebM, MKV, OGV, AVI, GIF |
+| **GIFs** | GIF | GIF, Animated WebP, MP4, WebM |
+| **Video** | MP4, MOV, MKV, WebM, AVI, WMV, FLV, MPEG, 3GP, TS and more | MP4, WebM, MKV, OGV, AVI, GIF, Animated WebP, audio only |
 | **Audio** | MP3, M4A, AAC, FLAC, WAV, OGG, Opus, WMA, AIFF and more | MP3, AAC, OGG, FLAC, WAV |
 
 ## Highlights

@@ -79,7 +79,7 @@ public static class MediaGroups
     /// <summary>The group a format naturally belongs to. Used to sort presets under the right kind of file.</summary>
     public static MediaGroup Of(TargetFormat format) => format switch
     {
-        TargetFormat.Gif => MediaGroup.Gif,
+        TargetFormat.Gif or TargetFormat.WebPAnimated => MediaGroup.Gif,
         TargetFormat.Mp4 or TargetFormat.Mkv or TargetFormat.WebM or TargetFormat.Ogv or TargetFormat.Avi => MediaGroup.Video,
         TargetFormat.Mp3 or TargetFormat.Flac or TargetFormat.Ogg or TargetFormat.Wav or TargetFormat.Aac => MediaGroup.Audio,
         _ => MediaGroup.Photo,
@@ -105,11 +105,13 @@ public static class FormatCatalog
         new(MediaGroup.Video, TargetFormat.Ogv, "OGV", "Open format for some web players.", null, true, 0.34),
         new(MediaGroup.Video, TargetFormat.Avi, "AVI", "For older players and TVs.", null, true, 0.60),
         new(MediaGroup.Video, TargetFormat.Gif, "GIF", "Short silent animation. Files get much larger.", null, true, 2.5),
+        new(MediaGroup.Video, TargetFormat.WebPAnimated, "Animated WebP", "A short looping picture, smaller and sharper than a GIF.", null, true, 0.9),
         new(MediaGroup.Video, TargetFormat.Mp3, "MP3 (audio only)", "Keeps just the sound, as a small file.", null, true, 0.06),
         new(MediaGroup.Video, TargetFormat.Aac, "AAC (audio only)", "Just the sound. Good for Apple apps.", null, true, 0.05),
         new(MediaGroup.Video, TargetFormat.Flac, "FLAC (audio only)", "Just the sound, with no quality loss.", null, false, 0.12),
 
         new(MediaGroup.Gif, TargetFormat.Gif, "GIF", "Animated image that plays everywhere.", "Stays a GIF", true, 0.75),
+        new(MediaGroup.Gif, TargetFormat.WebPAnimated, "Animated WebP", "The same animation, much smaller. Plays in browsers and chat apps.", null, true, 0.4),
         new(MediaGroup.Gif, TargetFormat.Mp4, "MP4 video", "Much smaller, but no longer a GIF.", null, true, 0.12),
         new(MediaGroup.Gif, TargetFormat.WebM, "WebM video", "Smallest, for websites.", null, true, 0.10),
 

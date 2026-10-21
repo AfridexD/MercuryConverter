@@ -160,3 +160,85 @@ public class HardeningTests
         Assert.Contains("pattern=\"@*\"", policy);
     }
 }
+
+public class AnimatedWebPTests
+{
+    private static ConversionPlan Plan(string input, int quality = 75, Transform? changes = null) =>
+        CommandBuilder.Build(
+            new ConversionRequest(input, TargetFormat.WebPAnimated, quality, Changes: changes),
+            @"C:\Out\clip.webp",
+            @"C:\Temp");
+
+    [Theory]
+    [InlineData(@"C:\v\clip.mp4")]
+    [InlineData(@"C:\v\clip.mov")]
+    [InlineData(@"C:\v\loop.gif")]
+    public void Videos_and_gifs_become_a_looping_silent_webp(string input)
+    {
+        var step = Assert.Single(Plan(input, 80).Steps);
+
+        var arguments = step.Arguments.ToList();
+        Assert.Equal(Tool.FFmpeg, step.Tool);
+        Assert.Equal("libwebp_anim", arguments[arguments.IndexOf("-c:v") + 1]);
+        Assert.Equal("0", arguments[arguments.IndexOf("-loop") + 1]);
+        Assert.Equal("80", arguments[arguments.IndexOf("-quality") + 1]);
+        Assert.Contains("-an", arguments);
+        Assert.Contains("fps=15", arguments[arguments.IndexOf("-vf") + 1]);
+    }
+
+    [Fact]
+    public void The_default_width_is_capped_but_a_chosen_size_wins()
+    {
+        var capped = Plan(@"C:\v\clip.mp4").Steps[0].Arguments;
+        Assert.Contains("min(640,iw)", capped[capped.ToList().IndexOf("-vf") + 1]);
+
+        var chosen = Plan(@"C:\v\clip.mp4", changes: new Transform(MaxWidth: 320)).Steps[0].Arguments;
+        var filter = chosen[chosen.ToList().IndexOf("-vf") + 1];
+        Assert.DoesNotContain("min(640,iw)", filter);
+        Assert.Contains("320", filter);
+    }
+
+    [Theory]
+    [InlineData(@"C:\p\photo.jpg")]
+    [InlineData(@"C:\a\song.mp3")]
+    public void Photos_and_songs_cannot_become_an_animation(string input)
+    {
+        Assert.Throws<NotSupportedException>(() => Plan(input));
+    }
+
+    [Fact]
+    public void It_is_offered_for_videos_and_gifs_under_a_clear_name()
+    {
+        Assert.True(FormatCatalog.IsOffered(MediaGroup.Video, TargetFormat.WebPAnimated));
+        Assert.True(FormatCatalog.IsOffered(MediaGroup.Gif, TargetFormat.WebPAnimated));
+        Assert.False(FormatCatalog.IsOffered(MediaGroup.Photo, TargetFormat.WebPAnimated));
+        Assert.Equal("Animated WebP", FormatCatalog.Get(MediaGroup.Video, TargetFormat.WebPAnimated).Name);
+        Assert.Equal(MediaGroup.Gif, MediaGroups.Of(TargetFormat.WebPAnimated));
+    }
+
+    [Fact]
+    public void It_is_far_smaller_than_a_gif_in_the_estimate()
+    {
+        var gif = SizeEstimator.Estimate(10_000_000, MediaGroup.Gif, TargetFormat.Gif, 75);
+        var webp = SizeEstimator.Estimate(10_000_000, MediaGroup.Gif, TargetFormat.WebPAnimated, 75);
+
+        Assert.True(webp < gif);
+    }
+
+    [Fact]
+    public void Webp_in_the_right_click_menu_still_means_a_photo()
+    {
+        var command = ConvertCommand.Parse([@"C:\app.exe", "--convert", "webp", @"C:\a.jpg"]);
+
+        Assert.Equal(TargetFormat.WebP, command.Target);
+    }
+
+    [Fact]
+    public void Both_webp_kinds_share_the_ending_and_keep_apart()
+    {
+        Assert.Equal("webp", Targets.Get(TargetFormat.WebP).Extension);
+        Assert.Equal("webp", Targets.Get(TargetFormat.WebPAnimated).Extension);
+        Assert.Equal(MediaKind.Image, Targets.Get(TargetFormat.WebP).Kind);
+        Assert.Equal(MediaKind.Animation, Targets.Get(TargetFormat.WebPAnimated).Kind);
+    }
+}

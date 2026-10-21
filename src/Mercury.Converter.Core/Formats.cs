@@ -30,6 +30,7 @@ public enum TargetFormat
     Ogg,
     Wav,
     Aac,
+    WebPAnimated,
 }
 
 /// <summary>Describes one output format in plain terms for the UI.</summary>
@@ -62,6 +63,9 @@ public static class Targets
         new(TargetFormat.Ogg, "OGG audio (Vorbis)", "ogg", MediaKind.Audio, Lossy: true),
         new(TargetFormat.Wav, "WAV audio (uncompressed)", "wav", MediaKind.Audio, Lossy: false),
         new(TargetFormat.Aac, "AAC audio", "aac", MediaKind.Audio, Lossy: true),
+
+        // Shares the .webp ending with the photo format. The photo one comes first, so "--convert webp" still means a photo.
+        new(TargetFormat.WebPAnimated, "Animated WebP (small, loops)", "webp", MediaKind.Animation, Lossy: true),
     ];
 
     public static TargetInfo Get(TargetFormat format) =>

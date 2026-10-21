@@ -84,6 +84,15 @@ public static class CommandBuilder
 
             steps.Add(ImageStep(request.InputPath, request.Target, quality, changes, exec, outputPath, request.StripMetadata));
         }
+        else if (request.Target == TargetFormat.WebPAnimated)
+        {
+            if (inputKind is MediaKind.Image or MediaKind.Audio)
+            {
+                throw new NotSupportedException("Only videos and animations can be converted to an animated WebP.");
+            }
+
+            steps.Add(AnimatedWebPStep(request.InputPath, quality, changes, exec, outputPath, request.StripMetadata));
+        }
         else if (request.Target == TargetFormat.Gif)
         {
             steps.Add(GifStep(request.InputPath, quality, changes, exec, outputPath));
@@ -298,6 +307,34 @@ public static class CommandBuilder
         }
 
         return args;
+    }
+
+    /// <summary>A looping WebP picture from a video or a GIF. No sound, like a GIF, but smaller and with full colors.</summary>
+    private static ToolCommand AnimatedWebPStep(string input, int quality, Transform changes, ExecutionOptions exec, string output, bool strip)
+    {
+        var filters = FfmpegTransformFilters(changes);
+        if (changes.ScalePercent is null && changes.MaxWidth is null && changes.MaxHeight is null)
+        {
+            // Wide enough to look good, small enough to stay light. A size chosen by the user replaces this.
+            filters.Add("scale='min(640,iw)':-2:flags=lanczos");
+        }
+
+        filters.Add("fps=15");
+
+        var args = FfmpegStart(input, exec);
+        args.AddRange(
+        [
+            "-vf", string.Join(",", filters),
+            "-an",
+            "-c:v", "libwebp_anim",
+            "-lossless", "0",
+            "-quality", quality.ToString(CultureInfo.InvariantCulture),
+            "-compression_level", "4",
+            "-loop", "0",
+        ]);
+        AddStripArguments(args, strip);
+        args.Add(output);
+        return new ToolCommand(Tool.FFmpeg, args);
     }
 
     private static ToolCommand GifStep(string input, int quality, Transform changes, ExecutionOptions exec, string output)
