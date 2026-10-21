@@ -14,6 +14,7 @@ What is done, what is being worked on, and what may come next for Mercury Conver
 - Remove location and camera details from photos, videos and songs
 - Pull the sound out of a video
 - Animated WebP: turn short videos and GIFs into small looping pictures
+- Faster large photo batches: up to 8 photos at once, and no slow lossless WebP
 - Dark mode, following Windows or your choice
 - Optional "new version available" notice (off until you turn it on)
 - A notification when a long batch finishes

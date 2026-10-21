@@ -208,7 +208,16 @@ public static class CommandBuilder
 
         if (target is TargetFormat.Jpeg or TargetFormat.WebP or TargetFormat.Avif)
         {
-            args.AddRange(["-quality", QualityMapper.MagickQuality(quality).ToString(CultureInfo.InvariantCulture)]);
+            var magickQuality = QualityMapper.MagickQuality(quality);
+
+            // At 100 the WebP encoder switches to a lossless mode that is about 6 times slower and makes files bigger than
+            // the original. 99 is lossy and looks the same.
+            if (target == TargetFormat.WebP)
+            {
+                magickQuality = Math.Min(magickQuality, 99);
+            }
+
+            args.AddRange(["-quality", magickQuality.ToString(CultureInfo.InvariantCulture)]);
         }
 
         // Transparent pixels would turn black in formats without alpha, so flatten onto white.

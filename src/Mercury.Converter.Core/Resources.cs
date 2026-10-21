@@ -67,7 +67,7 @@ public static class ResourceGovernor
         {
             MediaKind.Video => GiB,
             MediaKind.Animation => GiB / 2,
-            MediaKind.Image => GiB / 2,
+            MediaKind.Image => 3 * GiB / 4,
             _ => GiB / 8,
         };
 
@@ -83,6 +83,9 @@ public static class ResourceGovernor
         {
             // One heavy video already uses many threads well. Two at once only help on big processors.
             MediaKind.Video => threads >= 10 ? 2 : 1,
+            // Photo encoders use one core each, so one photo per free core works well. Four at a time left most of the
+            // processor idle on large batches.
+            MediaKind.Image => Math.Clamp(threads, 1, 8),
             _ => Math.Clamp(threads / 2, 1, 4),
         };
 

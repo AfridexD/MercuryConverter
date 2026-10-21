@@ -134,7 +134,7 @@ public class ResourceTests
         }, CancellationToken.None);
 
         Assert.Equal(12, done);
-        Assert.InRange(peak, 2, 4);
+        Assert.InRange(peak, 4, 8);
     }
 
     [Fact]
@@ -232,5 +232,76 @@ public class ResourceTests
             }
         }
         while (Interlocked.CompareExchange(ref target, value, current) != current);
+    }
+}
+
+public class PhotoBatchSpeedTests
+{
+    private const long GiB = 1024L * 1024 * 1024;
+
+    private static ResourceSnapshot Machine(int cores, double busy = 0, long freeGiB = 24) =>
+        new(cores, busy, freeGiB * GiB, 32 * GiB);
+
+    [Fact]
+    public void An_idle_twelve_core_computer_runs_eight_photos_at_once_with_one_thread_each()
+    {
+        var budget = ResourceGovernor.Decide(Machine(12), PerformanceMode.Smart, MediaKind.Image);
+
+        Assert.Equal(8, budget.MaxParallelJobs);
+        Assert.Equal(1, budget.ThreadsPerJob);
+    }
+
+    [Theory]
+    [InlineData(4, 3)]
+    [InlineData(8, 6)]
+    [InlineData(2, 1)]
+    public void Smaller_computers_run_about_one_photo_per_free_core(int cores, int expectedJobs)
+    {
+        var budget = ResourceGovernor.Decide(Machine(cores), PerformanceMode.Smart, MediaKind.Image);
+
+        Assert.Equal(expectedJobs, budget.MaxParallelJobs);
+    }
+
+    [Fact]
+    public void Gentle_mode_still_keeps_photos_to_two_at_a_time()
+    {
+        var budget = ResourceGovernor.Decide(Machine(12), PerformanceMode.Gentle, MediaKind.Image);
+
+        Assert.True(budget.MaxParallelJobs <= 2);
+    }
+
+    [Fact]
+    public void Eight_photos_at_once_still_fit_in_memory_limits()
+    {
+        // 24 GiB free: eight photos at 0.75 GiB each is 6 GiB. With 4 GiB free it must come down.
+        var roomy = ResourceGovernor.Decide(Machine(12, freeGiB: 24), PerformanceMode.Smart, MediaKind.Image);
+        var tight = ResourceGovernor.Decide(Machine(12, freeGiB: 4), PerformanceMode.Smart, MediaKind.Image);
+
+        Assert.Equal(8, roomy.MaxParallelJobs);
+        Assert.InRange(tight.MaxParallelJobs, 1, 3);
+    }
+
+    [Fact]
+    public void The_webp_encoder_is_never_asked_for_its_slow_lossless_mode()
+    {
+        var plan = CommandBuilder.Build(
+            new ConversionRequest(@"C:\p\a.jpg", TargetFormat.WebP, Quality: 100),
+            @"C:\Out\a.webp",
+            @"C:\Temp");
+
+        var arguments = plan.Steps[0].Arguments.ToList();
+        Assert.Equal("99", arguments[arguments.IndexOf("-quality") + 1]);
+    }
+
+    [Fact]
+    public void Other_formats_keep_the_quality_the_slider_says()
+    {
+        var plan = CommandBuilder.Build(
+            new ConversionRequest(@"C:\p\a.png", TargetFormat.Jpeg, Quality: 100),
+            @"C:\Out\a.jpg",
+            @"C:\Temp");
+
+        var arguments = plan.Steps[0].Arguments.ToList();
+        Assert.Equal("100", arguments[arguments.IndexOf("-quality") + 1]);
     }
 }
