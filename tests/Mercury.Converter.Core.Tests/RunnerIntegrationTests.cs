@@ -186,8 +186,9 @@ public class RunnerIntegrationTests : IDisposable
         Assert.Equal("my original file", File.ReadAllText(existing));
     }
 
+
     [Fact]
-    public async Task A_result_that_cannot_be_made_smaller_is_not_saved()
+    public async Task A_result_that_cannot_be_made_smaller_is_still_saved_with_a_note()
     {
         if (ToolsMissing) return;
         var input = MakeTestMedia("clip.mp4", "-hide_banner -loglevel error -y -f lavfi -i testsrc=duration=2:size=320x240:rate=10 -c:v libx264 -crf 45 -preset veryslow {out}");
@@ -195,14 +196,27 @@ public class RunnerIntegrationTests : IDisposable
 
         var result = await Runner().RunAsync(new ConversionRequest(input, TargetFormat.Avi, Quality: 90), wanted, durationSeconds: 2.0);
 
-        Assert.False(result.Succeeded);
-        Assert.True(result.WasNotSmaller);
-        Assert.False(File.Exists(wanted));
-        Assert.Empty(Directory.GetFiles(folder, "*.tmp*"));
+        // Converting to a format that is bigger by nature must still work. The user is told the file is larger.
+        Assert.True(result.Succeeded, result.Error);
+        Assert.True(File.Exists(result.OutputPath));
+        Assert.True(result.OutputBytes > result.InputBytes);
+        Assert.False(string.IsNullOrEmpty(result.Warning));
 
-        // Saving it anyway still works.
-        var again = await Runner().RunAsync(new ConversionRequest(input, TargetFormat.Avi, Quality: 90), wanted, durationSeconds: 2.0, keepSmallerThanOriginal: false);
-        Assert.True(again.Succeeded, again.Error);
+        // Only the finished file is left: no temporary files from the extra tries.
+        Assert.Single(Directory.GetFiles(folder, "*.avi"));
+        Assert.Empty(Directory.GetFiles(folder, ".Mercury.Converter-*"));
+    }
+
+    [Fact]
+    public async Task A_photo_converted_to_a_bigger_format_is_saved_not_refused()
+    {
+        if (ToolsMissing) return;
+        var webp = MakeTestMedia("small.webp", "-hide_banner -loglevel error -y -f lavfi -i testsrc=size=640x480:rate=1 -frames:v 1 -q:v 90 {out}");
+
+        var result = await Runner().RunAsync(new ConversionRequest(webp, TargetFormat.Jpeg, Quality: 100), Path.Combine(folder, "small.jpg"));
+
+        Assert.True(result.Succeeded, result.Error);
+        Assert.True(File.Exists(result.OutputPath));
     }
 
     [Fact]

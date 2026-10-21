@@ -48,6 +48,32 @@ public static class SafeOutput
         File.Move(tempPath, finalPath, overwrite: false);
     }
 
+    /// <summary>
+    /// Moves a finished temp file into place under the wanted name, or the next free one. Several files converted at the
+    /// same time can want the same name ("in.webp" and "in.bmp" both becoming "in.jpg"), so the name is checked again
+    /// at the moment of moving. Existing files are still never overwritten.
+    /// </summary>
+    /// <returns>The name the file was saved under.</returns>
+    public static string CommitUnique(string tempPath, string wantedPath)
+    {
+        var target = UniquePath(wantedPath);
+        for (var attempt = 0; attempt < 50; attempt++)
+        {
+            try
+            {
+                File.Move(tempPath, target, overwrite: false);
+                return target;
+            }
+            catch (IOException) when (File.Exists(target))
+            {
+                // Another conversion took this name a moment ago. Take the next free one.
+                target = UniquePath(wantedPath);
+            }
+        }
+
+        throw new IOException($"Could not find a free file name for '{wantedPath}'.");
+    }
+
     /// <summary>Deletes a temp file if it exists. Never throws, so it is safe in cleanup code.</summary>
     public static void TryDelete(string path)
     {

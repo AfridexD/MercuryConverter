@@ -68,6 +68,10 @@ public sealed class ConversionRunner(ToolLocator tools)
             : [QualityMapper.Clamp(request.Quality)];
 
         var state = new RunState();
+
+        // If no quality makes the file smaller, the result at the quality that was asked for is kept and saved, with a note.
+        string? fallbackTemp = null;
+        long fallbackBytes = 0;
         try
         {
             for (var attempt = 0; attempt < qualities.Count; attempt++)
@@ -86,16 +90,30 @@ public sealed class ConversionRunner(ToolLocator tools)
                     var outputBytes = new FileInfo(temp).Length;
                     if (outputBytes < inputBytes || !enforce)
                     {
-                        SafeOutput.Commit(temp, finalPath);
+                        var savedAs = SafeOutput.CommitUnique(temp, finalPath);
                         committed = true;
+                        if (fallbackTemp is not null)
+                        {
+                            SafeOutput.TryDelete(fallbackTemp);
+                            fallbackTemp = null;
+                        }
+
                         return new ConversionResult(
                             Succeeded: true,
-                            OutputPath: finalPath,
+                            OutputPath: savedAs,
                             InputBytes: inputBytes,
                             OutputBytes: outputBytes,
                             Warning: SizeWarning(inputBytes, outputBytes, quality, lossy, enforce),
                             Error: null,
                             AdjustedQuality: quality == QualityMapper.Clamp(request.Quality) ? null : quality);
+                    }
+
+                    // Too big. The first result is kept in case no quality does better.
+                    if (attempt == 0)
+                    {
+                        fallbackTemp = temp;
+                        fallbackBytes = outputBytes;
+                        committed = true;
                     }
                 }
                 finally
@@ -107,7 +125,21 @@ public sealed class ConversionRunner(ToolLocator tools)
                 }
             }
 
-            // Every attempt was larger than the original, so nothing was saved.
+            // Nothing got smaller. Save the result at the requested quality and say it is larger, so converting to a
+            // format that is bigger by nature (WebP to JPEG, for example) still works.
+            if (fallbackTemp is not null)
+            {
+                var fallbackSavedAs = SafeOutput.CommitUnique(fallbackTemp, finalPath);
+                fallbackTemp = null;
+                return new ConversionResult(
+                    Succeeded: true,
+                    OutputPath: fallbackSavedAs,
+                    InputBytes: inputBytes,
+                    OutputBytes: fallbackBytes,
+                    Warning: SizeWarning(inputBytes, fallbackBytes, qualities[0], lossy, keepSmaller: false),
+                    Error: null);
+            }
+
             return Fail(NotSmallerMessage, inputBytes);
         }
         catch (OperationCanceledException)
@@ -117,6 +149,14 @@ public sealed class ConversionRunner(ToolLocator tools)
         catch (Exception ex) when (ex is IOException or InvalidOperationException or NotSupportedException or ArgumentException)
         {
             return Fail(ex.Message, inputBytes);
+        }
+        finally
+        {
+            // A kept first result that was not used (an error or a cancel came later) must not be left behind.
+            if (fallbackTemp is not null)
+            {
+                SafeOutput.TryDelete(fallbackTemp);
+            }
         }
     }
 

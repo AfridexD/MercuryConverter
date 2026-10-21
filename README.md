@@ -130,6 +130,8 @@ The [documentation site](https://afridexd.github.io/MercuryConverter/) has a ste
 - [Getting started](https://afridexd.github.io/MercuryConverter/guide.html)
 - [Right-click menu](https://afridexd.github.io/MercuryConverter/guide.html#right-click)
 - [Questions and fixes](https://afridexd.github.io/MercuryConverter/faq.html)
+- [Roadmap](ROADMAP.md): what is done, what is next
+- [Ideas and votes](https://github.com/AfridexD/MercuryConverter/discussions): suggest a feature or help translate
 - [Building from source](docs/BUILDING.md)
 
 ## Build from source

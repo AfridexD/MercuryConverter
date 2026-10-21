@@ -318,7 +318,10 @@ public sealed partial class MainViewModel
     {
         var change = result.InputBytes == 0 ? 0 : (int)Math.Round((result.OutputBytes - result.InputBytes) * 100.0 / result.InputBytes);
         var sign = change > 0 ? "+" : change < 0 ? "−" : string.Empty;
-        return $"{SizeText.Of(result.InputBytes)} → {SizeText.Of(result.OutputBytes)} ({sign}{Math.Abs(change)}%)";
+        var text = $"{SizeText.Of(result.InputBytes)} → {SizeText.Of(result.OutputBytes)} ({sign}{Math.Abs(change)}%)";
+
+        // Say so plainly when the new file is bigger, so it is never a surprise.
+        return result.OutputBytes > result.InputBytes ? text + "\nLarger than the original." : text;
     }
 
     private static string FriendlyError(string? error) =>

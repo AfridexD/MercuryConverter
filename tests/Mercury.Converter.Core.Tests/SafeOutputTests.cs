@@ -81,3 +81,57 @@ public class SafeOutputTests : IDisposable
         SafeOutput.TryDelete(Path.Combine(folder, "missing.tmp"));
     }
 }
+
+public class CommitUniqueTests
+{
+    [Fact]
+    public void Two_files_that_want_the_same_name_both_get_saved()
+    {
+        var folder = Path.Combine(Path.GetTempPath(), $"commit-{Guid.NewGuid():N}");
+        Directory.CreateDirectory(folder);
+        try
+        {
+            var wanted = Path.Combine(folder, "in.jpg");
+            var first = Path.Combine(folder, ".a.jpg");
+            var second = Path.Combine(folder, ".b.jpg");
+            File.WriteAllText(first, "one");
+            File.WriteAllText(second, "two");
+
+            // Both asked for "in.jpg" while it was still free, as parallel conversions do.
+            var savedFirst = SafeOutput.CommitUnique(first, wanted);
+            var savedSecond = SafeOutput.CommitUnique(second, wanted);
+
+            Assert.Equal(wanted, savedFirst);
+            Assert.Equal(Path.Combine(folder, "in (2).jpg"), savedSecond);
+            Assert.Equal("one", File.ReadAllText(savedFirst));
+            Assert.Equal("two", File.ReadAllText(savedSecond));
+        }
+        finally
+        {
+            Directory.Delete(folder, recursive: true);
+        }
+    }
+
+    [Fact]
+    public void An_existing_file_is_never_overwritten()
+    {
+        var folder = Path.Combine(Path.GetTempPath(), $"commit-{Guid.NewGuid():N}");
+        Directory.CreateDirectory(folder);
+        try
+        {
+            var wanted = Path.Combine(folder, "keep.png");
+            File.WriteAllText(wanted, "mine");
+            var temp = Path.Combine(folder, ".t.png");
+            File.WriteAllText(temp, "new");
+
+            var saved = SafeOutput.CommitUnique(temp, wanted);
+
+            Assert.NotEqual(wanted, saved);
+            Assert.Equal("mine", File.ReadAllText(wanted));
+        }
+        finally
+        {
+            Directory.Delete(folder, recursive: true);
+        }
+    }
+}
