@@ -53,6 +53,8 @@ public partial class App : Application
             }
         }
 
+        ThemeService.Initialize(AppSettingsStore.Default.Load().Theme);
+
         RepairRightClickMenu();
 
         // Explorer starts the program once per selected file. The first process collects the others' files.

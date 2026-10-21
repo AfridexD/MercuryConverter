@@ -1,11 +1,11 @@
 <?xml version="1.0" encoding="utf-8"?>
-<!-- RequestedTheme is Light on purpose: the dark theme is a later step, so the app ignores the Windows theme for now. -->
+<!-- The theme is chosen in code (ThemeService): it follows Windows unless the user picks light or dark. -->
 <Application
     x:Class="Mercury.Converter.App.App"
     xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
     xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
     xmlns:local="using:Mercury.Converter.App"
-    RequestedTheme="Light">
+    >
     <Application.Resources>
         <ResourceDictionary>
             <ResourceDictionary.MergedDictionaries>

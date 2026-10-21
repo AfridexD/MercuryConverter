@@ -105,6 +105,7 @@ Pick *Mercury Converter → To MP4* in File Explorer. A small window shows progr
 - Files never get bigger by surprise: quality is lowered and retried, and if it still cannot shrink, nothing is saved and your original is left alone.
 - JPEG to **JPEG XL without any loss**, and back to the exact original.
 - Resize, rotate and flip.
+- **Light and dark themes**, following Windows or your choice, with a sun/moon button in the top bar.
 - **Remove location and camera details** from photos, videos and songs before you share them.
 - **Pull the sound out of a video** as MP3, AAC or FLAC.
 - A notification when a long batch finishes, and an optional heads-up when a new version is out (off until you say yes).
@@ -113,6 +114,14 @@ Pick *Mercury Converter → To MP4* in File Explorer. A small window shows progr
 </td>
 </tr>
 </table>
+
+<div align="center">
+
+**Light or dark.** Mercury follows your Windows setting, or you can choose.
+
+<img src="docs/images/main-dark.png" alt="Mercury Converter in dark mode" width="860">
+
+</div>
 
 ## Documentation
 
@@ -158,8 +167,7 @@ The downloads are not code-signed yet, so Windows SmartScreen may warn you the f
 ## Known limits
 
 - On Windows 11 the right-click menu is under **Show more options** (or hold Shift while you right-click).
-- Light theme only for now. Dark mode is planned.
+- English only for now. Translations are planned.
 - Not code-signed yet.
-- The app is in English. Translations are planned.
 
 Found a problem or have an idea? [Open an issue](https://github.com/AfridexD/MercuryConverter/issues/new).

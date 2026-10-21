@@ -52,3 +52,48 @@ public class AppSettingsTests : IDisposable
         Assert.True(damaged.KeepSmallerThanOriginal);
     }
 }
+
+public class ThemeSettingTests
+{
+    [Fact]
+    public void The_theme_follows_Windows_until_the_user_picks_one()
+    {
+        Assert.Equal(AppTheme.System, new AppSettings().Theme);
+    }
+
+    [Theory]
+    [InlineData(AppTheme.Light)]
+    [InlineData(AppTheme.Dark)]
+    [InlineData(AppTheme.System)]
+    public void A_chosen_theme_is_remembered(AppTheme theme)
+    {
+        var path = Path.Combine(Path.GetTempPath(), $"settings-{Guid.NewGuid():N}.json");
+        try
+        {
+            var store = new AppSettingsStore(path);
+            store.Save(new AppSettings { Theme = theme });
+
+            Assert.Equal(theme, store.Load().Theme);
+        }
+        finally
+        {
+            File.Delete(path);
+        }
+    }
+
+    [Fact]
+    public void Settings_from_an_older_version_open_in_the_system_theme()
+    {
+        var path = Path.Combine(Path.GetTempPath(), $"settings-{Guid.NewGuid():N}.json");
+        try
+        {
+            File.WriteAllText(path, "{ \"LastQuality\": 60 }");
+
+            Assert.Equal(AppTheme.System, new AppSettingsStore(path).Load().Theme);
+        }
+        finally
+        {
+            File.Delete(path);
+        }
+    }
+}

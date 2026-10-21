@@ -111,6 +111,23 @@
                                     <ColumnDefinition Width="*" />
                                     <ColumnDefinition Width="200" />
                                 </Grid.ColumnDefinitions>
+                                <FontIcon Glyph="&#xE790;" FontSize="20" Foreground="{StaticResource McText2}" VerticalAlignment="Center" />
+                                <StackPanel Grid.Column="1" VerticalAlignment="Center">
+                                    <TextBlock Text="App theme" Style="{StaticResource McBodyText}" />
+                                    <TextBlock Text="Light, dark, or the same as Windows." Style="{StaticResource McCaptionText}" />
+                                </StackPanel>
+                                <ComboBox x:Name="ThemeBox" Grid.Column="2" Style="{StaticResource McComboBox}" DisplayMemberPath="Label"
+                                          SelectionChanged="Theme_SelectionChanged" AutomationProperties.Name="App theme" />
+                            </Grid>
+                        </Border>
+
+                        <Border Style="{StaticResource McSettingCard}">
+                            <Grid ColumnSpacing="14">
+                                <Grid.ColumnDefinitions>
+                                    <ColumnDefinition Width="Auto" />
+                                    <ColumnDefinition Width="*" />
+                                    <ColumnDefinition Width="200" />
+                                </Grid.ColumnDefinitions>
                                 <FontIcon Glyph="&#xEB9F;" FontSize="20" Foreground="{StaticResource McText2}" VerticalAlignment="Center" />
                                 <TextBlock Grid.Column="1" Text="Previews" Style="{StaticResource McBodyText}" VerticalAlignment="Center" />
                                 <ComboBox x:Name="PreviewBox" Grid.Column="2" Style="{StaticResource McComboBox}" DisplayMemberPath="Label"

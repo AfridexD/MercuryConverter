@@ -91,9 +91,10 @@ public static class TileColors
     {
         if (group == MediaGroup.Audio)
         {
-            return new SolidColorBrush(Color.FromArgb(255, 0xE6, 0xE8, 0xEE));
+            return Tokens.Brush("McAudioTile");
         }
 
+        var dark = Services.ThemeService.IsDark;
         var hue = 0;
         foreach (var c in name)
         {
@@ -106,8 +107,8 @@ public static class TileColors
             EndPoint = new Windows.Foundation.Point(1, 1),
             GradientStops =
             {
-                new GradientStop { Color = FromOklch(0.86, 0.06, hue), Offset = 0 },
-                new GradientStop { Color = FromOklch(0.72, 0.07, (hue + 40) % 360), Offset = 1 },
+                new GradientStop { Color = FromOklch(dark ? 0.46 : 0.86, 0.06, hue), Offset = 0 },
+                new GradientStop { Color = FromOklch(dark ? 0.34 : 0.72, 0.07, (hue + 40) % 360), Offset = 1 },
             },
         };
     }
@@ -153,7 +154,7 @@ public partial class FileItem : ObservableObject
         Group = group;
         Size = size;
         AddedIndex = addedIndex;
-        TileBrush = TileColors.For(Name, group);
+        tileBrush = TileColors.For(Name, group);
     }
 
     public string Path { get; }
@@ -168,7 +169,18 @@ public partial class FileItem : ObservableObject
 
     public int AddedIndex { get; }
 
-    public Brush TileBrush { get; }
+    private Brush tileBrush;
+
+    public Brush TileBrush => tileBrush;
+
+    /// <summary>Called when light or dark changes, so the tile gets colors that suit it.</summary>
+    public void RefreshTheme()
+    {
+        tileBrush = TileColors.For(Name, Group);
+        OnPropertyChanged(nameof(TileBrush));
+        OnPropertyChanged(nameof(TileIconBrush));
+        NotifyDisplay();
+    }
 
     public Brush TileIconBrush => Group == MediaGroup.Audio
         ? Tokens.Brush("McText2")

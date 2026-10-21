@@ -1,4 +1,5 @@
 using System.Runtime.InteropServices;
+using Mercury.Converter.App.Services;
 using Mercury.Converter.App.ViewModels;
 using Mercury.Converter.Core;
 using Microsoft.UI;
@@ -52,7 +53,7 @@ public sealed partial class QuickWindow : Window
 
         ExtendsContentIntoTitleBar = true;
         SetTitleBar(AppTitleBar);
-        UiHelpers.StyleCaptionButtons(AppWindow);
+        ThemeService.Attach(this, Root);
         if (AppWindow.Presenter is OverlappedPresenter presenter)
         {
             presenter.IsResizable = false;

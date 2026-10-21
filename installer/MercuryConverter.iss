@@ -2,7 +2,7 @@
 ; Build it with scripts\build-installer.ps1, which publishes the app first.
 
 #define AppName "Mercury Converter"
-#define AppVersion "1.0.1"
+#define AppVersion "1.0.2"
 #define AppExe "MercuryConverter.exe"
 
 [Setup]

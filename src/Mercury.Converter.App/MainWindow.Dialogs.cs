@@ -36,7 +36,7 @@ public sealed partial class MainWindow
 
         var status = new TextBlock { Style = Res("McCaptionText"), Visibility = Visibility.Collapsed };
         var list = new StackPanel { Spacing = 4 };
-        var nameBox = new TextBox { PlaceholderText = "Name this preset", MaxLength = 80, Width = 240 };
+        var nameBox = new TextBox { PlaceholderText = "Name this preset", MaxLength = 80 };
 
         void Rebuild()
         {
@@ -150,8 +150,12 @@ public sealed partial class MainWindow
             status.Visibility = Visibility.Visible;
         }
 
-        var saveRow = new StackPanel { Orientation = Orientation.Horizontal, Spacing = 8 };
+        // The name box takes the space the button leaves, so the button text is never cut off.
+        var saveRow = new Grid { ColumnSpacing = 8 };
+        saveRow.ColumnDefinitions.Add(new ColumnDefinition { Width = new GridLength(1, GridUnitType.Star) });
+        saveRow.ColumnDefinitions.Add(new ColumnDefinition { Width = GridLength.Auto });
         saveRow.Children.Add(nameBox);
+        Grid.SetColumn(save, 1);
         saveRow.Children.Add(save);
         var moveRow = new StackPanel { Orientation = Orientation.Horizontal, Spacing = 8 };
         moveRow.Children.Add(import);

@@ -61,6 +61,9 @@ public sealed record AppSettings
     /// <summary>Ask GitHub once a day whether a newer version exists. Off until the user says yes.</summary>
     public bool CheckForUpdates { get; init; }
 
+    /// <summary>Light, dark, or whatever Windows is set to.</summary>
+    public AppTheme Theme { get; init; } = AppTheme.System;
+
     /// <summary>Remove location, camera and date details from photos, video and audio. Off unless the user turns it on.</summary>
     public bool StripMetadata { get; init; }
 
@@ -123,4 +126,13 @@ public sealed class AppSettingsStore(string filePath)
         File.WriteAllText(temp, JsonSerializer.Serialize(settings, JsonOptions));
         File.Move(temp, filePath, overwrite: true);
     }
+}
+
+/// <summary>Which colors the app uses.</summary>
+public enum AppTheme
+{
+    /// <summary>Follow the Windows setting, and change when it changes.</summary>
+    System,
+    Light,
+    Dark,
 }

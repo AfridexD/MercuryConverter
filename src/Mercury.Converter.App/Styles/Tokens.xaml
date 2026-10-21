@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="utf-8"?>
 <!--
     Design tokens, light theme. Values come from the design handoff (docs/design/HANDOFF.md).
-    Dark theme will add a second set with the same keys.
+    The dark values are in ThemePalette.cs and are applied in code, so every window changes at once.
 -->
 <ResourceDictionary
     xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
@@ -72,13 +72,32 @@
     <CornerRadius x:Key="McRadiusSetting">6</CornerRadius>
     <CornerRadius x:Key="McRadiusCard">8</CornerRadius>
 
-    <!-- The app's accent is the brand blue, so every standard control (toggles, check boxes, sliders, focus) uses it. -->
-    <Color x:Key="SystemAccentColor">#1F4FD6</Color>
-    <Color x:Key="SystemAccentColorDark1">#1F4FD6</Color>
-    <Color x:Key="SystemAccentColorDark2">#1A43B8</Color>
-    <Color x:Key="SystemAccentColorDark3">#163A9C</Color>
-    <Color x:Key="SystemAccentColorLight1">#4F77E6</Color>
-    <Color x:Key="SystemAccentColorLight2">#7F9BEF</Color>
-    <Color x:Key="SystemAccentColorLight3">#B0C2F7</Color>
+    <!-- Extra brushes the light/dark palette (ThemeService) also changes -->
+    <SolidColorBrush x:Key="McMenuBtn" Color="#E6FFFFFF" />
+    <SolidColorBrush x:Key="McSmoke" Color="#4D000000" />
+    <SolidColorBrush x:Key="McAudioTile" Color="#E6E8EE" />
+
+    <!-- The app's accent is the brand blue (lighter in the dark theme), so every standard control
+         (toggles, check boxes, sliders, focus) uses it. -->
+    <ResourceDictionary.ThemeDictionaries>
+        <ResourceDictionary x:Key="Light">
+            <Color x:Key="SystemAccentColor">#1F4FD6</Color>
+            <Color x:Key="SystemAccentColorDark1">#1F4FD6</Color>
+            <Color x:Key="SystemAccentColorDark2">#1A43B8</Color>
+            <Color x:Key="SystemAccentColorDark3">#163A9C</Color>
+            <Color x:Key="SystemAccentColorLight1">#4F77E6</Color>
+            <Color x:Key="SystemAccentColorLight2">#7F9BEF</Color>
+            <Color x:Key="SystemAccentColorLight3">#B0C2F7</Color>
+        </ResourceDictionary>
+        <ResourceDictionary x:Key="Dark">
+            <Color x:Key="SystemAccentColor">#7FA3FF</Color>
+            <Color x:Key="SystemAccentColorDark1">#5C86F5</Color>
+            <Color x:Key="SystemAccentColorDark2">#4A72E0</Color>
+            <Color x:Key="SystemAccentColorDark3">#3A5FC8</Color>
+            <Color x:Key="SystemAccentColorLight1">#9DB8F2</Color>
+            <Color x:Key="SystemAccentColorLight2">#7FA3FF</Color>
+            <Color x:Key="SystemAccentColorLight3">#C2D3FF</Color>
+        </ResourceDictionary>
+    </ResourceDictionary.ThemeDictionaries>
 
 </ResourceDictionary>

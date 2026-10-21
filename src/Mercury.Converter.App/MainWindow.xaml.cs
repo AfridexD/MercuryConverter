@@ -34,7 +34,7 @@ public sealed partial class MainWindow : Window
 
         ExtendsContentIntoTitleBar = true;
         SetTitleBar(AppTitleBar);
-        UiHelpers.StyleCaptionButtons(AppWindow);
+        ThemeService.Attach(this, Root);
         AppWindow.Resize(new SizeInt32(1280, 800));
         TrySetIcon();
         AddKeyboardShortcuts();
@@ -45,10 +45,32 @@ public sealed partial class MainWindow : Window
         _ = ViewModel.CheckForUpdateAsync();
 
         // The View menu changes how big the cards are.
+        ThemeService.Changed += UpdateThemeIcon;
+        UpdateThemeIcon();
         ViewModel.View.PropertyChanged += (_, _) => ApplyCardSize();
         ApplyCardSize();
 
 #if DEBUG
+        // For testing only: MERCURY_TEST_THEME=Dark,Light cycles the theme every few seconds, like using the theme menu.
+        if (Environment.GetEnvironmentVariable("MERCURY_TEST_THEME") is { Length: > 0 } themes)
+        {
+            var themeQueue = new Queue<AppTheme>(themes.Split(',').Select(Enum.Parse<AppTheme>));
+            var themeTimer = DispatcherQueue.CreateTimer();
+            themeTimer.Interval = TimeSpan.FromSeconds(4);
+            themeTimer.Tick += (t, _) =>
+            {
+                if (themeQueue.Count > 0)
+                {
+                    ViewModel.Theme = themeQueue.Dequeue();
+                }
+                else
+                {
+                    t.Stop();
+                }
+            };
+            themeTimer.Start();
+        }
+
         // For testing only: MERCURY_TEST_VIEW=Large,Small cycles the View setting every few seconds, like clicking the menu.
         if (Environment.GetEnvironmentVariable("MERCURY_TEST_VIEW") is { Length: > 0 } sizes)
         {
@@ -400,6 +422,21 @@ public sealed partial class MainWindow : Window
             ViewMenu.Items.Add(item);
         }
     }
+
+    private void ThemeMenu_Opening(object? sender, object e)
+    {
+        ThemeMenu.Items.Clear();
+        foreach (var choice in ViewModel.ThemeChoices)
+        {
+            var item = new RadioMenuFlyoutItem { Text = choice.Label, GroupName = "Theme", IsChecked = ViewModel.Theme == choice.Value };
+            var theme = choice.Value;
+            item.Click += (_, _) => ViewModel.Theme = theme;
+            ThemeMenu.Items.Add(item);
+        }
+    }
+
+    /// <summary>A moon while the app is light (press for dark), and a sun while it is dark.</summary>
+    private void UpdateThemeIcon() => ThemeIcon.Glyph = ThemeService.IsDark ? "" : "";
 
     private void SortMenu_Opening(object? sender, object e)
     {

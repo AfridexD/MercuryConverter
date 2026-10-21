@@ -72,6 +72,8 @@ public sealed partial class SettingsView : UserControl
         RightClickSwitch.IsOn = ShellIntegration.IsInstalled();
         QuickWindowBox.ItemsSource = viewModel.QuickWindowChoices;
         QuickWindowBox.SelectedItem = viewModel.QuickWindowChoices.First(c => c.Value == viewModel.UseQuickWindow);
+        ThemeBox.ItemsSource = viewModel.ThemeChoices;
+        ThemeBox.SelectedItem = viewModel.ThemeChoices.First(c => c.Value == viewModel.Theme);
         PreviewBox.ItemsSource = viewModel.PreviewChoices;
         PreviewBox.SelectedItem = viewModel.PreviewChoices.First(c => c.Value == viewModel.ThumbnailSetting);
         SpeedBox.ItemsSource = viewModel.ModeChoices;
@@ -129,6 +131,14 @@ public sealed partial class SettingsView : UserControl
         if (!loading && viewModel is not null && QuickWindowBox.SelectedItem is ListChoice<bool> choice)
         {
             viewModel.UseQuickWindow = choice.Value;
+        }
+    }
+
+    private void Theme_SelectionChanged(object sender, SelectionChangedEventArgs e)
+    {
+        if (!loading && viewModel is not null && ThemeBox.SelectedItem is ListChoice<AppTheme> choice)
+        {
+            viewModel.Theme = choice.Value;
         }
     }
 

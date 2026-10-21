@@ -59,6 +59,7 @@ public sealed partial class MainViewModel : ObservableObject
         UseQuickWindow = settings.UseQuickWindow;
         RightClickTipShown = settings.RightClickTipShown;
         CheckForUpdates = settings.CheckForUpdates;
+        Theme = settings.Theme;
         StripMetadata = settings.StripMetadata;
         NotifyWhenDone = settings.NotifyWhenDone;
         ThumbnailSetting = settings.Thumbnails;
@@ -71,6 +72,15 @@ public sealed partial class MainViewModel : ObservableObject
         initializing = false;
 
         View.Apply(ThumbnailSetting);
+
+        // Tiles drawn in code need new colors when the theme changes.
+        Services.ThemeService.Changed += () =>
+        {
+            foreach (var item in Files)
+            {
+                item.RefreshTheme();
+            }
+        };
         Presets = new ObservableCollection<Preset>(presetStore.Load());
 
         // Housekeeping and hardware detection happen in the background so the window opens straight away.
@@ -126,6 +136,13 @@ public sealed partial class MainViewModel : ObservableObject
         new("Name", SortMode.Name),
         new("Size", SortMode.Size),
         new("Type", SortMode.Type),
+    ];
+
+    public IReadOnlyList<ListChoice<AppTheme>> ThemeChoices { get; } =
+    [
+        new("Use my Windows setting", AppTheme.System),
+        new("Light", AppTheme.Light),
+        new("Dark", AppTheme.Dark),
     ];
 
     public IReadOnlyList<ListChoice<bool>> QuickWindowChoices { get; } =
@@ -190,6 +207,9 @@ public sealed partial class MainViewModel : ObservableObject
 
     [ObservableProperty]
     public partial bool CheckForUpdates { get; set; }
+
+    [ObservableProperty]
+    public partial AppTheme Theme { get; set; }
 
     [ObservableProperty]
     public partial bool StripMetadata { get; set; }
@@ -272,6 +292,17 @@ public sealed partial class MainViewModel : ObservableObject
     partial void OnUseQuickWindowChanged(bool value) => SaveUnlessLoading();
 
     partial void OnStripMetadataChanged(bool value) => SaveUnlessLoading();
+
+    partial void OnThemeChanged(AppTheme value)
+    {
+        if (initializing)
+        {
+            return;
+        }
+
+        Services.ThemeService.SetPreference(value);
+        SaveSettings();
+    }
 
     partial void OnNotifyWhenDoneChanged(bool value) => SaveUnlessLoading();
 
@@ -589,6 +620,7 @@ public sealed partial class MainViewModel : ObservableObject
                 AudioChannels = SelectedChannels.Value,
                 CheckForUpdates = CheckForUpdates,
                 StripMetadata = StripMetadata,
+                Theme = Theme,
                 NotifyWhenDone = NotifyWhenDone,
                 UpdatePromptAnswered = UpdateQuestionAnswered,
                 SkippedVersion = skippedVersion,
