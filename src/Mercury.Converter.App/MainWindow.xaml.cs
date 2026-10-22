@@ -52,6 +52,14 @@ public sealed partial class MainWindow : Window
         ApplyCardSize();
 
 #if DEBUG
+        // For making screenshots only: MERCURY_TEST_FRAME=2000x1250 opens the window at that many pixels, near the top-left.
+        if (Environment.GetEnvironmentVariable("MERCURY_TEST_FRAME") is { Length: > 0 } frame)
+        {
+            var size = frame.Split('x').Select(int.Parse).ToArray();
+            AppWindow.Resize(new SizeInt32(size[0], size[1]));
+            AppWindow.Move(new PointInt32(40, 0));
+        }
+
         // For testing only: MERCURY_TEST_THEME=Dark,Light cycles the theme every few seconds, like using the theme menu.
         if (Environment.GetEnvironmentVariable("MERCURY_TEST_THEME") is { Length: > 0 } themes)
         {
