@@ -38,3 +38,7 @@ In `<Properties>`, set `<Logo>Assets\StoreLogo.png</Logo>`.
 - Electron: `"win": { "icon": "icon/mercury-converter.ico" }` (electron-builder).
 - Inno Setup: `SetupIconFile=icon\mercury-converter.ico`.
 - Tauri: list `icon/mercury-converter.ico` and `icon/png/app-icon-*.png` under `bundle.icon`.
+
+## Current logo
+
+The blue owl icon in `logo/blue/` and `icon/png-blue/` is the logo used by the app, the installer and the website. `icon/mercury-converter-blue.ico` is the Windows icon (16 to 256 px). The earlier dark owl files are kept for reference.
