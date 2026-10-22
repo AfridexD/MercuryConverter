@@ -35,7 +35,9 @@ public sealed partial class MainWindow : Window
         ExtendsContentIntoTitleBar = true;
         SetTitleBar(AppTitleBar);
         ThemeService.Attach(this, Root);
-        AppWindow.Resize(new SizeInt32(1280, 800));
+        // AppWindow sizes are in real pixels, so scale the design size (1280 x 800) by the screen's scaling.
+        var dpiScale = GetDpiForWindow(WinRT.Interop.WindowNative.GetWindowHandle(this)) / 96.0;
+        AppWindow.Resize(new SizeInt32((int)(1280 * dpiScale), (int)(800 * dpiScale)));
         TrySetIcon();
         AddKeyboardShortcuts();
 
@@ -52,11 +54,11 @@ public sealed partial class MainWindow : Window
         ApplyCardSize();
 
 #if DEBUG
-        // For making screenshots only: MERCURY_TEST_FRAME=2000x1250 opens the window at that many pixels, near the top-left.
+        // For making screenshots only: MERCURY_TEST_FRAME=1000x625 opens the window at that many device-independent pixels, near the top-left.
         if (Environment.GetEnvironmentVariable("MERCURY_TEST_FRAME") is { Length: > 0 } frame)
         {
             var size = frame.Split('x').Select(int.Parse).ToArray();
-            AppWindow.Resize(new SizeInt32(size[0], size[1]));
+            AppWindow.Resize(new SizeInt32((int)(size[0] * dpiScale), (int)(size[1] * dpiScale)));
             AppWindow.Move(new PointInt32(40, 0));
         }
 
@@ -128,6 +130,9 @@ public sealed partial class MainWindow : Window
 
         Activate();
     }
+
+    [System.Runtime.InteropServices.DllImport("user32.dll"), System.Runtime.InteropServices.DefaultDllImportSearchPaths(System.Runtime.InteropServices.DllImportSearchPath.System32)]
+    private static extern uint GetDpiForWindow(IntPtr hwnd);
 
     private void TrySetIcon()
     {
