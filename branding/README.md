@@ -1,6 +1,6 @@
 # Mercury Converter — Windows icon package
 
-Mark: **3b Prime Icon** (flat dark-metal owl, Optic Red eyes, Night tile).
+Mark: the blue owl icon (white owl on Signature Blue). The older dark-metal owl files (`logo/svg/`, `icon/png-unplated/`, `msix/`) are kept for reference only.
 
 ## Contents
 - `icon/mercury-converter.ico`: multi-size app icon (16, 20, 24, 32, 40, 48, 64, 256). Use for the .exe, installer, shortcuts and window icon.
