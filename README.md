@@ -1,6 +1,6 @@
 <div align="center">
 
-<img src="branding/icon/png/app-icon-256.png" alt="Mercury Converter" width="112" height="112">
+<img src="branding/icon/png-blue/app-icon-256.png" alt="Mercury Converter" width="112" height="112">
 
 # Mercury Converter
 
