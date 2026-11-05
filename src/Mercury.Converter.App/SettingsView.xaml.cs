@@ -84,6 +84,9 @@ public sealed partial class SettingsView : UserControl
         TaskbarSwitch.IsOn = viewModel.ShowTaskbarProgress;
         UpdateSwitch.IsOn = viewModel.CheckForUpdates;
         NotifySwitch.IsOn = viewModel.NotifyWhenDone;
+        SubfoldersSwitch.IsOn = viewModel.IncludeSubfolders;
+        LayoutSwitch.IsOn = viewModel.KeepFolderLayout;
+        RememberSwitch.IsOn = viewModel.RememberList;
         FolderText.Text = viewModel.OutputFolderText;
         UseOriginalButton.Visibility = viewModel.OutputFolderIsCustom ? Visibility.Visible : Visibility.Collapsed;
         loading = false;
@@ -179,6 +182,30 @@ public sealed partial class SettingsView : UserControl
         if (!loading && viewModel is not null)
         {
             viewModel.NotifyWhenDone = NotifySwitch.IsOn;
+        }
+    }
+
+    private void Subfolders_Toggled(object sender, RoutedEventArgs e)
+    {
+        if (!loading && viewModel is not null)
+        {
+            viewModel.IncludeSubfolders = SubfoldersSwitch.IsOn;
+        }
+    }
+
+    private void Layout_Toggled(object sender, RoutedEventArgs e)
+    {
+        if (!loading && viewModel is not null)
+        {
+            viewModel.KeepFolderLayout = LayoutSwitch.IsOn;
+        }
+    }
+
+    private void Remember_Toggled(object sender, RoutedEventArgs e)
+    {
+        if (!loading && viewModel is not null)
+        {
+            viewModel.RememberList = RememberSwitch.IsOn;
         }
     }
 

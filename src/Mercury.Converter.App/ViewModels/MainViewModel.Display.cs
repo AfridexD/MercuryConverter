@@ -1,4 +1,5 @@
 using System.Collections.ObjectModel;
+using System.Diagnostics;
 using System.Globalization;
 using CommunityToolkit.Mvvm.Input;
 using Mercury.Converter.Core;
@@ -109,6 +110,10 @@ public sealed partial class MainViewModel
 
     public bool ShowCancel { get; private set; }
 
+    public bool ShowPause { get; private set; }
+
+    public bool ShowResume { get; private set; }
+
     public bool ShowClearList { get; private set; }
 
     // ----- Refreshing -------------------------------------------------------------------------------------------
@@ -124,20 +129,48 @@ public sealed partial class MainViewModel
             return;
         }
 
-        var files = Files.ToList();
-        var selected = files.Where(f => f.IsSelected).ToList();
-        var scope = selected.Count > 0 ? selected : files;
+        lastRefreshTick = Environment.TickCount64;
+#if DEBUG
+        // For testing only: MERCURY_TEST_TIMING=<file> writes how long refreshes take, to try very large lists.
+        var started = Stopwatch.GetTimestamp();
+        RefreshCore();
+        RefreshTiming.Record(Stopwatch.GetElapsedTime(started).TotalMilliseconds, Files.Count);
+#else
+        RefreshCore();
+#endif
+    }
+
+    private void RefreshCore()
+    {
+        // The list itself is read, not copied: this runs on the window thread, so it cannot change underneath us.
+        IReadOnlyList<FileItem> files = Files;
+
+        // One pass for all the counts. With tens of thousands of files, many separate passes add up.
+        int ready = 0, waiting = 0, active = 0, done = 0, failed = 0, cancelled = 0, selectedCount = 0;
+        foreach (var f in files)
+        {
+            switch (f.State)
+            {
+                case ItemState.Ready: ready++; break;
+                case ItemState.Waiting: waiting++; break;
+                case ItemState.Active: active++; break;
+                case ItemState.Done: done++; break;
+                case ItemState.Failed: failed++; break;
+                case ItemState.Cancelled: cancelled++; break;
+            }
+
+            if (f.IsSelected)
+            {
+                selectedCount++;
+            }
+        }
+
+        IReadOnlyList<FileItem> selected = selectedCount > 0 ? files.Where(f => f.IsSelected).ToList() : [];
+        var scope = selectedCount > 0 ? selected : files;
         var kinds = GroupOrder.Where(g => scope.Any(f => f.Group == g)).ToList();
         int CountIn(MediaGroup g) => scope.Count(f => f.Group == g);
         FormatChoice ChoiceFor(MediaGroup g) => FormatCatalog.Get(g, targets[g]);
         var quality = (int)Math.Round(Quality);
-
-        var ready = files.Count(f => f.State == ItemState.Ready);
-        var waiting = files.Count(f => f.State == ItemState.Waiting);
-        var active = files.Count(f => f.State == ItemState.Active);
-        var done = files.Count(f => f.State == ItemState.Done);
-        var failed = files.Count(f => f.State == ItemState.Failed);
-        var cancelled = files.Count(f => f.State == ItemState.Cancelled);
         var running = IsBusy;
         var hasResults = !running && done + failed + cancelled > 0;
 
@@ -170,7 +203,16 @@ public sealed partial class MainViewModel
         OnPropertyChanged(string.Empty);
     }
 
-    private void BuildQueueHeader(List<FileItem> files, bool running, bool hasResults, int done, int failed, int active, int runTotal, int quality)
+    /// <summary>" · took 1 h 12 min" for the summary after a long run. Nothing for runs under half a minute.</summary>
+    private static string TookText(TimeSpan time) => time.TotalSeconds < 30
+        ? string.Empty
+        : time.TotalHours >= 1
+            ? string.Create(CultureInfo.InvariantCulture, $" · took {(int)time.TotalHours} h {time.Minutes} min")
+            : time.TotalMinutes >= 1
+                ? string.Create(CultureInfo.InvariantCulture, $" · took {(int)time.TotalMinutes} min {time.Seconds} s")
+                : string.Create(CultureInfo.InvariantCulture, $" · took {time.Seconds} s");
+
+    private void BuildQueueHeader(IReadOnlyList<FileItem> files, bool running, bool hasResults, int done, int failed, int active, int runTotal, int quality)
     {
         if (running)
         {
@@ -191,8 +233,11 @@ public sealed partial class MainViewModel
         if (hasResults)
         {
             var finishedFiles = files.Where(f => f.State == ItemState.Done).ToList();
+            var before = finishedFiles.Sum(f => f.Size);
+            var after = finishedFiles.Sum(f => f.OutputBytes);
+            var smaller = before > 0 && after < before ? $" ({Math.Round((1 - after / (double)before) * 100):0}% smaller)" : string.Empty;
             QueueTitle = "Finished";
-            QueueSub = $"{done} converted · {SizeText.Of(finishedFiles.Sum(f => f.Size))} → {SizeText.Of(finishedFiles.Sum(f => f.OutputBytes))}";
+            QueueSub = $"{done:N0} converted · {SizeText.Of(before)} → {SizeText.Of(after)}{smaller}{TookText(LastRunTime)}";
             return;
         }
 
@@ -202,7 +247,7 @@ public sealed partial class MainViewModel
         QueueSub = files.Count == 0 ? string.Empty : $"{SizeText.Of(inBytes)} → about {SizeText.Of(outBytes)}";
     }
 
-    private void BuildPills(List<FileItem> files, bool running, bool hasResults, int waiting, int active, int done, int failed, int cancelled)
+    private void BuildPills(IReadOnlyList<FileItem> files, bool running, bool hasResults, int waiting, int active, int done, int failed, int cancelled)
     {
         var desired = new List<PillItem>();
         PillItem Pill(string key, string label, int count, string? glyph, string brushKey) =>
@@ -259,7 +304,7 @@ public sealed partial class MainViewModel
         var notSmaller = Files.Count(f => f.State == ItemState.Failed && f.NotSmaller);
         var realFailures = failed - notSmaller;
 
-        BannerTitle = bad ? $"{done} converted, {failed} {(notSmaller == failed ? "not made smaller" : "failed")}" : $"{done} converted";
+        BannerTitle = bad ? $"{done:N0} converted, {failed:N0} {(notSmaller == failed ? "not made smaller" : "failed")}" : $"{done:N0} converted";
         BannerBody = notSmaller == failed && bad
             ? "These files are already compact, so nothing was saved. Use Save anyway on a card to keep a larger copy."
             : bad ? "Open the failed file to see why." : OutputFolder is null ? "Saved next to the originals." : $"Saved to {OutputFolder}.";
@@ -267,7 +312,7 @@ public sealed partial class MainViewModel
         BannerRetryLabel = realFailures > 0 && cancelled > 0 ? "Retry failed and cancelled" : realFailures > 0 ? "Retry failed" : "Retry cancelled";
     }
 
-    private void BuildVisibleFiles(List<FileItem> files)
+    private void BuildVisibleFiles(IReadOnlyList<FileItem> files)
     {
         IEnumerable<FileItem> list = files;
         if (filterKey != "all")
@@ -283,28 +328,26 @@ public sealed partial class MainViewModel
             };
         }
 
+        // Files are kept in the order they were added, so that order needs no sorting.
         list = Sort switch
         {
             SortMode.Name => list.OrderBy(f => f.Name, StringComparer.OrdinalIgnoreCase),
             SortMode.Size => list.OrderByDescending(f => f.Size),
             SortMode.Type => list.OrderBy(f => f.Group).ThenBy(f => f.Extension, StringComparer.OrdinalIgnoreCase).ThenBy(f => f.Name, StringComparer.OrdinalIgnoreCase),
-            _ => list.OrderBy(f => f.AddedIndex),
+            _ => list,
         };
 
         var desired = list.ToList();
         if (!VisibleFiles.SequenceEqual(desired))
         {
-            VisibleFiles.Clear();
-            foreach (var item in desired)
-            {
-                VisibleFiles.Add(item);
-            }
+            // One change for the whole list, not one per card: tens of thousands of single changes froze the window.
+            VisibleFiles.ReplaceAll(desired);
         }
     }
 
     private void BuildInspector(
-        List<FileItem> scope,
-        List<FileItem> selected,
+        IReadOnlyList<FileItem> scope,
+        IReadOnlyList<FileItem> selected,
         List<MediaGroup> kinds,
         Func<MediaGroup, int> countIn,
         Func<MediaGroup, FormatChoice> choiceFor,
@@ -366,8 +409,8 @@ public sealed partial class MainViewModel
     }
 
     private void BuildActionBar(
-        List<FileItem> files,
-        List<FileItem> selected,
+        IReadOnlyList<FileItem> files,
+        IReadOnlyList<FileItem> selected,
         List<MediaGroup> kinds,
         Func<MediaGroup, FormatChoice> choiceFor,
         bool running,
@@ -396,6 +439,8 @@ public sealed partial class MainViewModel
         }
 
         ShowCancel = running;
+        ShowPause = running && !IsPaused && waiting > 0;
+        ShowResume = running && IsPaused;
         ShowClearList = !running && files.Count > 0;
 
         var summary = "Drop files here, or press Ctrl+O to add files.";
@@ -408,7 +453,9 @@ public sealed partial class MainViewModel
 
         if (running)
         {
-            summary = $"Converting {active} at a time · {waiting} waiting";
+            summary = IsPaused
+                ? $"Paused · {active} finishing · {waiting:N0} waiting. Press Resume to carry on."
+                : $"Converting {active} at a time · {waiting:N0} waiting";
         }
 
         if (hasResults)

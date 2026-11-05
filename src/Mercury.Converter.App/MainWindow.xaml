@@ -496,14 +496,20 @@
                 <ColumnDefinition Width="Auto" />
                 <ColumnDefinition Width="Auto" />
                 <ColumnDefinition Width="Auto" />
+                <ColumnDefinition Width="Auto" />
             </Grid.ColumnDefinitions>
             <TextBlock Grid.Column="0" Text="{x:Bind ViewModel.SummaryText, Mode=OneWay}" Style="{StaticResource McSecondaryText}" VerticalAlignment="Center"
                        TextTrimming="CharacterEllipsis" TextWrapping="NoWrap" />
-            <Button Grid.Column="1" Content="Cancel" Style="{StaticResource McButton}" Command="{x:Bind ViewModel.CancelCommand}"
+            <Button Grid.Column="1" Content="Pause" Style="{StaticResource McButton}" Command="{x:Bind ViewModel.PauseCommand}"
+                    ToolTipService.ToolTip="Stop starting new files. The ones in progress finish."
+                    Visibility="{x:Bind local:UiHelpers.Show(ViewModel.ShowPause), Mode=OneWay}" />
+            <Button Grid.Column="1" Content="Resume" Style="{StaticResource McButton}" Command="{x:Bind ViewModel.ResumeCommand}"
+                    Visibility="{x:Bind local:UiHelpers.Show(ViewModel.ShowResume), Mode=OneWay}" />
+            <Button Grid.Column="2" Content="Cancel" Style="{StaticResource McButton}" Command="{x:Bind ViewModel.CancelCommand}"
                     Visibility="{x:Bind local:UiHelpers.Show(ViewModel.ShowCancel), Mode=OneWay}" />
-            <Button Grid.Column="2" Content="Clear list" Style="{StaticResource McButton}" Command="{x:Bind ViewModel.ClearListCommand}"
+            <Button Grid.Column="3" Content="Clear list" Style="{StaticResource McButton}" Command="{x:Bind ViewModel.ClearListCommand}"
                     Visibility="{x:Bind local:UiHelpers.Show(ViewModel.ShowClearList), Mode=OneWay}" />
-            <Button x:Name="ConvertButton" Grid.Column="3" Content="{x:Bind ViewModel.ConvertLabel, Mode=OneWay}" Style="{StaticResource McPrimaryButton}"
+            <Button x:Name="ConvertButton" Grid.Column="4" Content="{x:Bind ViewModel.ConvertLabel, Mode=OneWay}" Style="{StaticResource McPrimaryButton}"
                     Command="{x:Bind ViewModel.ConvertCommand}" MinWidth="160" />
         </Grid>
     </Grid>

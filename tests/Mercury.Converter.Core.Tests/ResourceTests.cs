@@ -134,7 +134,7 @@ public class ResourceTests
         }, CancellationToken.None);
 
         Assert.Equal(12, done);
-        Assert.InRange(peak, 4, 8);
+        Assert.InRange(peak, 4, 10);
     }
 
     [Fact]
@@ -243,11 +243,11 @@ public class PhotoBatchSpeedTests
         new(cores, busy, freeGiB * GiB, 32 * GiB);
 
     [Fact]
-    public void An_idle_twelve_core_computer_runs_eight_photos_at_once_with_one_thread_each()
+    public void An_idle_twelve_core_computer_runs_ten_photos_at_once_with_one_thread_each()
     {
         var budget = ResourceGovernor.Decide(Machine(12), PerformanceMode.Smart, MediaKind.Image);
 
-        Assert.Equal(8, budget.MaxParallelJobs);
+        Assert.Equal(10, budget.MaxParallelJobs);
         Assert.Equal(1, budget.ThreadsPerJob);
     }
 
@@ -271,13 +271,13 @@ public class PhotoBatchSpeedTests
     }
 
     [Fact]
-    public void Eight_photos_at_once_still_fit_in_memory_limits()
+    public void Many_photos_at_once_still_fit_in_memory_limits()
     {
-        // 24 GiB free: eight photos at 0.75 GiB each is 6 GiB. With 4 GiB free it must come down.
+        // 24 GiB free: ten photos at 0.75 GiB each is 7.5 GiB. With 4 GiB free it must come down.
         var roomy = ResourceGovernor.Decide(Machine(12, freeGiB: 24), PerformanceMode.Smart, MediaKind.Image);
         var tight = ResourceGovernor.Decide(Machine(12, freeGiB: 4), PerformanceMode.Smart, MediaKind.Image);
 
-        Assert.Equal(8, roomy.MaxParallelJobs);
+        Assert.Equal(10, roomy.MaxParallelJobs);
         Assert.InRange(tight.MaxParallelJobs, 1, 3);
     }
 

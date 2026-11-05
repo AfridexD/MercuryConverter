@@ -169,6 +169,19 @@ public partial class FileItem : ObservableObject
 
     public int AddedIndex { get; }
 
+    /// <summary>The folder this file was added from, so its folder layout can be kept. Null for files added one by one.</summary>
+    public string? RootFolder { get; init; }
+
+    /// <summary>False once the file has left the list, so a preview that finishes late is thrown away.</summary>
+    public bool InList { get; set; }
+
+    /// <summary>Which theme this card's colors were made for. A card made before a theme change is recolored when it is shown.</summary>
+    internal int ThemeVersion { get; set; }
+
+    internal bool PreviewRequested { get; set; }
+
+    internal bool DurationRequested { get; set; }
+
     private Brush tileBrush;
 
     public Brush TileBrush => tileBrush;

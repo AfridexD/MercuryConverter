@@ -45,11 +45,24 @@ public static class ResourceGovernor
     /// <summary>Memory kept free for Windows and other programs, whatever the mode.</summary>
     private const long MemoryReserve = 3 * GiB / 2;
 
-    public static ResourceBudget Decide(ResourceSnapshot snapshot, PerformanceMode mode, MediaKind kind)
+    /// <summary>Photos up to this size need far less memory than a large camera photo, so more of them can run at once.</summary>
+    private const long SmallPhotoBytes = 12L * 1024 * 1024;
+
+    /// <summary>The most photos converted at the same time, however big the computer is.</summary>
+    public const int MaxParallelPhotos = 16;
+
+    /// <param name="sizeHint">The size of the file about to start, in bytes. 0 when unknown.</param>
+    /// <param name="runningJobs">How many conversions of ours are already running. Their own use of the processor is
+    /// not "someone else being busy", so it is counted as free. Without this, a batch of photos slows itself down:
+    /// the more it runs, the busier the computer looks, and the fewer it starts.</param>
+    public static ResourceBudget Decide(ResourceSnapshot snapshot, PerformanceMode mode, MediaKind kind, long sizeHint = 0, int runningJobs = 0)
     {
         var cores = Math.Max(1, snapshot.LogicalCores);
         var busy = Math.Clamp(snapshot.CpuBusyPercent, 0, 100);
-        var idleCores = cores * (1 - busy / 100.0);
+
+        // A photo or animation job keeps about one core busy. A video job uses many, so its own load is not credited.
+        var ownCores = kind is MediaKind.Image or MediaKind.Animation ? Math.Min(runningJobs, cores) : 0;
+        var idleCores = Math.Min(cores, cores * (1 - busy / 100.0) + ownCores);
 
         var threads = mode switch
         {
@@ -67,12 +80,12 @@ public static class ResourceGovernor
         {
             MediaKind.Video => GiB,
             MediaKind.Animation => GiB / 2,
-            MediaKind.Image => 3 * GiB / 4,
+            MediaKind.Image => sizeHint is > 0 and <= SmallPhotoBytes ? GiB / 3 : 3 * GiB / 4,
             _ => GiB / 8,
         };
 
         var spareMemory = snapshot.AvailableMemoryBytes - MemoryReserve;
-        var memoryJobs = (int)Math.Clamp(spareMemory / perJob, 1, 16);
+        var memoryJobs = (int)Math.Clamp(spareMemory / perJob, 1, MaxParallelPhotos);
 
         if (snapshot.AvailableMemoryBytes < 2 * GiB)
         {
@@ -84,8 +97,8 @@ public static class ResourceGovernor
             // One heavy video already uses many threads well. Two at once only help on big processors.
             MediaKind.Video => threads >= 10 ? 2 : 1,
             // Photo encoders use one core each, so one photo per free core works well. Four at a time left most of the
-            // processor idle on large batches.
-            MediaKind.Image => Math.Clamp(threads, 1, 8),
+            // processor idle on large batches, and eight left cores idle on big processors.
+            MediaKind.Image => Math.Clamp(threads, 1, MaxParallelPhotos),
             _ => Math.Clamp(threads / 2, 1, 4),
         };
 
@@ -202,6 +215,46 @@ public sealed partial class SystemResourceSampler : IResourceSampler
     private static partial bool GlobalMemoryStatusEx(ref MemoryStatus status);
 }
 
+/// <summary>Lets the user stop new conversions from starting, and carry on later. Running ones finish on their own.</summary>
+public sealed class PauseGate
+{
+    private readonly object gate = new();
+    private TaskCompletionSource? resumed;
+
+    public bool IsPaused { get; private set; }
+
+    /// <summary>Completes when the gate is resumed. Already complete when it is not paused.</summary>
+    public Task WhenResumed
+    {
+        get
+        {
+            lock (gate)
+            {
+                return resumed?.Task ?? Task.CompletedTask;
+            }
+        }
+    }
+
+    public void Pause()
+    {
+        lock (gate)
+        {
+            IsPaused = true;
+            resumed ??= new TaskCompletionSource(TaskCreationOptions.RunContinuationsAsynchronously);
+        }
+    }
+
+    public void Resume()
+    {
+        lock (gate)
+        {
+            IsPaused = false;
+            resumed?.TrySetResult();
+            resumed = null;
+        }
+    }
+}
+
 /// <summary>
 /// Runs a list of jobs, a few at a time. Before each job starts it asks the governor how much of the computer
 /// is free, so a busy computer gets one gentle job and an idle one gets several fast jobs.
@@ -209,14 +262,26 @@ public sealed partial class SystemResourceSampler : IResourceSampler
 public sealed class ConversionScheduler(IResourceSampler sampler, PerformanceMode mode)
 {
     /// <summary>Runs every item. Cancelling stops new jobs from starting and passes the token to running ones.</summary>
-    public async Task RunAsync<T>(
+    public Task RunAsync<T>(
         IReadOnlyList<(T Item, MediaKind Kind)> items,
         Func<T, ResourceBudget, CancellationToken, Task> runItem,
-        CancellationToken cancellationToken)
+        CancellationToken cancellationToken) =>
+        RunAsync(items.Select(i => (i.Item, i.Kind, 0L)).ToList(), runItem, cancellationToken, null);
+
+    /// <summary>
+    /// Runs every item. While <paramref name="pause"/> is paused no new job starts, and the ones already running finish.
+    /// </summary>
+    public async Task RunAsync<T>(
+        IReadOnlyList<(T Item, MediaKind Kind, long Size)> items,
+        Func<T, ResourceBudget, CancellationToken, Task> runItem,
+        CancellationToken cancellationToken,
+        PauseGate? pause)
     {
-        var queue = new Queue<(T Item, MediaKind Kind)>(items);
+        var queue = new Queue<(T Item, MediaKind Kind, long Size)>(items);
         var running = new List<Task>();
         var failures = new List<Exception>();
+        var cancelled = new TaskCompletionSource();
+        using var registration = cancellationToken.Register(() => cancelled.TrySetResult());
 
         while (queue.Count > 0 || running.Count > 0)
         {
@@ -224,8 +289,15 @@ public sealed class ConversionScheduler(IResourceSampler sampler, PerformanceMod
 
             if (queue.Count > 0 && !cancellationToken.IsCancellationRequested)
             {
+                if (pause is { IsPaused: true })
+                {
+                    // Nothing new starts until the user resumes, cancels, or a running job ends.
+                    await Task.WhenAny(running.Append(pause.WhenResumed).Append(cancelled.Task));
+                    continue;
+                }
+
                 var next = queue.Peek();
-                var budget = ResourceGovernor.Decide(sampler.Sample(), mode, next.Kind);
+                var budget = ResourceGovernor.Decide(sampler.Sample(), mode, next.Kind, next.Size, running.Count);
 
                 if (running.Count < budget.MaxParallelJobs)
                 {

@@ -14,7 +14,12 @@ What is done, what is being worked on, and what may come next for Mercury Conver
 - Remove location and camera details from photos, videos and songs
 - Pull the sound out of a video
 - Animated WebP: turn short videos and GIFs into small looping pictures
-- Faster large photo batches: up to 8 photos at once, and no slow lossless WebP
+- Faster large photo batches: more photos at once (up to 16 on a big PC), and no slow lossless WebP
+- Very large batches: tried with 26,000 photos in one go, with a window that stays responsive
+- Add a whole folder including the folders inside it, and keep the same folder layout when saving to one place
+- Pause and resume a batch
+- Remember the list after the app is closed
+- A summary after a long run: files converted, space saved, time taken
 - Dark mode, following Windows or your choice
 - Optional "new version available" notice (off until you turn it on)
 - A notification when a long batch finishes
@@ -30,8 +35,6 @@ What is done, what is being worked on, and what may come next for Mercury Conver
 - **Translations.** The app is English only. Spanish, French, German, Portuguese, Hindi and Arabic would reach the most people. [Help with a translation](https://github.com/AfridexD/MercuryConverter/discussions) is very welcome.
 - **More output formats**, such as HEIC
 - **Merge photos into one PDF**, and rename files while converting
-- **Pause and resume** a batch
-- **Remember the list** after the app is closed
 
 ## Later
 
