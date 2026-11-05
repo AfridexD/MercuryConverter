@@ -4,25 +4,20 @@ using Xunit;
 
 namespace Mercury.Converter.Core.Tests;
 
-/// <summary>The right-click menu that goes into the Microsoft Store package.</summary>
+/// <summary>The file types listed in the Microsoft Store package, so Windows offers Mercury under "Open with".</summary>
 public sealed class StoreMenuTests
 {
     private static XElement Wrap(string extensions) => XElement.Parse(
-        "<Extensions xmlns:uap=\"u1\" xmlns:uap2=\"u2\" xmlns:uap3=\"u3\">" + extensions + "</Extensions>");
+        "<Extensions xmlns:uap=\"u1\" xmlns:uap3=\"u3\">" + extensions + "</Extensions>");
 
     [Fact]
-    public void Every_kind_of_file_gets_one_group_with_its_file_types_and_a_few_lines()
+    public void Every_kind_of_file_gets_one_group_with_its_file_types()
     {
         var root = Wrap(StoreMenu.BuildExtensions());
         var groups = root.Descendants().Where(e => e.Name.LocalName == "FileTypeAssociation").ToList();
 
         Assert.Equal(["mercuryphoto", "mercuryanimation", "mercuryvideo", "mercuryaudio"], groups.Select(g => (string)g.Attribute("Name")!));
-        foreach (var group in groups)
-        {
-            Assert.NotEmpty(group.Descendants().Where(e => e.Name.LocalName == "FileType"));
-            var verbs = group.Descendants().Where(e => e.Name.LocalName == "Verb").ToList();
-            Assert.InRange(verbs.Count, 2, 3);
-        }
+        Assert.All(groups, group => Assert.NotEmpty(group.Descendants().Where(e => e.Name.LocalName == "FileType")));
     }
 
     [Fact]
@@ -36,34 +31,22 @@ public sealed class StoreMenuTests
     }
 
     [Fact]
-    public void Each_line_runs_the_same_convert_command_as_the_installed_menu()
+    public void Opening_a_file_passes_it_to_the_program_and_a_selection_of_many_is_handled()
     {
         var root = Wrap(StoreMenu.BuildExtensions());
-        var verbs = root.Descendants().Where(e => e.Name.LocalName == "Verb").ToList();
 
-        Assert.All(verbs, verb =>
+        Assert.All(root.Descendants().Where(e => e.Name.LocalName == "FileTypeAssociation"), group =>
         {
-            var parameters = (string)verb.Attribute("Parameters")!;
-            Assert.StartsWith("--convert ", parameters);
-            Assert.EndsWith("\"%1\"", parameters);
-            Assert.Equal("Player", (string)verb.Attribute("MultiSelectModel")!);
-            Assert.StartsWith("To ", verb.Value);
+            Assert.Equal("\"%1\"", (string)group.Attribute("Parameters")!);
+            Assert.Equal("Player", (string)group.Attribute("MultiSelectModel")!);
         });
-
-        // The convert command must be one the app understands.
-        var parsed = ConvertCommand.Parse(["Mercury.exe", .. ("--convert webp C:\\a.jpg").Split(' ')]);
-        Assert.Equal(TargetFormat.WebP, parsed.Target);
     }
 
     [Fact]
-    public void Verb_names_are_unique_inside_a_group_and_use_only_letters_and_numbers()
+    public void No_verbs_are_listed_because_Windows_only_shows_them_for_the_default_program()
     {
         var root = Wrap(StoreMenu.BuildExtensions());
-        foreach (var group in root.Descendants().Where(e => e.Name.LocalName == "FileTypeAssociation"))
-        {
-            var ids = group.Descendants().Where(e => e.Name.LocalName == "Verb").Select(e => (string)e.Attribute("Id")!).ToList();
-            Assert.Equal(ids.Count, ids.Distinct().Count());
-            Assert.All(ids, id => Assert.Matches("^[a-z0-9]+$", id));
-        }
+
+        Assert.Empty(root.Descendants().Where(e => e.Name.LocalName is "Verb" or "SupportedVerbs"));
     }
 }
