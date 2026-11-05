@@ -18,6 +18,8 @@ param(
     [string]$IdentityName = "MercuryConverter.LocalTest",
     [string]$Publisher = "CN=MercuryConverterLocalTest",
     [string]$PublisherDisplayName = "Mercury Converter",
+    # Must be one of the names reserved in Partner Center. The name people see in Start stays "Mercury Converter".
+    [string]$PackageDisplayName = "Mercury Converter",
     [string]$Version,
     [string]$MakeAppx,
     [switch]$ForStore,
@@ -86,7 +88,9 @@ $menu = Get-Content $menuFile -Raw
 Remove-Item $menuFile
 
 $manifest = Get-Content $template -Raw
-$manifest = $manifest.Replace("{{IdentityName}}", $IdentityName).Replace("{{Publisher}}", $Publisher).Replace("{{PublisherDisplayName}}", $PublisherDisplayName)
+$escape = { param($text) [System.Security.SecurityElement]::Escape($text) }
+$manifest = $manifest.Replace("{{IdentityName}}", (& $escape $IdentityName)).Replace("{{Publisher}}", (& $escape $Publisher))
+$manifest = $manifest.Replace("{{PublisherDisplayName}}", (& $escape $PublisherDisplayName)).Replace("{{PackageDisplayName}}", (& $escape $PackageDisplayName))
 $manifest = $manifest.Replace("{{Version}}", $Version).Replace("{{MenuExtensions}}", $menu)
 Set-Content (Join-Path $stage "AppxManifest.xml") $manifest -Encoding utf8
 

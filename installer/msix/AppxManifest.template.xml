@@ -15,7 +15,7 @@
   <Identity Name="{{IdentityName}}" Publisher="{{Publisher}}" Version="{{Version}}" ProcessorArchitecture="x64" />
 
   <Properties>
-    <DisplayName>Mercury Converter</DisplayName>
+    <DisplayName>{{PackageDisplayName}}</DisplayName>
     <PublisherDisplayName>{{PublisherDisplayName}}</PublisherDisplayName>
     <Logo>Assets\Package\StoreLogo.png</Logo>
   </Properties>
