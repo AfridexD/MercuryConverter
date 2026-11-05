@@ -87,4 +87,4 @@ Issues and pull requests are welcome. Please run `dotnet test` before sending a 
 
 `scripts\build-msix.ps1` builds the `.msix` package for the Microsoft Store (`dist\MercuryConverter-<version>-x64.msix`). It needs the same tools as the installer plus `makeappx.exe` from the Windows SDK, which the restored NuGet packages already contain. The package is not signed: the Store signs it. See [MICROSOFT-STORE.md](MICROSOFT-STORE.md) for the whole publishing process.
 
-In the package the app detects that it is packaged (`PackageInfo.IsPackaged`). It then leaves the right-click menu to the package manifest (`StoreMenu`), does not write the registry, does not check for updates, and shows notifications under the package's own name.
+In the package the app detects that it is packaged (`PackageInfo.IsPackaged`). Windows offers it under "Open with" for the file types it can read (`StoreMenu`, written into the package manifest), it does not write the registry for its own right-click submenu (a Store app cannot add one), it does not check for updates, and it shows notifications under the package's own name.

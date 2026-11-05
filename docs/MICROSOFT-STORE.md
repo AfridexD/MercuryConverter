@@ -120,7 +120,7 @@ Then **Submit to the Store**.
 > • Photos, GIFs, video and audio, including WebP, JPEG, PNG, AVIF, HEIC, MP4, MKV, GIF and MP3
 > • Built for big jobs: tested with 26,000 photos in one go, with Pause and Resume
 > • Never changes your original files and never makes a file bigger than the original
-> • Right-click a file in File Explorer to convert it
+> • Right-click a file in File Explorer and choose Open with, Mercury Converter
 > • Light and dark mode
 >
 > Mercury Converter is open source (MIT license): https://github.com/AfridexD/MercuryConverter
@@ -132,7 +132,7 @@ Then **Submit to the Store**.
 **Notes for certification** (paste into Submission options)
 > Mercury Converter is a Windows desktop app (Win32 packaged with MSIX). It requires the restricted capability runFullTrust because it starts the converter programs it carries in its own install folder (FFmpeg, ImageMagick, libjxl) as separate processes, and it writes converted files next to the user's original files or in a folder the user chooses. It makes no network requests.
 >
-> To test: open the app, drag in any photo, video or audio file, press Convert. The new file is saved next to the original. Right-click a photo or video in File Explorer, choose Show more options, then To Webp / To Mp4: the app opens and converts the file.
+> To test: open the app, drag in any photo, video or audio file, press Convert. The new file is saved next to the original. Right-click a photo or video in File Explorer and choose Open with, then Mercury Converter: the app opens with the file in its list, ready to convert.
 >
 > FFmpeg is GPL v3. Its source and the licenses are linked in the store description and in THIRD-PARTY-NOTICES.md.
 
@@ -151,7 +151,7 @@ Then **Submit to the Store**.
 
 | | GitHub installer | Store version |
 |---|---|---|
-| Right-click menu | Full list (12 lines for video) in a submenu | A short list (3 lines per kind of file), added by the package, under Show more options |
+| Right-click menu | A Mercury Converter submenu with a "To WebP", "To MP4" and so on line per format | **Open with**, then Mercury Converter (adds the file to the list). A Store app cannot add its own submenu to File Explorer |
 | Updates | Optional "new version" notice | The Store updates it. The app never contacts GitHub |
 | "Unknown publisher" warning | Shown until the app is code-signed | Not shown |
 | Where it installs | Program Files or your user folder | Windows keeps it in its protected apps folder |
