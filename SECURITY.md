@@ -13,6 +13,7 @@ If you find a security problem in Mercury Converter, please [open a private secu
   - They are started with an argument list, never a command string, so a file name cannot add commands.
   - FFmpeg may only read local files and pipes, so a crafted file cannot make it fetch web addresses.
   - ImageMagick uses Mercury's own security policy (`installer/magick-policy.xml`), which switches off network access, scripts, file lists and Ghostscript formats, and caps memory and disk use.
+- **A remembered list holds only file locations.** So a long list survives closing the app, Mercury writes the paths of files not converted yet to `%LOCALAPPDATA%\MercuryConverter\queue.json`. Nothing from inside your files is stored. Paths that are not full paths are ignored when the list is read back, and it can be turned off in Settings.
 - **Only your account is changed.** The right-click menu is written to your own user settings. No administrator rights are needed for "just me" installs.
 - **Safe loading.** The app loads system libraries only from the Windows folder, preset files are size-limited and checked before use, and the "open this file" pipe between copies of the app accepts only the current user.
 

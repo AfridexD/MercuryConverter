@@ -70,6 +70,15 @@ public sealed record AppSettings
     /// <summary>Show a Windows notification when a run finishes while the window is not in front.</summary>
     public bool NotifyWhenDone { get; init; } = true;
 
+    /// <summary>Adding a folder also adds the folders inside it.</summary>
+    public bool IncludeSubfolders { get; init; } = true;
+
+    /// <summary>When results go to one chosen folder, keep the same folder layout as the originals.</summary>
+    public bool KeepFolderLayout { get; init; } = true;
+
+    /// <summary>Bring back the files that were not converted yet when the app is opened again.</summary>
+    public bool RememberList { get; init; } = true;
+
     /// <summary>The first-run question about update checks has been answered, either way.</summary>
     public bool UpdatePromptAnswered { get; init; }
 

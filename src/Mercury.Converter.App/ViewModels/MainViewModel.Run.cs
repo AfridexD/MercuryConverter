@@ -223,7 +223,7 @@ public sealed partial class MainViewModel
         await RunBatchAsync(batch);
     }
 
-    private bool CanConvert() => !IsBusy && FilesToConvert().Count > 0;
+    private bool CanConvert() => !IsBusy && !IsAdding && FilesToConvert().Count > 0;
 
     /// <summary>The selected files if there are any, otherwise the new ones, otherwise everything already converted.</summary>
     internal List<FileItem> FilesToConvert()
@@ -252,15 +252,17 @@ public sealed partial class MainViewModel
         }
 
         cancellation = new CancellationTokenSource();
+        pauseGate = new PauseGate();
+        IsPaused = false;
         runClock.Restart();
         IsBusy = true;
         Refresh();
 
         var scheduler = new ConversionScheduler(sampler, SelectedMode.Value);
-        var jobs = batch.Select(item => (item, KindOf(item.Group))).ToList();
+        var jobs = batch.Select(item => (item, KindOf(item.Group), item.Size)).ToList();
         try
         {
-            await scheduler.RunAsync(jobs, (item, budget, token) => ConvertOneAsync(item, budget, token), cancellation.Token);
+            await scheduler.RunAsync(jobs, (item, budget, token) => ConvertOneAsync(item, budget, token), cancellation.Token, pauseGate);
         }
         catch (AggregateException)
         {
@@ -273,10 +275,51 @@ public sealed partial class MainViewModel
         }
 
         runClock.Stop();
+        LastRunTime = runClock.Elapsed;
+        IsPaused = false;
+        pauseGate = null;
         IsBusy = false;
         cancellation.Dispose();
         cancellation = null;
         OverallProgress = 0;
+        Refresh();
+        SaveQueueSoon();
+    }
+
+    private PauseGate? pauseGate;
+
+    /// <summary>The run is paused: nothing new starts, and the files already running finish.</summary>
+    public bool IsPaused { get; private set; }
+
+    /// <summary>How long the last run took, for the summary after it.</summary>
+    internal TimeSpan LastRunTime { get; private set; }
+
+    [RelayCommand]
+    private void Pause()
+    {
+        if (pauseGate is null || IsPaused)
+        {
+            return;
+        }
+
+        pauseGate.Pause();
+        IsPaused = true;
+        runClock.Stop();
+        Refresh();
+        SaveQueueNow();
+    }
+
+    [RelayCommand]
+    private void Resume()
+    {
+        if (pauseGate is null || !IsPaused)
+        {
+            return;
+        }
+
+        pauseGate.Resume();
+        IsPaused = false;
+        runClock.Start();
         Refresh();
     }
 
@@ -315,7 +358,18 @@ public sealed partial class MainViewModel
         }
 
         var progress = new Progress<double>(value => item.Progress = Math.Round(value * 100));
-        var result = await runner.RunAsync(request, OutputPathFor(item), duration, progress, NeverLarger && !item.AllowLarger, token);
+        var outputPath = OutputPathFor(item);
+        try
+        {
+            // Matching folders under the Save to folder are made as they are needed.
+            Directory.CreateDirectory(Path.GetDirectoryName(outputPath)!);
+        }
+        catch (Exception ex) when (ex is IOException or UnauthorizedAccessException)
+        {
+            // The conversion below reports the problem for this file in plain words.
+        }
+
+        var result = await runner.RunAsync(request, outputPath, duration, progress, NeverLarger && !item.AllowLarger, token);
 
         if (result.Succeeded)
         {
@@ -340,6 +394,40 @@ public sealed partial class MainViewModel
             item.State = ItemState.Failed;
         }
 
+        RequestRefresh();
+        SaveQueueSoon();
+    }
+
+    private long lastRefreshTick;
+    private bool refreshQueued;
+
+    /// <summary>
+    /// Refreshes the window soon. While a long run is going, files finish many times a second, and refreshing the whole
+    /// window for each one froze the window on lists of tens of thousands of files. The window is refreshed at most
+    /// every so often instead, and always once more at the end of the run.
+    /// </summary>
+    private void RequestRefresh()
+    {
+        // About 1 ms of waiting per 50 files: nothing noticeable on a short list, about half a second at 26,000 files.
+        var interval = Math.Clamp(Files.Count / 50, 0, 600);
+        var wait = interval - (Environment.TickCount64 - lastRefreshTick);
+        if (wait <= 0)
+        {
+            Refresh();
+            return;
+        }
+
+        if (!refreshQueued)
+        {
+            refreshQueued = true;
+            _ = RefreshLaterAsync((int)wait);
+        }
+    }
+
+    private async Task RefreshLaterAsync(int milliseconds)
+    {
+        await Task.Delay(milliseconds);
+        refreshQueued = false;
         Refresh();
     }
 

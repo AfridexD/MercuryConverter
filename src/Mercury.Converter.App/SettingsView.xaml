@@ -224,6 +224,57 @@
                             </Grid>
                         </Border>
 
+                        <Border Style="{StaticResource McSettingCard}">
+                            <Grid ColumnSpacing="14">
+                                <Grid.ColumnDefinitions>
+                                    <ColumnDefinition Width="Auto" />
+                                    <ColumnDefinition Width="*" />
+                                    <ColumnDefinition Width="Auto" />
+                                </Grid.ColumnDefinitions>
+                                <FontIcon Glyph="&#xED25;" FontSize="20" Foreground="{StaticResource McText2}" VerticalAlignment="Center" />
+                                <StackPanel Grid.Column="1" VerticalAlignment="Center">
+                                    <TextBlock Text="Include folders inside a folder" Style="{StaticResource McBodyText}" />
+                                    <TextBlock Text="When you add a folder, also add the files in the folders inside it." Style="{StaticResource McCaptionText}" />
+                                </StackPanel>
+                                <ToggleSwitch x:Name="SubfoldersSwitch" Grid.Column="2" OnContent="On" OffContent="Off" Toggled="Subfolders_Toggled"
+                                              AutomationProperties.Name="Include folders inside a folder" MinWidth="0" />
+                            </Grid>
+                        </Border>
+
+                        <Border Style="{StaticResource McSettingCard}">
+                            <Grid ColumnSpacing="14">
+                                <Grid.ColumnDefinitions>
+                                    <ColumnDefinition Width="Auto" />
+                                    <ColumnDefinition Width="*" />
+                                    <ColumnDefinition Width="Auto" />
+                                </Grid.ColumnDefinitions>
+                                <FontIcon Glyph="&#xE8B7;" FontSize="20" Foreground="{StaticResource McText2}" VerticalAlignment="Center" />
+                                <StackPanel Grid.Column="1" VerticalAlignment="Center">
+                                    <TextBlock Text="Keep the same folders when saving to one place" Style="{StaticResource McBodyText}" />
+                                    <TextBlock Text="If you choose a Save to folder, files from a folder you added are saved in matching folders there." Style="{StaticResource McCaptionText}" TextWrapping="Wrap" />
+                                </StackPanel>
+                                <ToggleSwitch x:Name="LayoutSwitch" Grid.Column="2" OnContent="On" OffContent="Off" Toggled="Layout_Toggled"
+                                              AutomationProperties.Name="Keep the same folders when saving to one place" MinWidth="0" />
+                            </Grid>
+                        </Border>
+
+                        <Border Style="{StaticResource McSettingCard}">
+                            <Grid ColumnSpacing="14">
+                                <Grid.ColumnDefinitions>
+                                    <ColumnDefinition Width="Auto" />
+                                    <ColumnDefinition Width="*" />
+                                    <ColumnDefinition Width="Auto" />
+                                </Grid.ColumnDefinitions>
+                                <FontIcon Glyph="&#xE81C;" FontSize="20" Foreground="{StaticResource McText2}" VerticalAlignment="Center" />
+                                <StackPanel Grid.Column="1" VerticalAlignment="Center">
+                                    <TextBlock Text="Remember my list" Style="{StaticResource McBodyText}" />
+                                    <TextBlock Text="Bring back the files that were not converted yet when you open Mercury again. Only file locations are saved." Style="{StaticResource McCaptionText}" TextWrapping="Wrap" />
+                                </StackPanel>
+                                <ToggleSwitch x:Name="RememberSwitch" Grid.Column="2" OnContent="On" OffContent="Off" Toggled="Remember_Toggled"
+                                              AutomationProperties.Name="Remember my list" MinWidth="0" />
+                            </Grid>
+                        </Border>
+
                         <TextBlock Text="Updates" Style="{StaticResource McSectionLabel}" Margin="0,14,0,4" />
 
                         <Border Style="{StaticResource McSettingCard}">

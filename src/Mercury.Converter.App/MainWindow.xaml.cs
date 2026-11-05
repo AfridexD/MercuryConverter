@@ -101,10 +101,35 @@ public sealed partial class MainWindow : Window
             };
             timer.Start();
         }
+
+        // For testing only: MERCURY_TEST_ADD=<folder> adds every supported file under it (subfolders too) a moment after
+        // start, and MERCURY_TEST_RUN=1 then presses Convert. Used to try very large batches.
+        if (Environment.GetEnvironmentVariable("MERCURY_TEST_ADD") is { Length: > 0 } testFolder)
+        {
+            var runToo = Environment.GetEnvironmentVariable("MERCURY_TEST_RUN") == "1";
+            DispatcherQueue.TryEnqueue(Microsoft.UI.Dispatching.DispatcherQueuePriority.Low, () =>
+            {
+                _ = AddTestFolderAsync(testFolder, runToo);
+            });
+        }
 #endif
         Closed += (_, _) => OnClosed();
 
+        // Cards get their preview only while they can be seen.
+        Cards.ElementPrepared += Cards_ElementPrepared;
+        Cards.ElementClearing += Cards_ElementClearing;
+
         var startup = App.Startup;
+        var skipRestore = false;
+#if DEBUG
+        skipRestore = Environment.GetEnvironmentVariable("MERCURY_TEST_ADD") is { Length: > 0 };
+#endif
+        if (startup.Files.Count == 0 && !skipRestore)
+        {
+            // Bring back the files that were not converted last time, once the window is up.
+            DispatcherQueue.TryEnqueue(Microsoft.UI.Dispatching.DispatcherQueuePriority.Low, () => _ = ViewModel.RestoreListAsync());
+        }
+
         if (startup.Files.Count > 0)
         {
             ViewModel.ApplyStartup(startup);
@@ -118,6 +143,52 @@ public sealed partial class MainWindow : Window
     }
 
     public MainViewModel ViewModel { get; } = new();
+
+    private readonly Dictionary<UIElement, FileItem> shownCards = [];
+
+    private void Cards_ElementPrepared(Microsoft.UI.Xaml.Controls.ItemsRepeater sender, Microsoft.UI.Xaml.Controls.ItemsRepeaterElementPreparedEventArgs args)
+    {
+        if (args.Index >= 0 && args.Index < ViewModel.VisibleFiles.Count)
+        {
+            var item = ViewModel.VisibleFiles[args.Index];
+            shownCards[args.Element] = item;
+            ViewModel.CardShown(item);
+        }
+    }
+
+    private void Cards_ElementClearing(Microsoft.UI.Xaml.Controls.ItemsRepeater sender, Microsoft.UI.Xaml.Controls.ItemsRepeaterElementClearingEventArgs args)
+    {
+        if (shownCards.Remove(args.Element, out var item))
+        {
+            ViewModel.CardHidden(item);
+        }
+    }
+
+#if DEBUG
+    private async Task AddTestFolderAsync(string folder, bool run)
+    {
+        // MERCURY_TEST_OUT=<folder> picks the Save to folder. MERCURY_TEST_FOLDERMODE=1 adds the folder the way Add folder does.
+        if (Environment.GetEnvironmentVariable("MERCURY_TEST_OUT") is { Length: > 0 } outFolder)
+        {
+            ViewModel.OutputFolder = outFolder;
+        }
+
+        if (Environment.GetEnvironmentVariable("MERCURY_TEST_FOLDERMODE") == "1")
+        {
+            await ViewModel.AddFolderAsync(folder);
+        }
+        else
+        {
+            var files = await Task.Run(() => Directory.EnumerateFiles(folder, "*", SearchOption.AllDirectories).ToList());
+            await ViewModel.AddFilesAsync(files);
+        }
+
+        if (run)
+        {
+            ViewModel.ConvertCommand.Execute(null);
+        }
+    }
+#endif
 
     /// <summary>Adds files sent by another right-click while this window is open, and converts them if a format was named.</summary>
     public void Receive(ConvertCommand command)
@@ -211,6 +282,7 @@ public sealed partial class MainWindow : Window
     private void OnClosed()
     {
         ViewModel.SaveSettings();
+        ViewModel.SaveQueueNow(wait: true);
         taskbar?.Clear();
         taskbar?.Dispose();
     }
@@ -347,7 +419,7 @@ public sealed partial class MainWindow : Window
         var files = await picker.PickMultipleFilesAsync();
         if (files.Count > 0)
         {
-            ViewModel.AddFiles(files.Select(file => file.Path));
+            await ViewModel.AddFilesAsync(files.Select(file => file.Path).ToList());
         }
     }
 
@@ -356,7 +428,7 @@ public sealed partial class MainWindow : Window
         var folder = await PickFolderAsync();
         if (folder is not null)
         {
-            ViewModel.AddFolder(folder);
+            await ViewModel.AddFolderAsync(folder);
         }
     }
 
@@ -418,10 +490,10 @@ public sealed partial class MainWindow : Window
         try
         {
             var items = await e.DataView.GetStorageItemsAsync();
-            ViewModel.AddFiles(items.OfType<StorageFile>().Select(file => file.Path));
+            await ViewModel.AddFilesAsync(items.OfType<StorageFile>().Select(file => file.Path).ToList());
             foreach (var folder in items.OfType<StorageFolder>())
             {
-                ViewModel.AddFolder(folder.Path);
+                await ViewModel.AddFolderAsync(folder.Path);
             }
         }
         finally
