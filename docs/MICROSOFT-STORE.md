@@ -68,7 +68,7 @@ A Store reviewer opens the app. If it fails to start there, the submission is re
 4. Start **Mercury Converter** from the Start menu and check:
    - the window opens and shows the new owl icon
    - add a few photos, a video and an audio file, and convert each
-   - right-click a photo, then **Show more options**: you should see To Webp, To Jpeg and To Png
+   - right-click a photo, then **Show more options**: you should see To Webp, To Jpg and To Png
    - choose one of them. Mercury should open and convert the file
    - Settings: the "right-click menu" and "new version" switches should be hidden (the Store does both)
    - close the app with files still in the list, open it again, and check the list came back
