@@ -72,18 +72,23 @@ if (-not $SkipPublish) {
     dotnet publish "$app\Mercury.Converter.App.csproj" -c Release -r win-x64 -p:Platform=x64 -p:PublishDir="$stage\" `
         "-p:ProjectPriIndexName=$IdentityName" "-p:ProjectPriFileName=resources.pri" --nologo
     if ($LASTEXITCODE -ne 0) { throw "dotnet publish failed." }
+
+    # The helper that answers File Explorer's right-click menu, next to the app. They share the same runtime files.
+    Write-Host "Publishing the right-click menu helper..."
+    dotnet publish "$root\src\Mercury.Converter.Shell\Mercury.Converter.Shell.csproj" -c Release -r win-x64 -p:Platform=x64 -p:PublishDir="$stage\" --nologo
+    if ($LASTEXITCODE -ne 0) { throw "dotnet publish of the menu helper failed." }
 }
 
-if (-not (Test-Path (Join-Path $stage "resources.pri"))) {
-    throw "publish\msix\resources.pri is missing. Run without -SkipPublish."
+if (-not (Test-Path (Join-Path $stage "resources.pri")) -or -not (Test-Path (Join-Path $stage "MercuryShell.exe"))) {
+    throw "publish\msix is incomplete. Run without -SkipPublish."
 }
 
 Write-Host "Writing the right-click menu lines..."
 $menuFile = Join-Path $dist "store-menu.xml"
 New-Item -ItemType Directory -Force $dist | Out-Null
 if (Test-Path $menuFile) { Remove-Item $menuFile }
-Start-Process (Join-Path $stage "MercuryConverter.exe") -ArgumentList "--write-store-menu", "`"$menuFile`"" -Wait
-if (-not (Test-Path $menuFile)) { throw "The app did not write the menu lines." }
+Start-Process (Join-Path $stage "MercuryShell.exe") -ArgumentList "--write-manifest", "`"$menuFile`"" -Wait
+if (-not (Test-Path $menuFile)) { throw "The menu helper did not write the menu lines." }
 $menu = Get-Content $menuFile -Raw
 Remove-Item $menuFile
 

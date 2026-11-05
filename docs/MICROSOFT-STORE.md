@@ -69,11 +69,16 @@ A Store reviewer opens the app. If it fails to start there, the submission is re
 4. Start **Mercury Converter** from the Start menu and check:
    - the window opens and shows the new owl icon
    - add a few photos, a video and an audio file, and convert each
-   - right-click a photo, choose **Show more options**, then **Open with**, and pick **Mercury Converter**. Mercury should open with the photo already in its list
-   - Settings: the "right-click menu" and "new version" switches should be hidden (the Store version has no menu of its own and is updated by the Store)
+   - restart File Explorer once so it learns about the new menu (see the note below this list)
+   - right-click a photo, choose **Show more options** if you are on Windows 11 (the Mercury Converter menu may also appear straight away), and point at **Mercury Converter**: you should see To Webp, To Jpg, To Png and more. Choose **To Webp**. Mercury should open and convert the photo by itself
+   - do the same with a video (To Mp4, To Mp3) and an audio file
+   - select 3 photos at once and choose To Webp. All 3 should be converted in one Mercury window
+   - Settings: the "right-click menu" and "new version" switches should be hidden (the Store version always has the menu and is updated by the Store)
    - careful: this test build reads the same settings as your normal install, so it saves converted files to your usual Save to folder
    - close the app with files still in the list, open it again, and check the list came back
 5. Remove it: `Get-AppxPackage *MercuryConverter* | Remove-AppxPackage`
+
+**About restarting File Explorer.** Windows reads a new right-click menu only when File Explorer starts. After you register the package, either sign out and in again, or restart Explorer: press `Ctrl+Shift+Esc`, find **Windows Explorer**, right-click it, and choose **Restart**. Your open folders close and come back. People who install from the Store do not need to do this: Windows restarts it for them.
 
 If any of this fails, tell Claude what you saw. Please do not submit until it passes.
 
@@ -120,7 +125,7 @@ Then **Submit to the Store**.
 > • Photos, GIFs, video and audio, including WebP, JPEG, PNG, AVIF, HEIC, MP4, MKV, GIF and MP3
 > • Built for big jobs: tested with 26,000 photos in one go, with Pause and Resume
 > • Never changes your original files and never makes a file bigger than the original
-> • Right-click a file in File Explorer and choose Open with, Mercury Converter
+> • Right-click a file in File Explorer, choose Mercury Converter, then the format you want
 > • Light and dark mode
 >
 > Mercury Converter is open source (MIT license): https://github.com/AfridexD/MercuryConverter
@@ -132,7 +137,7 @@ Then **Submit to the Store**.
 **Notes for certification** (paste into Submission options)
 > Mercury Converter is a Windows desktop app (Win32 packaged with MSIX). It requires the restricted capability runFullTrust because it starts the converter programs it carries in its own install folder (FFmpeg, ImageMagick, libjxl) as separate processes, and it writes converted files next to the user's original files or in a folder the user chooses. It makes no network requests.
 >
-> To test: open the app, drag in any photo, video or audio file, press Convert. The new file is saved next to the original. Right-click a photo or video in File Explorer and choose Open with, then Mercury Converter: the app opens with the file in its list, ready to convert.
+> To test: open the app, drag in any photo, video or audio file, press Convert. The new file is saved next to the original. Right-click a photo or video in File Explorer, choose Mercury Converter, then a format such as To Webp or To Mp4: the app opens and converts the file. The menu is provided by a small helper program in the package (MercuryShell.exe), which File Explorer starts through the package's COM server registration; it only starts Mercury with the chosen format and the selected files.
 >
 > FFmpeg is GPL v3. Its source and the licenses are linked in the store description and in THIRD-PARTY-NOTICES.md.
 
@@ -151,7 +156,7 @@ Then **Submit to the Store**.
 
 | | GitHub installer | Store version |
 |---|---|---|
-| Right-click menu | A Mercury Converter submenu with a "To WebP", "To MP4" and so on line per format | **Open with**, then Mercury Converter (adds the file to the list). A Store app cannot add its own submenu to File Explorer |
+| Right-click menu | A Mercury Converter submenu with a line per format, written to the registry. You can turn it off in Settings | The same submenu, declared in the package and served by a small helper program (`MercuryShell.exe`). Always on. Removed with the app |
 | Updates | Optional "new version" notice | The Store updates it. The app never contacts GitHub |
 | "Unknown publisher" warning | Shown until the app is code-signed | Not shown |
 | Where it installs | Program Files or your user folder | Windows keeps it in its protected apps folder |
