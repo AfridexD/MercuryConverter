@@ -44,7 +44,8 @@ On the PC that has the project and the `tools` folder:
 .\scripts\build-msix.ps1 -ForStore `
   -IdentityName "12345YourName.MercuryConverter" `
   -Publisher "CN=01234567-89AB-CDEF-0123-456789ABCDEF" `
-  -PublisherDisplayName "Your Name"
+  -PublisherDisplayName "Your Name" `
+  -PackageDisplayName "The exact name you reserved"
 ```
 
 This makes `dist\MercuryConverter-<version>-x64.msix` (about 165 MB). Do not sign it. The Store signs it.
