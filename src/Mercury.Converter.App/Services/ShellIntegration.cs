@@ -14,8 +14,16 @@ public static class ShellIntegration
     private const string MenuLabel = "Mercury Converter";
     private const string ClassesRoot = @"Software\Classes\SystemFileAssociations";
 
+    /// <summary>The Store version gets its right-click menu from its package, so nothing is written to the registry.</summary>
+    public static bool IsProvidedByPackage => PackageInfo.IsPackaged;
+
     public static bool IsInstalled()
     {
+        if (IsProvidedByPackage)
+        {
+            return true;
+        }
+
         using var key = Registry.CurrentUser.OpenSubKey($@"{ClassesRoot}\.mp4\shell\{MenuName}");
         return key is not null;
     }
@@ -23,7 +31,7 @@ public static class ShellIntegration
     /// <summary>True when the menu is on but its entries are out of date: written by an older build, or pointing at another folder.</summary>
     public static bool NeedsRepair(string exePath)
     {
-        if (!IsInstalled())
+        if (IsProvidedByPackage || !IsInstalled())
         {
             return false;
         }
@@ -41,6 +49,11 @@ public static class ShellIntegration
     /// <summary>Writes the menu entries. Safe to run again: existing entries are replaced.</summary>
     public static void Install(string exePath)
     {
+        if (IsProvidedByPackage)
+        {
+            return;
+        }
+
         Remove();
 
         // Each file extension gets its own menu, so it works even for types Windows does not label as video or image.
@@ -72,6 +85,11 @@ public static class ShellIntegration
     /// <summary>Removes the menu entries, including the ones older versions wrote.</summary>
     public static void Remove()
     {
+        if (IsProvidedByPackage)
+        {
+            return;
+        }
+
         foreach (var (extension, _) in InputFormats.All)
         {
             Registry.CurrentUser.DeleteSubKeyTree($@"{ClassesRoot}\.{extension}\shell\{MenuName}", throwOnMissingSubKey: false);

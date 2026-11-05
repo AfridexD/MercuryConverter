@@ -69,6 +69,16 @@ public sealed partial class SettingsView : UserControl
         }
 
         loading = true;
+
+        // The Store version gets its right-click menu from its package and is updated by the Store, so those two
+        // settings do not apply to it.
+        if (PackageInfo.IsPackaged)
+        {
+            RightClickCard.Visibility = Visibility.Collapsed;
+            UpdatesLabel.Visibility = Visibility.Collapsed;
+            UpdateCard.Visibility = Visibility.Collapsed;
+        }
+
         RightClickSwitch.IsOn = ShellIntegration.IsInstalled();
         QuickWindowBox.ItemsSource = viewModel.QuickWindowChoices;
         QuickWindowBox.SelectedItem = viewModel.QuickWindowChoices.First(c => c.Value == viewModel.UseQuickWindow);

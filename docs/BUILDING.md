@@ -82,3 +82,9 @@ The look of the app follows the design in [`docs/design`](design). Colors, sizes
 ## Contributing
 
 Issues and pull requests are welcome. Please run `dotnet test` before sending a change, and keep user-facing wording short and plain: the app is for people who do not think about codecs.
+
+## Microsoft Store package
+
+`scripts\build-msix.ps1` builds the `.msix` package for the Microsoft Store (`dist\MercuryConverter-<version>-x64.msix`). It needs the same tools as the installer plus `makeappx.exe` from the Windows SDK, which the restored NuGet packages already contain. The package is not signed: the Store signs it. See [MICROSOFT-STORE.md](MICROSOFT-STORE.md) for the whole publishing process.
+
+In the package the app detects that it is packaged (`PackageInfo.IsPackaged`). It then leaves the right-click menu to the package manifest (`StoreMenu`), does not write the registry, does not check for updates, and shows notifications under the package's own name.

@@ -30,6 +30,16 @@ public partial class App : Application
             return;
         }
 
+        // "--write-store-menu <file>" is used when the Store package is built: it writes the right-click menu lines that
+        // go into the package, so they come from the same list as the installed program's menu.
+        var storeMenuIndex = Array.FindIndex(arguments, argument => string.Equals(argument, "--write-store-menu", StringComparison.OrdinalIgnoreCase));
+        if (storeMenuIndex >= 0 && storeMenuIndex + 1 < arguments.Length)
+        {
+            File.WriteAllText(arguments[storeMenuIndex + 1], StoreMenu.BuildExtensions());
+            Exit();
+            return;
+        }
+
         // "--install-menu" does the same as turning on "Show in right-click menu", without opening a window.
         if (arguments.Any(argument => string.Equals(argument, "--install-menu", StringComparison.OrdinalIgnoreCase)))
         {

@@ -18,6 +18,13 @@ public static class Notifier
     /// <summary>Call once at start. Never throws: if Windows refuses, only the taskbar flash is used.</summary>
     public static void Register()
     {
+        // The Store version already has a name and icon in Windows, from its package. Nothing to register.
+        if (PackageInfo.IsPackaged)
+        {
+            ready = true;
+            return;
+        }
+
         try
         {
             SetCurrentProcessExplicitAppUserModelID(AppId);
@@ -59,7 +66,10 @@ public static class Notifier
                 + $"<text>{System.Security.SecurityElement.Escape(title)}</text>"
                 + $"<text>{System.Security.SecurityElement.Escape(text)}</text>"
                 + "</binding></visual></toast>");
-            ToastNotificationManager.CreateToastNotifier(AppId).Show(new ToastNotification(xml));
+            var notifier = PackageInfo.IsPackaged
+                ? ToastNotificationManager.CreateToastNotifier()
+                : ToastNotificationManager.CreateToastNotifier(AppId);
+            notifier.Show(new ToastNotification(xml));
         }
         catch (Exception ex) when (ex is InvalidOperationException or COMException or ArgumentException)
         {
