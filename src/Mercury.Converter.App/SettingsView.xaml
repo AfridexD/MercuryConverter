@@ -32,7 +32,7 @@
                     <StackPanel Grid.Column="0" Spacing="6">
                         <TextBlock Text="Converting from File Explorer" Style="{StaticResource McSectionLabel}" Margin="0,8,0,4" />
 
-                        <Border Style="{StaticResource McSettingCard}">
+                        <Border x:Name="RightClickCard" Style="{StaticResource McSettingCard}">
                             <Grid ColumnSpacing="14">
                                 <Grid.ColumnDefinitions>
                                     <ColumnDefinition Width="Auto" />
@@ -275,9 +275,9 @@
                             </Grid>
                         </Border>
 
-                        <TextBlock Text="Updates" Style="{StaticResource McSectionLabel}" Margin="0,14,0,4" />
+                        <TextBlock x:Name="UpdatesLabel" Text="Updates" Style="{StaticResource McSectionLabel}" Margin="0,14,0,4" />
 
-                        <Border Style="{StaticResource McSettingCard}">
+                        <Border x:Name="UpdateCard" Style="{StaticResource McSettingCard}">
                             <Grid ColumnSpacing="14">
                                 <Grid.ColumnDefinitions>
                                     <ColumnDefinition Width="Auto" />

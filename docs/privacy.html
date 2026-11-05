@@ -1,0 +1,72 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Privacy: Mercury Converter</title>
+<meta name="description" content="Mercury Converter does not collect your data and does not upload your files. This page says exactly what the app does and does not do.">
+<link rel="icon" href="images/favicon.png">
+<link rel="stylesheet" href="style.css">
+</head>
+<body>
+
+<header class="nav">
+  <div class="nav-inner">
+    <a class="brand" href="./"><img src="images/logo.png" alt=""> Mercury Converter</a>
+    <nav class="nav-links">
+      <a href="guide.html">Guide</a>
+      <a href="faq.html">Questions</a>
+      <a class="hide-s" href="https://github.com/AfridexD/MercuryConverter">GitHub</a>
+      <a class="btn small primary" href="https://github.com/AfridexD/MercuryConverter/releases/latest/download/MercuryConverter-x64-setup.exe">Download</a>
+    </nav>
+  </div>
+</header>
+
+<div class="wrap doc">
+  <article class="article">
+    <h1>Privacy</h1>
+    <p class="lead">Short version: Mercury Converter does not collect anything about you, and your files never leave your computer.</p>
+
+    <h2>What Mercury does not do</h2>
+    <ul>
+      <li>It does not upload your photos, videos, GIFs or audio anywhere. Every conversion happens on your own computer.</li>
+      <li>It does not need an account, and it has no ads.</li>
+      <li>It does not collect usage data, analytics or crash reports, and it does not send any of that to anyone.</li>
+      <li>It does not read your files except the ones you add, and only to convert them.</li>
+    </ul>
+
+    <h2>What Mercury keeps on your computer</h2>
+    <p>These are saved in <code>%LOCALAPPDATA%\MercuryConverter</code> and never sent anywhere:</p>
+    <ul>
+      <li>Your settings and presets.</li>
+      <li>Small preview pictures of files you added, so they load fast. They are cleaned up automatically (about 200 MB at most).</li>
+      <li>The locations of files that were not converted yet, so the list comes back when you open the app again. Only file locations are saved, never the contents. You can turn this off in Settings under <em>Remember my list</em>.</li>
+    </ul>
+    <p>To remove all of it, close Mercury and delete that folder.</p>
+
+    <h2>The internet</h2>
+    <ul>
+      <li><strong>Microsoft Store version:</strong> Mercury makes no network requests at all. Windows updates it through the Store.</li>
+      <li><strong>Version from GitHub:</strong> there is one optional check. If you say yes when asked, once a day it asks GitHub for the newest version number. It sends nothing else, and it is off until you turn it on.</li>
+    </ul>
+
+    <h2>Other programs inside Mercury</h2>
+    <p>Mercury runs FFmpeg, ImageMagick and libjxl on your computer to do the conversions. They run offline, with network access switched off where the program allows it. See <a href="https://github.com/AfridexD/MercuryConverter/blob/main/SECURITY.md">SECURITY.md</a> for how.</p>
+
+    <h2>Open source</h2>
+    <p>You do not have to take our word for it. The source code is public under the MIT license, so anyone can check what the app does: <a href="https://github.com/AfridexD/MercuryConverter">github.com/AfridexD/MercuryConverter</a>.</p>
+
+    <h2>Questions</h2>
+    <p><a href="https://github.com/AfridexD/MercuryConverter/issues/new">Open an issue on GitHub</a> and we will answer there.</p>
+    <p><small>Last updated: November 2026.</small></p>
+  </article>
+</div>
+
+<footer>
+  <div class="wrap">
+    <span>Mercury Converter is free software under the MIT license.</span>
+    <span><a href="https://github.com/AfridexD/MercuryConverter">Source code</a> &middot; <a href="https://github.com/AfridexD/MercuryConverter/issues/new">Report a problem</a></span>
+  </div>
+</footer>
+</body>
+</html>

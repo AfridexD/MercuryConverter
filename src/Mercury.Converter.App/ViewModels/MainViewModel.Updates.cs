@@ -29,7 +29,7 @@ public sealed partial class MainViewModel
         skippedVersion = settings.SkippedVersion;
         lastUpdateCheck = settings.LastUpdateCheckUtc;
         UpdateQuestionAnswered = settings.UpdatePromptAnswered;
-        ShowUpdateQuestion = !settings.UpdatePromptAnswered;
+        ShowUpdateQuestion = !settings.UpdatePromptAnswered && !Services.PackageInfo.IsPackaged;
     }
 
     private bool UpdateQuestionAnswered { get; set; }
@@ -37,7 +37,8 @@ public sealed partial class MainViewModel
     /// <summary>Asks GitHub about a newer version, at most once a day, and only if the user has said yes.</summary>
     public async Task CheckForUpdateAsync()
     {
-        if (!CheckForUpdates || lastUpdateCheck is { } last && DateTime.UtcNow - last < TimeSpan.FromHours(20))
+        // The Store updates the app itself. It never contacts GitHub for a new version.
+        if (Services.PackageInfo.IsPackaged || !CheckForUpdates || lastUpdateCheck is { } last && DateTime.UtcNow - last < TimeSpan.FromHours(20))
         {
             return;
         }
